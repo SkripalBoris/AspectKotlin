@@ -13,8 +13,7 @@ aspectBody
 //Составная часть тела аспекта
 aspectBodyDeclaration
     :	advice
-//TODO
-//    |   pointcut
+    |   pointcut
     ;
 
 // Совет
@@ -29,6 +28,11 @@ adviceSpec
 	|	'after' formalParameters 'returning' ('(' formalParameter? ')')?
 	|	'after' formalParameters 'throwing' ('(' formalParameter? ')')?
 	;
+
+// Срез
+pointcut
+    :   'pointcut' id formalParameters ':' pointcutExpression ';'?
+    ;
 
 //Выражение для составления срезов
 pointcutExpression
