@@ -155,6 +155,67 @@ expressionList
     :   expression (',' expression)*
     ;
 
+methodBody
+    : block
+    ;
+
+block
+    :   '{' blockStatement* '}'
+    ;
+
+blockStatement
+    :   localVariableDeclarationStatement
+    |   statement
+    ;
+
+localVariableDeclarationStatement
+    :    localVariableDeclaration ';'?
+    ;
+
+localVariableDeclaration
+    :   variableModifier* 'val' variableDeclarators
+    ;
+
+variableDeclarators
+    :   variableDeclarator (',' variableDeclarator)*
+    ;
+
+variableDeclarator
+    :   variableDeclaratorId ('=' variableInitializer)?
+    ;
+
+variableInitializer
+    :   arrayInitializer
+    |   expression
+    ;
+
+arrayInitializer
+    :   '{' (variableInitializer (',' variableInitializer)* (',')? )? '}'
+    ;
+
+statement
+    :   block
+    |   'if' parExpression statement ('else' statement)?
+    |   'for' '(' forControl ')' statement
+    |   'while' parExpression statement
+    |   'do' statement 'while' parExpression ';'?
+    |   'return' expression? ';'?
+    |   'break' Identifier? ';'?
+    |   'continue' Identifier? ';'?
+    |   ';'
+    |   expression ';'?
+    |   Identifier ':' statement
+    ;
+
+// Выражения
+parExpression
+    :   '(' expression ')'
+    ;
+
+forControl
+    :   variableDeclaratorId ':' typeType  'in' expression
+    ;
+
 fragment
 KotlinLetter
     :   [a-zA-Z$_] // these are the "java letters" below 0x7F

@@ -19,7 +19,7 @@ aspectBodyDeclaration
 
 // Совет
 advice
-	:	adviceSpec ('throws' typeList)? ':' pointcutExpression '{' methodBody '}'
+	:	adviceSpec ('throws' typeList)? ':' pointcutExpression methodBody
 	;
 
 //Спецификация совета
