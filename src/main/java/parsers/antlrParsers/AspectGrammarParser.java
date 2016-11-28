@@ -1,6 +1,5 @@
-package parsers.antlrParsers;
-
 // Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.5.3
+package parsers.antlrParsers;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -35,7 +34,7 @@ public class AspectGrammarParser extends Parser {
 		IntegerLiteral=102, FloatingPointLiteral=103, BooleanLiteral=104, CharacterLiteral=105, 
 		StringLiteral=106, WS=107, COMMENT=108, LINE_COMMENT=109;
 	public static final int
-		RULE_aspect = 0, RULE_aspectBody = 1, RULE_aspectBodyDeclaration = 2, 
+		RULE_aspectDeclaration = 0, RULE_aspectBody = 1, RULE_aspectBodyDeclaration = 2, 
 		RULE_advice = 3, RULE_adviceSpec = 4, RULE_pointcut = 5, RULE_pointcutExpression = 6, 
 		RULE_referencePointcut = 7, RULE_pointcutPrimitive = 8, RULE_formalParametersPattern = 9, 
 		RULE_formalsPattern = 10, RULE_formalsPatternAfterDotDot = 11, RULE_typePattern = 12, 
@@ -57,8 +56,8 @@ public class AspectGrammarParser extends Parser {
 		RULE_variableInitializer = 59, RULE_arrayInitializer = 60, RULE_statement = 61, 
 		RULE_parExpression = 62, RULE_forControl = 63, RULE_literal = 64;
 	public static final String[] ruleNames = {
-		"aspect", "aspectBody", "aspectBodyDeclaration", "advice", "adviceSpec", 
-		"pointcut", "pointcutExpression", "referencePointcut", "pointcutPrimitive", 
+		"aspectDeclaration", "aspectBody", "aspectBodyDeclaration", "advice", 
+		"adviceSpec", "pointcut", "pointcutExpression", "referencePointcut", "pointcutPrimitive", 
 		"formalParametersPattern", "formalsPattern", "formalsPatternAfterDotDot", 
 		"typePattern", "optionalParensTypePattern", "simpleTypePattern", "dottedNamePattern", 
 		"annotationPattern", "annotationTypePattern", "annotationOrIdentifer", 
@@ -154,33 +153,33 @@ public class AspectGrammarParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-	public static class AspectContext extends ParserRuleContext {
+	public static class AspectDeclarationContext extends ParserRuleContext {
 		public TerminalNode Identifier() { return getToken(AspectGrammarParser.Identifier, 0); }
 		public AspectBodyContext aspectBody() {
 			return getRuleContext(AspectBodyContext.class,0);
 		}
-		public AspectContext(ParserRuleContext parent, int invokingState) {
+		public AspectDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_aspect; }
+		@Override public int getRuleIndex() { return RULE_aspectDeclaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof AspectGrammarListener ) ((AspectGrammarListener)listener).enterAspect(this);
+			if ( listener instanceof AspectGrammarListener ) ((AspectGrammarListener)listener).enterAspectDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof AspectGrammarListener ) ((AspectGrammarListener)listener).exitAspect(this);
+			if ( listener instanceof AspectGrammarListener ) ((AspectGrammarListener)listener).exitAspectDeclaration(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AspectGrammarVisitor ) return ((AspectGrammarVisitor<? extends T>)visitor).visitAspect(this);
+			if ( visitor instanceof AspectGrammarVisitor ) return ((AspectGrammarVisitor<? extends T>)visitor).visitAspectDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final AspectContext aspect() throws RecognitionException {
-		AspectContext _localctx = new AspectContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_aspect);
+	public final AspectDeclarationContext aspectDeclaration() throws RecognitionException {
+		AspectDeclarationContext _localctx = new AspectDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_aspectDeclaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

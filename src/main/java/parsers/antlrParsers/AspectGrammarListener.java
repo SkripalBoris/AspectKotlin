@@ -1,6 +1,5 @@
-package parsers.antlrParsers;
-
 // Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.5.3
+package parsers.antlrParsers;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -9,15 +8,15 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface AspectGrammarListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link AspectGrammarParser#aspect}.
+	 * Enter a parse tree produced by {@link AspectGrammarParser#aspectDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterAspect(AspectGrammarParser.AspectContext ctx);
+	void enterAspectDeclaration(AspectGrammarParser.AspectDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AspectGrammarParser#aspect}.
+	 * Exit a parse tree produced by {@link AspectGrammarParser#aspectDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitAspect(AspectGrammarParser.AspectContext ctx);
+	void exitAspectDeclaration(AspectGrammarParser.AspectDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#aspectBody}.
 	 * @param ctx the parse tree

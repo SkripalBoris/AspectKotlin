@@ -1,6 +1,5 @@
-package parsers.antlrParsers;
-
 // Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.5.3
+package parsers.antlrParsers;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

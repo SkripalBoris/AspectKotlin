@@ -3,7 +3,7 @@ grammar AspectGrammar;
 import KotlinGrammar;
 
 // Аспект
-aspect: 'aspect' Identifier aspectBody;
+aspectDeclaration: 'aspect' Identifier aspectBody;
 
 //Тело аспекта
 aspectBody

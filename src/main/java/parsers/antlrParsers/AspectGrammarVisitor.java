@@ -1,6 +1,5 @@
-package parsers.antlrParsers;
-
 // Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.5.3
+package parsers.antlrParsers;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -12,11 +11,11 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link AspectGrammarParser#aspect}.
+	 * Visit a parse tree produced by {@link AspectGrammarParser#aspectDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAspect(AspectGrammarParser.AspectContext ctx);
+	T visitAspectDeclaration(AspectGrammarParser.AspectDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#aspectBody}.
 	 * @param ctx the parse tree
