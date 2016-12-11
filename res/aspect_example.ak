@@ -3,7 +3,7 @@ aspect A  {
     pointcut gooPC(): execution(fun Test.goo());
     pointcut printPC(): call(fun println(String));
 
-    before(): cflow(fooPC()) && cflow(gooPC()) && printPC() && !within(A) {
+    before(): (cflow(fooPC()) || !cflow(gooPC())) && printPC() && !within(A) {
         println("Hello, world!");
     }
 }

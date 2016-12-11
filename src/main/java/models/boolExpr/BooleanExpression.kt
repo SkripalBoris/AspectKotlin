@@ -41,17 +41,21 @@ abstract class Terminal(protected var value: String) : BooleanExpression {
 
 class Or : NonTerminal() {
     override fun toString(): String {
-        return String.format("($left | $right)")
+        return String.format("($left || $right)")
     }
 }
 
 class And : NonTerminal() {
     override fun toString(): String {
-        return String.format("($left | $right)")
+        return String.format("($left && $right)")
     }
 }
 
 class Not : NonTerminal() {
+    fun setChild(child: BooleanExpression?) {
+        this.setLeftNode(child)
+    }
+
     override fun toString(): String {
         return String.format("!($left)")
     }
