@@ -41,8 +41,9 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
             buildExpression(ctx.pointcutExpression())
             val boolExpr = root ?: throw IllegalStateException("Advice must have pointcutExpression")
 
+            println(boolExpr)
             pointcuts.add(Pointcut(ctx.id().text, boolExpr))
-            return Pointcut("", NodeItem(""))
+            return Pointcut("", NodeItem("", ""))
         }
 
         private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
@@ -51,7 +52,10 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
             if(pointcutExpression.childCount == 1) {
-                this.root = NodeItem(pointcutExpression.getChild(0).text)
+                if (pointcutExpression.getChild(0).childCount == 2)
+                    this.root = NodeItem(pointcutExpression.getChild(0).text, null)
+                else
+                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
                 return
             }
 
@@ -102,9 +106,10 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
             buildExpression(ctx.pointcutExpression())
             val boolExpr = root ?: throw IllegalStateException("Advice must have pointcutExpression")
 
+            print(boolExpr)
             advices.add(Advice(ctx.adviceSpec().text, boolExpr))
 
-            return Advice("", NodeItem(""))
+            return Advice("", NodeItem("", ""))
         }
 
         private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
@@ -113,7 +118,10 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
             if(pointcutExpression.childCount == 1) {
-                this.root = NodeItem(pointcutExpression.getChild(0).text)
+                if (pointcutExpression.getChild(0).childCount == 2)
+                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(0).text, null)
+                else
+                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(2).getChild(0).text, pointcutExpression.getChild(0).getChild(0).text)
                 return
             }
 

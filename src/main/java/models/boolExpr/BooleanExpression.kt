@@ -29,6 +29,14 @@ abstract class NonTerminal : BooleanExpression {
     fun setRightNode(right: BooleanExpression?) {
         this.right = right
     }
+
+    fun getLeftNode(): BooleanExpression?{
+        return this.left
+    }
+
+    fun getRightNode(): BooleanExpression?{
+        return this.right
+    }
 }
 
 abstract class Terminal(protected var value: String) : BooleanExpression {
@@ -61,9 +69,41 @@ class Not : NonTerminal() {
     }
 }
 
-class NodeItem(value: String) : Terminal(value) {
+class NodeItem(identifier: String, modifier: String?) : Terminal(identifier) {
+    private var modifierList: MutableList<String>
+    private var identifier: String
+
+    init {
+        modifierList = mutableListOf()
+        if (modifier != null)
+            modifierList.add(modifier)
+
+        this.identifier = identifier
+    }
     override fun toString(): String {
-        return value
+        var retString = ""
+
+        for (mod in modifierList)
+            retString += mod + "("
+
+        retString += this.identifier
+
+        for(mod in modifierList)
+            retString += ")"
+        return retString
+    }
+
+    public fun addModifier(modifier: String) {
+        this.modifierList.add(modifier)
+    }
+
+    public fun getModifierList(): MutableList<String> {
+        return this.modifierList
+    }
+
+
+    public fun getIdentifier(): String {
+        return identifier
     }
 }
 
