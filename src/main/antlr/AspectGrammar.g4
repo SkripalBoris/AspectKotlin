@@ -120,7 +120,7 @@ dottedNamePattern
 
 //Паттерн аннотации
 annotationPattern
-	:	'@' annotationTypePattern annotationPattern*
+	:	annotationTypePattern*
 	;
 
 annotationTypePattern
