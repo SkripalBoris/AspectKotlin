@@ -154,7 +154,7 @@ methodOrConstructorPattern
 	;
 
 methodPattern
-	:	annotationPattern? 'fun' methodModifiersPattern? (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' typePattern)?
+	:	annotationPattern? methodModifiersPattern? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' typePattern)?
 	;
 
 methodModifiersPattern
