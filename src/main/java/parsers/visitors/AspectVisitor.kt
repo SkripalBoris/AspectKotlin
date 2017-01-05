@@ -34,126 +34,101 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
     inner class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>(){
         var pointcuts = mutableListOf<Pointcut>()
-        private var root: BooleanExpression? = null
 
         override fun visitPointcut(ctx: AspectGrammarParser.PointcutContext): Pointcut {
-            this.root = null
-            buildExpression(ctx.pointcutExpression())
-            val boolExpr = root ?: throw IllegalStateException("Advice must have pointcutExpression")
+            val boolExpr = buildExpression(ctx.pointcutExpression())
 
             println(boolExpr)
             pointcuts.add(Pointcut(ctx.id().text, boolExpr))
             return Pointcut("", NodeItem("", ""))
         }
 
-        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
-            expression(pointcutExpression)
+        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
+            return expression(pointcutExpression)
         }
 
-        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
+        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
             if(pointcutExpression.childCount == 1) {
                 if (pointcutExpression.getChild(0).childCount == 2)
-                    this.root = NodeItem(pointcutExpression.getChild(0).text, null)
+                    return NodeItem(pointcutExpression.getChild(0).text, null)
                 else
-                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
-                return
+                    return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
             }
 
             if (pointcutExpression.childCount == 2) {
                 val not = Not()
-                expression(pointcutExpression.pointcutExpression(0))
-                not.setChild(this.root)
-                this.root = not
-                return
+                not.setChild(expression(pointcutExpression.pointcutExpression(0)))
+                return not
             }
 
             if (pointcutExpression.childCount == 3) {
                 if (pointcutExpression.getChild(0).text == "(")
-                    expression(pointcutExpression.pointcutExpression(0))
+                    return expression(pointcutExpression.pointcutExpression(0))
                 else if (pointcutExpression.getChild(1).text == "||") {
                     val or = Or()
-                    expression(pointcutExpression.pointcutExpression(0))
-                    or.setLeftNode(this.root)
-                    expression(pointcutExpression.pointcutExpression(1))
-                    or.setRightNode(this.root)
-                    this.root = or
+                    or.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
+                    or.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    return or
                 }
                 else if (pointcutExpression.getChild(1).text == "&&") {
                     val and = And()
-                    expression(pointcutExpression.pointcutExpression(0))
-                    and.setLeftNode(this.root)
-                    expression(pointcutExpression.pointcutExpression(1))
-                    and.setRightNode(this.root)
-                    this.root = and
+
+                    and.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
+                    and.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    return and
                 }
-                return
             }
+            throw IllegalArgumentException()
         }
     }
 
     inner class AdviceVisitor : AspectGrammarBaseVisitor<Advice>(){
         var advices = mutableListOf<Advice>()
-
-        private var root: BooleanExpression? = null
-        private var pointcutIdList: List<String>
-
-        init {
-            pointcutIdList = mutableListOf()
-        }
+        private var pointcutIdList: List<String> = mutableListOf()
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
-            this.root = null
-            buildExpression(ctx.pointcutExpression())
-            val boolExpr = root ?: throw IllegalStateException("Advice must have pointcutExpression")
-
+            val boolExpr = buildExpression(ctx.pointcutExpression())
             print(boolExpr)
             advices.add(Advice(ctx.adviceSpec().text, boolExpr))
 
             return Advice("", NodeItem("", ""))
         }
 
-        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
-            expression(pointcutExpression)
+        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
+            return expression(pointcutExpression)
         }
 
-        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext) {
+        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
             if(pointcutExpression.childCount == 1) {
                 if (pointcutExpression.getChild(0).childCount == 2)
-                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(0).text, null)
-                else
-                    this.root = NodeItem(pointcutExpression.getChild(0).getChild(2).getChild(0).text, pointcutExpression.getChild(0).getChild(0).text)
-                return
+                    return NodeItem(pointcutExpression.getChild(0).getChild(0).text, null)
+                return NodeItem(pointcutExpression.getChild(0).getChild(2).getChild(0).text, pointcutExpression.getChild(0).getChild(0).text)
+
             }
 
             if (pointcutExpression.childCount == 2) {
                 val not = Not()
-                expression(pointcutExpression.pointcutExpression(0))
-                not.setChild(this.root)
-                this.root = not
-                return
+                not.setChild(expression(pointcutExpression.pointcutExpression(0)))
+                return not
             }
 
             if (pointcutExpression.childCount == 3) {
                 if (pointcutExpression.getChild(0).text == "(")
-                    expression(pointcutExpression.pointcutExpression(0))
+                    return expression(pointcutExpression.pointcutExpression(0))
                 else if (pointcutExpression.getChild(1).text == "||") {
                     val or = Or()
-                    expression(pointcutExpression.pointcutExpression(0))
-                    or.setLeftNode(this.root)
-                    expression(pointcutExpression.pointcutExpression(1))
-                    or.setRightNode(this.root)
-                    this.root = or
+                    or.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
+                    or.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    return or
                 }
                 else if (pointcutExpression.getChild(1).text == "&&") {
                     val and = And()
-                    expression(pointcutExpression.pointcutExpression(0))
-                    and.setLeftNode(this.root)
-                    expression(pointcutExpression.pointcutExpression(1))
-                    and.setRightNode(this.root)
-                    this.root = and
+                    and.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
+                    and.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    return and
                 }
-                return
             }
+            throw IllegalArgumentException()
         }
     }
 }

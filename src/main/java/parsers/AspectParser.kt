@@ -1,6 +1,5 @@
 package parsers
 
-import models.aspect.Aspect
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import parsers.antlrParsers.*
