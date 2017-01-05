@@ -1,5 +1,5 @@
 
-package models.aspect
+package models.aspect.pointcut
 
 import models.boolExpr.BooleanExpression
 
@@ -8,5 +8,6 @@ import models.boolExpr.BooleanExpression
  */
 
 class Pointcut(var id: String, var pointcutException: BooleanExpression) {
+
 }
 

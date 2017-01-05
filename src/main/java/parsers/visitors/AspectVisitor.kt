@@ -2,7 +2,7 @@ package parsers.visitors
 
 import models.aspect.Advice
 import models.aspect.Aspect
-import models.aspect.Pointcut
+import models.aspect.pointcut.Pointcut
 import models.boolExpr.*
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
@@ -84,14 +84,13 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
     inner class AdviceVisitor : AspectGrammarBaseVisitor<Advice>(){
         var advices = mutableListOf<Advice>()
-        private var pointcutIdList: List<String> = mutableListOf()
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
             val boolExpr = buildExpression(ctx.pointcutExpression())
             print(boolExpr)
-            advices.add(Advice(ctx.adviceSpec().text, boolExpr))
+            advices.add(Advice(ctx.adviceSpec().text, boolExpr, ctx.methodBody().block().text))
 
-            return Advice("", NodeItem("", ""))
+            return Advice("", NodeItem("", ""), "")
         }
 
         private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
