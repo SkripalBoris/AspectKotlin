@@ -394,6 +394,16 @@ public interface AspectGrammarListener extends ParseTreeListener {
 	 */
 	void exitFormalsPatternAfterDotDot(AspectGrammarParser.FormalsPatternAfterDotDotContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#retTypePattern}.
+	 * @param ctx the parse tree
+	 */
+	void enterRetTypePattern(AspectGrammarParser.RetTypePatternContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#retTypePattern}.
+	 * @param ctx the parse tree
+	 */
+	void exitRetTypePattern(AspectGrammarParser.RetTypePatternContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#typePattern}.
 	 * @param ctx the parse tree
 	 */

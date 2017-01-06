@@ -9,9 +9,7 @@ package models.boolExpr
 /*
 Абстрактные классы
  */
-interface BooleanExpression {
-
-}
+interface BooleanExpression
 
 abstract class NonTerminal : BooleanExpression {
     protected var left: BooleanExpression?
@@ -28,14 +26,6 @@ abstract class NonTerminal : BooleanExpression {
 
     fun setRightNode(right: BooleanExpression?) {
         this.right = right
-    }
-
-    fun getLeftNode(): BooleanExpression?{
-        return this.left
-    }
-
-    fun getRightNode(): BooleanExpression?{
-        return this.right
     }
 }
 

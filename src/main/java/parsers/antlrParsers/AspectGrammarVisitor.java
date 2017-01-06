@@ -238,6 +238,12 @@ public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFormalsPatternAfterDotDot(AspectGrammarParser.FormalsPatternAfterDotDotContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AspectGrammarParser#retTypePattern}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRetTypePattern(AspectGrammarParser.RetTypePatternContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#typePattern}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

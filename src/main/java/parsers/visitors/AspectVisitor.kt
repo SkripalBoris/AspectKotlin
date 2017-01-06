@@ -4,9 +4,10 @@ import models.aspect.Advice
 import models.aspect.Aspect
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.*
+import models.aspect.items.CallNodeItem
+import models.aspect.items.MethodPattern
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
-
 
 
 /**
@@ -51,8 +52,19 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
             if(pointcutExpression.childCount == 1) {
                 if (pointcutExpression.getChild(0).childCount == 2)
                     return NodeItem(pointcutExpression.getChild(0).text, null)
-                else
+                else {
+                    if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.CallPointcutContext) {
+                        val methodPattern = (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.CallPointcutContext).methodOrConstructorPattern().methodPattern()
+                        val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<String>() else methodPattern.annotationPattern().annotationTypePattern().map { it.text }
+                        val modifiers = if (methodPattern.methodModifiersPattern() == null) mutableListOf<String>() else methodPattern.methodModifiersPattern().methodModifiersPattern().map { it.text }
+                        val types = if (methodPattern.typePattern() == null || methodPattern.typePattern().typePattern() == null ) mutableListOf<String>() else methodPattern.typePattern().typePattern().map { it.text }
+                        val name = methodPattern.simpleNamePattern().text
+                        val params = if (methodPattern.formalParametersPattern().formalsPattern().formalsPattern() == null) mutableListOf<String>() else methodPattern.formalParametersPattern().formalsPattern().formalsPattern().map { it.text }
+                        val retType = if (methodPattern.retTypePattern() == null) null else methodPattern.retTypePattern().text
+                        return CallNodeItem(MethodPattern(annotations, modifiers, types, name, params, retType))
+                    }
                     return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
+                }
             }
 
             if (pointcutExpression.childCount == 2) {

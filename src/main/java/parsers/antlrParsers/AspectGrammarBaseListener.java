@@ -424,6 +424,18 @@ public class AspectGrammarBaseListener implements AspectGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRetTypePattern(AspectGrammarParser.RetTypePatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRetTypePattern(AspectGrammarParser.RetTypePatternContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypePattern(AspectGrammarParser.TypePatternContext ctx) { }
 	/**
 	 * {@inheritDoc}

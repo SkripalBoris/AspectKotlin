@@ -93,6 +93,10 @@ formalsPatternAfterDotDot
 	|	typePattern '...'
 	;
 
+retTypePattern
+    : typePattern
+    ;
+
 //Паттерн типа
 typePattern
 	:	simpleTypePattern
@@ -154,7 +158,7 @@ methodOrConstructorPattern
 	;
 
 methodPattern
-	:	annotationPattern? methodModifiersPattern? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' typePattern)?
+	:	annotationPattern? methodModifiersPattern? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
 	;
 
 methodModifiersPattern
