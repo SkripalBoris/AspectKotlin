@@ -1,9 +1,8 @@
 aspect A  {
-    pointcut fooPC(): execution(fun Test.foo(): Int);
-    pointcut gooPC(): execution(fun Test.goo());
+    pointcut fooPC(): execution(fun Foo.foo());
     pointcut printPC(): call(fun println(String));
 
-    before(): (cflow(fooPC()) || !cflow(gooPC())) && printPC() && !within(A) {
-        println("Hello, world!");
+    before(): fooPC() && printPC() {
+        println("Test");
     }
 }

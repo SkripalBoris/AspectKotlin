@@ -122,7 +122,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
             if(pointcutExpression.childCount == 1) {
                 if (pointcutExpression.getChild(0).childCount == 2)
                     return NodeItem(pointcutExpression.getChild(0).getChild(0).text, null)
-                return NodeItem(pointcutExpression.getChild(0).getChild(2).getChild(0).text, pointcutExpression.getChild(0).getChild(0).text)
+                return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
 
             }
 
