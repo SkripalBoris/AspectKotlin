@@ -27,6 +27,14 @@ abstract class NonTerminal : BooleanExpression {
     fun setRightNode(right: BooleanExpression?) {
         this.right = right
     }
+
+    fun getLeftNode(): BooleanExpression {
+        return this.left!!
+    }
+
+    fun getRightNode(): BooleanExpression {
+        return this.right!!
+    }
 }
 
 abstract class Terminal(protected var value: String) : BooleanExpression {
@@ -52,6 +60,10 @@ class And : NonTerminal() {
 class Not : NonTerminal() {
     fun setChild(child: BooleanExpression?) {
         this.setLeftNode(child)
+    }
+
+    fun getChild(): BooleanExpression {
+        return this.getLeftNode()
     }
 
     override fun toString(): String {

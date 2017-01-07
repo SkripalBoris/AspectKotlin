@@ -55,7 +55,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                 val modifiers = if (methodPattern.methodModifiersPattern() == null) mutableListOf<String>() else methodPattern.methodModifiersPattern().methodModifiersPattern().map { it.text }
                 val types = if (methodPattern.typePattern() == null || methodPattern.typePattern().typePattern() == null ) mutableListOf<String>() else methodPattern.typePattern().typePattern().map { it.text }
                 val name = methodPattern.simpleNamePattern().text
-                val params = if (methodPattern.formalParametersPattern().formalsPattern() == null || methodPattern.formalParametersPattern().formalsPattern().formalsPattern() == null) mutableListOf<String>() else methodPattern.formalParametersPattern().formalsPattern().formalsPattern().map { it.text }
+                val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<String>() else methodPattern.formalParametersPattern().formalsPattern().children.map { it.text }
                 val retType = if (methodPattern.retTypePattern() == null) null else methodPattern.retTypePattern().text
                 return MethodPattern(annotations, modifiers, types, name, params, retType)
             }

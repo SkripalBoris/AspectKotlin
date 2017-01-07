@@ -23,7 +23,7 @@ class MethodPattern(var annotations: List<String>, var modifiers: List<String>, 
 
         if (params.isNotEmpty())
             params.forEach {
-                retStr += "$it."
+                retStr += it
                 if (it != params.last())
                     retStr += ", "
             }
