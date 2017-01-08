@@ -1,6 +1,7 @@
 package psi.visitors
 
 import models.aspect.items.CallNodeItem
+import models.aspect.items.ExecutionNodeItem
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.And
 import models.boolExpr.BooleanExpression
@@ -39,7 +40,14 @@ object CustomTagSetter{
         }
 
         // Если это элемент
-        if (node is CallNodeItem)
+        if (node is CallNodeItem) {
             CallPsiTagSetter.visitFile(file, node)
+            return
+        }
+
+        if (node is ExecutionNodeItem) {
+            ExecutePsiTagSetter.visitFile(file, node)
+            return
+        }
     }
 }

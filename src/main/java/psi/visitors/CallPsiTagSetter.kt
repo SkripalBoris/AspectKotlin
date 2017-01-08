@@ -15,7 +15,7 @@ object CallPsiTagSetter: PsiTagSetter {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         if (psiElement is KtCallExpression)
             if (matchFunction(psiElement, aspectItem))
-                println(psiElement.text)
+                psiElement.putUserData(aspectItem.key, aspectItem.toString())
         psiElement.children.forEach { setTag(it, aspectItem) }
     }
 
