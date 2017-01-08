@@ -40,6 +40,6 @@ object CustomTagSetter{
 
         // Если это элемент
         if (node is CallNodeItem)
-            return
+            CallPsiTagSetter.visitFile(file, node)
     }
 }

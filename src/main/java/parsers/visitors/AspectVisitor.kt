@@ -39,8 +39,6 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         override fun visitPointcut(ctx: AspectGrammarParser.PointcutContext): Pointcut {
             val boolExpr = buildExpression(ctx.pointcutExpression())
-
-            println(boolExpr)
             pointcuts.add(Pointcut(ctx.id().text, boolExpr))
             return Pointcut("", NodeItem("", ""))
         }
@@ -108,7 +106,6 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
             val boolExpr = buildExpression(ctx.pointcutExpression())
-            print(boolExpr)
             advices.add(Advice(ctx.adviceSpec().text, boolExpr, ctx.methodBody().block().text))
 
             return Advice("", NodeItem("", ""), "")

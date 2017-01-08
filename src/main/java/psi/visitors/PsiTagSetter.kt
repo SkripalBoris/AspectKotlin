@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.psi.KtFile
 interface PsiTagSetter{
     fun setTag(psiElement: PsiElement, aspectItem: AspectItem)
 
-    fun visitFile(file: KtFile)
+    fun visitFile(file: KtFile, aspectItem: AspectItem)
 }
