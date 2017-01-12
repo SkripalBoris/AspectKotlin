@@ -7,8 +7,10 @@ import models.boolExpr.*
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
 import models.aspect.items.MethodPattern
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
+import psi.TargetProjectContainer
 
 
 /**
@@ -106,9 +108,14 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
             val boolExpr = buildExpression(ctx.pointcutExpression())
-            advices.add(Advice(ctx.adviceSpec().text, boolExpr, ctx.methodBody().block().text))
+            val adviceCode = KtPsiFactory(TargetProjectContainer.project).createBlock(
+                    ctx.methodBody().block().blockStatement().
+                            map { it.text }.
+                            foldRight(""){total, next -> "$total\n$next"}
+            )
+            advices.add(Advice(ctx.adviceSpec().text, boolExpr, adviceCode))
 
-            return Advice("", NodeItem("", ""), "")
+            return Advice("", NodeItem("", ""), adviceCode)
         }
 
         private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {

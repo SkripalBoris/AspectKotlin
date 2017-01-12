@@ -1,8 +1,10 @@
+import com.intellij.mock.MockProject
 import org.jetbrains.kootstrap.FooBarCompiler
 import org.jetbrains.kootstrap.util.opt
 import org.jetbrains.kootstrap.util.targetRoots
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import parsers.AspectParser
+import psi.TargetProjectContainer
 import psi.visitors.PointcutTagSetter
 
 fun main(args: Array<String>) {
@@ -24,6 +26,8 @@ fun main(args: Array<String>) {
             f.originalFile.virtualFile.path.startsWith(root)
         }
     }
+
+    TargetProjectContainer.project = targetFiles[0].project as MockProject
 
     var aspect = AspectParser.parseFile("/home/sba/Projects/AspectKotlin/res/aspect_example.ak")
 

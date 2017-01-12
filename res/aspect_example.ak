@@ -3,6 +3,7 @@ aspect A  {
     pointcut printPC(): call(fun println(String));
 
     before(): fooPC() && printPC() {
-        println("Test");
+        println("Hello!!")
+        println("world!!")
     }
 }
