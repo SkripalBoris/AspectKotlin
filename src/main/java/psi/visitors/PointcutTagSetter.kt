@@ -1,5 +1,6 @@
 package psi.visitors
 
+import com.intellij.psi.PsiElement
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
 import models.aspect.pointcut.Pointcut
@@ -13,16 +14,17 @@ import org.jetbrains.kotlin.psi.KtFile
  * Created by sba on 07.01.17.
  */
 
-object CustomTagSetter{
+object PointcutTagSetter {
     fun visitFiles(pointcut: Pointcut, files: List<KtFile>) {
         files.forEach { visitFile(pointcut, it) }
     }
 
-    fun visitFile(pointcut: Pointcut, file: KtFile) {
+    private fun visitFile(pointcut: Pointcut, file: KtFile) {
         visitBooleanExpression(pointcut.pointcutException, file)
+        recursiveSetPointcutTag(file, pointcut)
     }
 
-    fun visitBooleanExpression(node: BooleanExpression, file: KtFile) {
+    private fun visitBooleanExpression(node: BooleanExpression, file: KtFile) {
         // Если операнд, то переходим к его подвыражению
         if (node is Not) {
             visitBooleanExpression(node.getChild(), file)
@@ -49,5 +51,11 @@ object CustomTagSetter{
             ExecutePsiTagSetter.visitFile(file, node)
             return
         }
+    }
+
+    private fun recursiveSetPointcutTag(psiElement: PsiElement, pointcut: Pointcut) {
+        if (pointcut.calcExpression(psiElement))
+            psiElement.putUserData(pointcut.key, pointcut.toString())
+        psiElement.children.forEach { recursiveSetPointcutTag(it, pointcut) }
     }
 }

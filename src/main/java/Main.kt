@@ -3,7 +3,7 @@ import org.jetbrains.kootstrap.util.opt
 import org.jetbrains.kootstrap.util.targetRoots
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import parsers.AspectParser
-import psi.visitors.CustomTagSetter
+import psi.visitors.PointcutTagSetter
 
 fun main(args: Array<String>) {
 
@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     var aspect = AspectParser.parseFile("/home/sba/Projects/AspectKotlin/res/aspect_example.ak")
 
     aspect.pointcuts.forEach {
-        CustomTagSetter.visitFiles(it, targetFiles)
+        PointcutTagSetter.visitFiles(it, targetFiles)
     }
     return
 }

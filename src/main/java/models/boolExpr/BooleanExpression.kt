@@ -1,6 +1,8 @@
 
 package models.boolExpr
 
+import com.intellij.psi.PsiElement
+
 
 /**
  * Created by sba on 06.12.16.
@@ -9,7 +11,9 @@ package models.boolExpr
 /*
 Абстрактные классы
  */
-interface BooleanExpression
+interface BooleanExpression {
+    fun calcExpression(psiElement: PsiElement): Boolean
+}
 
 abstract class NonTerminal : BooleanExpression {
     protected var left: BooleanExpression?
@@ -49,11 +53,19 @@ class Or : NonTerminal() {
     override fun toString(): String {
         return String.format("($left || $right)")
     }
+
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return this.left!!.calcExpression(psiElement) || this.right!!.calcExpression(psiElement)
+    }
 }
 
 class And : NonTerminal() {
     override fun toString(): String {
         return String.format("($left && $right)")
+    }
+
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return this.left!!.calcExpression(psiElement) && this.right!!.calcExpression(psiElement)
     }
 }
 
@@ -68,6 +80,10 @@ class Not : NonTerminal() {
 
     override fun toString(): String {
         return String.format("!($left)")
+    }
+
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return !this.getChild().calcExpression(psiElement)
     }
 }
 
@@ -95,17 +111,8 @@ class NodeItem(identifier: String, modifier: String?) : Terminal(identifier) {
         return retString
     }
 
-    public fun addModifier(modifier: String) {
-        this.modifierList.add(modifier)
-    }
-
-    public fun getModifierList(): MutableList<String> {
-        return this.modifierList
-    }
-
-
-    public fun getIdentifier(): String {
-        return identifier
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return false
     }
 }
 

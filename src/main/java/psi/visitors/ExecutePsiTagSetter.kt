@@ -6,22 +6,23 @@ import models.aspect.items.ExecutionNodeItem
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
 /**
  * Created by sba on 08.01.17.
  */
 
-object ExecutePsiTagSetter: PsiTagSetter {
+object ExecutePsiTagSetter : PsiTagSetter {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
-        if (psiElement is KtFunction && matchFunction(psiElement, aspectItem)) {
-
-            if (psiElement.bodyExpression != null)
-                psiElement.bodyExpression!!.children.forEach {
-                    if (it is KtCallExpression)
-                        it.putUserData(aspectItem.key, aspectItem.toString())
-                }
+        psiElement.collectDescendantsOfType<KtFunction>().forEach {
+            if (matchFunction(it, aspectItem)) {
+                if (it.bodyExpression != null)
+                    it.bodyExpression!!.children.forEach { func ->
+                        if (func is KtCallExpression)
+                            func.putUserData(aspectItem.key, aspectItem.toString())
+                    }
+            }
         }
-        psiElement.children.forEach { setTag(it, aspectItem) }
     }
 
     override fun visitFile(file: KtFile, aspectItem: AspectItem) {
