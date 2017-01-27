@@ -1,4 +1,3 @@
-import com.intellij.mock.MockProject
 import org.jetbrains.kootstrap.FooBarCompiler
 import org.jetbrains.kootstrap.util.opt
 import org.jetbrains.kootstrap.util.targetRoots
@@ -27,7 +26,8 @@ fun main(args: Array<String>) {
         }
     }
 
-    TargetProjectContainer.project = targetFiles[0].project as MockProject
+    TargetProjectContainer.project = targetFiles[0].project
+    TargetProjectContainer.context = FooBarCompiler.analyzeBunchOfSources(env, targetFiles, cfg)
 
     var aspect = AspectParser.parseFile("/home/sba/Projects/AspectKotlin/res/aspect_example.ak")
 
