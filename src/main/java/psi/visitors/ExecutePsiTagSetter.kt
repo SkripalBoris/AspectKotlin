@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 /**
  * Created by sba on 08.01.17.
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 object ExecutePsiTagSetter : PsiTagSetter {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtFunction>().forEach {
-            if (matchFunction(it, aspectItem)) {
+            if (checkFunction(it, aspectItem)) {
                 if (it.bodyExpression != null)
                     it.bodyExpression!!.children.forEach { func ->
                         if (func is KtCallExpression)
@@ -32,11 +33,13 @@ object ExecutePsiTagSetter : PsiTagSetter {
         return
     }
 
-    private fun matchFunction(psiElement: KtFunction, aspectItem: AspectItem): Boolean {
+    private fun checkFunction(psiElement: KtFunction, aspectItem: AspectItem): Boolean {
         if (aspectItem is ExecutionNodeItem) {
-            if (aspectItem.methodPattern.name == psiElement.name) {
-                return true
-            }
+            if (aspectItem.methodPattern.name != psiElement.name)
+                return false
+            if (!aspectItem.methodPattern.type.isEmpty() &&
+                    psiElement.containingClassOrObject!!.fqName.toString() != aspectItem.methodPattern.type)
+                return false
         }
         return false
     }

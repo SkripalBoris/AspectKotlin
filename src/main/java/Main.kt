@@ -31,6 +31,7 @@ fun main(args: Array<String>) {
 
     var aspect = AspectParser.parseFile("/home/sba/Projects/AspectKotlin/res/aspect_example.ak")
 
+    // Размечаем psi тэгами точек включения
     aspect.pointcuts.forEach {
         PointcutTagSetter.visitFiles(it, targetFiles)
     }

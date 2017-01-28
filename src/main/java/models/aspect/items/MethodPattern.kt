@@ -4,7 +4,8 @@ package models.aspect.items
  * Created by sba on 05.01.17.
  */
 
-class MethodPattern(var annotations: List<String>, var modifiers: List<String>, var types: List<String>, var name: String, var params: List<String>, var returnType: String?) {
+//TODO Поддержка не только простых типов
+class MethodPattern(var annotations: List<String>, var modifiers: List<String>, var type: String, var name: String, var params: List<String>, var returnType: String?) {
     override fun toString(): String {
         var retStr = ""
         annotations.forEach {
@@ -15,9 +16,7 @@ class MethodPattern(var annotations: List<String>, var modifiers: List<String>, 
             retStr += "$it "
         }
 
-        types.forEach {
-            retStr += "$it "
-        }
+        retStr += type
 
         retStr += "fun $name("
 

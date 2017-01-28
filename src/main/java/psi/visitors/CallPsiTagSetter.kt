@@ -39,11 +39,13 @@ object CallPsiTagSetter: PsiTagSetter {
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
         val resolvedFunDescriptor = psiElement.getResolvedCall(TargetProjectContainer.context!!)!!.candidateDescriptor
         val funName = resolvedFunDescriptor.name.asString()
-        val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe
+        val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
-            if (aspectItem.methodPattern.name == funName) {
-                return true
-            }
+            if (aspectItem.methodPattern.name != funName)
+                return false
+            if (!aspectItem.methodPattern.type.isEmpty() && aspectItem.methodPattern.type != funPackage)
+                return false
+            return true
         }
         return false
     }
