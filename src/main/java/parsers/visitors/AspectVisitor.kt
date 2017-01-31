@@ -7,6 +7,7 @@ import models.boolExpr.*
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
 import models.aspect.items.MethodPattern
+import models.aspect.items.ReferencePointcutNodeItem
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
@@ -124,6 +125,12 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
             if(pointcutExpression.childCount == 1) {
+                if (pointcutExpression.referencePointcut() != null) {
+                    pointcutList.forEach {
+                        if (it.id == pointcutExpression.referencePointcut().id().text)
+                            return ReferencePointcutNodeItem(it.key)
+                    }
+                }
                 if (pointcutExpression.getChild(0).childCount == 2)
                     return NodeItem(pointcutExpression.getChild(0).getChild(0).text, null)
                 return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)

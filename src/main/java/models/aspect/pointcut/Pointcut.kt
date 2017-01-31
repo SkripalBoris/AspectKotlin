@@ -9,12 +9,12 @@ import models.boolExpr.BooleanExpression
  * Created by sba on 29.11.16.
  */
 
-class Pointcut(var id: String, var pointcutException: BooleanExpression): AspectItem() {
+class Pointcut(var id: String, var pointcutExpression: BooleanExpression): AspectItem() {
     override fun toString(): String {
-        return "$id $pointcutException"
+        return "$id $pointcutExpression"
     }
 
     override fun calcExpression(psiElement: PsiElement): Boolean {
-        return this.pointcutException.calcExpression(psiElement)
+        return this.pointcutExpression.calcExpression(psiElement)
     }
 }

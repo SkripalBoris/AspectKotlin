@@ -1,6 +1,5 @@
 package models.aspect.items
 
-import com.intellij.openapi.util.Key
 import models.boolExpr.BooleanExpression
 
 /**
@@ -8,5 +7,5 @@ import models.boolExpr.BooleanExpression
  */
 
 abstract class AspectItem: BooleanExpression {
-    var key = Key<String>(this.toString())
+    val key = this.hashCode()
 }

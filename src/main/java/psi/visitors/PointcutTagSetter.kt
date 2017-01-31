@@ -9,6 +9,7 @@ import models.boolExpr.BooleanExpression
 import models.boolExpr.Not
 import models.boolExpr.Or
 import org.jetbrains.kotlin.psi.KtFile
+import psi.TargetProjectContainer
 
 /**
  * Created by sba on 07.01.17.
@@ -20,7 +21,7 @@ object PointcutTagSetter {
     }
 
     private fun visitFile(pointcut: Pointcut, file: KtFile) {
-        visitBooleanExpression(pointcut.pointcutException, file)
+        visitBooleanExpression(pointcut.pointcutExpression, file)
         recursiveSetPointcutTag(file, pointcut)
     }
 
@@ -55,7 +56,7 @@ object PointcutTagSetter {
 
     private fun recursiveSetPointcutTag(psiElement: PsiElement, pointcut: Pointcut) {
         if (pointcut.calcExpression(psiElement))
-            psiElement.putUserData(pointcut.key, pointcut.toString())
+            psiElement.getUserData(TargetProjectContainer.tagKey)!!.add(pointcut.key)
         psiElement.children.forEach { recursiveSetPointcutTag(it, pointcut) }
     }
 }

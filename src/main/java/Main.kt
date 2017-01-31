@@ -4,6 +4,7 @@ import org.jetbrains.kootstrap.util.targetRoots
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import parsers.AspectParser
 import psi.TargetProjectContainer
+import psi.visitors.AdviceVisitor
 import psi.visitors.PointcutTagSetter
 
 fun main(args: Array<String>) {
@@ -34,6 +35,10 @@ fun main(args: Array<String>) {
     // Размечаем psi тэгами точек включения
     aspect.pointcuts.forEach {
         PointcutTagSetter.visitFiles(it, targetFiles)
+    }
+
+    aspect.advices.forEach {
+        AdviceVisitor.visitFiles(targetFiles, it)
     }
     return
 }

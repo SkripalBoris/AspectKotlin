@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import psi.TargetProjectContainer
 
 /**
  * Created by sba on 08.01.17.
@@ -20,7 +21,10 @@ object ExecutePsiTagSetter : PsiTagSetter {
                 if (it.bodyExpression != null)
                     it.bodyExpression!!.children.forEach { func ->
                         if (func is KtCallExpression)
-                            func.putUserData(aspectItem.key, aspectItem.toString())
+                            if (func.getUserData(TargetProjectContainer.tagKey) == null)
+                                func.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
+                            else
+                                func.getUserData(TargetProjectContainer.tagKey)!!.add(aspectItem.key)
                     }
             }
         }
@@ -40,6 +44,7 @@ object ExecutePsiTagSetter : PsiTagSetter {
             if (!aspectItem.methodPattern.type.isEmpty() &&
                     psiElement.containingClassOrObject!!.fqName.toString() != aspectItem.methodPattern.type)
                 return false
+            return true
         }
         return false
     }

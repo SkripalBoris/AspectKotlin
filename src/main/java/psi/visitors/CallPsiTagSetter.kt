@@ -3,17 +3,11 @@ package psi.visitors
 import com.intellij.psi.PsiElement
 import models.aspect.items.AspectItem
 import models.aspect.items.CallNodeItem
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import psi.TargetProjectContainer
 
 /**
@@ -25,7 +19,10 @@ object CallPsiTagSetter: PsiTagSetter {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
             if (checkFunction(it, aspectItem))
-                it.putUserData(aspectItem.key, aspectItem.toString())
+                if (it.getUserData(TargetProjectContainer.tagKey) == null)
+                    it.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
+                else
+                    it.getUserData(TargetProjectContainer.tagKey)!!.add(aspectItem.key)
         }
     }
 

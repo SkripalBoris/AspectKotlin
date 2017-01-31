@@ -2,6 +2,7 @@
 package models.boolExpr
 
 import com.intellij.psi.PsiElement
+import javax.naming.OperationNotSupportedException
 
 
 /**
@@ -112,7 +113,7 @@ class NodeItem(identifier: String, modifier: String?) : Terminal(identifier) {
     }
 
     override fun calcExpression(psiElement: PsiElement): Boolean {
-        return false
+        throw OperationNotSupportedException()
     }
 }
 
