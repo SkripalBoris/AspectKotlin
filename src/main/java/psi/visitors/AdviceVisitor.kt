@@ -22,6 +22,9 @@ object AdviceVisitor {
     }
 
     private fun setAdviceCode(psiElement: PsiElement, advice: Advice) {
-        psiElement.addBefore(advice.adviceCode, psiElement)
+        advice.adviceCode.children.forEach {
+            psiElement.parent.addBefore(it, psiElement)
+        }
+        return
     }
 }
