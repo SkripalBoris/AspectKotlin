@@ -112,7 +112,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
             val adviceCode = KtPsiFactory(TargetProjectContainer.project).createBlock(
                     "run {\n" + ctx.methodBody().block().blockStatement().
                             map { it.text }.
-                            foldRight(""){total, next -> "$total\n$next"} + "}\n"
+                            foldRight(""){total, next -> "$total\n$next"} + "};\n"
             )
             advices.add(Advice(ctx.adviceSpec().text, boolExpr, adviceCode))
 
