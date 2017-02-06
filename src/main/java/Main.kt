@@ -84,16 +84,7 @@ fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtF
         }
 
         val ktSrcFile = File(pathToFileDir + it.originalFile.name)
-        val fileText = it.text
-
-        var newText = ""
-        fileText.toCharArray().forEach {
-            newText += it.toString()
-            if (it == '}')
-                newText += "\n"
-        }
-
-        ktSrcFile.writeText(newText)
+        ktSrcFile.writeText(it.text)
     }
 
     val docFactory = DocumentBuilderFactory.newInstance()

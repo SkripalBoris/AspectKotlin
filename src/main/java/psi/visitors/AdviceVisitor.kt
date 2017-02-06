@@ -3,6 +3,8 @@ package psi.visitors
 import com.intellij.psi.PsiElement
 import models.aspect.Advice
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import psi.TargetProjectContainer
 
 /**
  * Created by sba on 31.01.17.
@@ -22,9 +24,8 @@ object AdviceVisitor {
     }
 
     private fun setAdviceCode(psiElement: PsiElement, advice: Advice) {
-        advice.adviceCode.children.forEach {
-            psiElement.parent.addBefore(it, psiElement)
-        }
+        psiElement.parent.addBefore(advice.adviceCode.children[0], psiElement)
+        psiElement.parent.addBefore(KtPsiFactory(TargetProjectContainer.project).createNewLine(), psiElement)
         return
     }
 }
