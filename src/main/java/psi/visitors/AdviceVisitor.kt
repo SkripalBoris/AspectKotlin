@@ -2,9 +2,9 @@ package psi.visitors
 
 import com.intellij.psi.PsiElement
 import models.aspect.Advice
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import psi.TargetProjectContainer
 
 /**
  * Created by sba on 31.01.17.
@@ -13,6 +13,7 @@ object AdviceVisitor {
     fun visitFiles(targetFiles: List<KtFile>, advice: Advice) {
         targetFiles.forEach { visitFile(it, advice) }
     }
+
     private fun visitFile(targetFile: KtFile, advice: Advice) {
         recursiveAdviceInjector(targetFile, advice)
     }
@@ -24,8 +25,20 @@ object AdviceVisitor {
     }
 
     private fun setAdviceCode(psiElement: PsiElement, advice: Advice) {
-        psiElement.parent.addBefore(advice.adviceCode.children[0], psiElement)
-        psiElement.parent.addBefore(KtPsiFactory(TargetProjectContainer.project).createNewLine(), psiElement)
+        when (advice.adviceInsertPlace) {
+            "before()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.forEach {
+                psiElement.parent.addBefore(it, psiElement)
+                psiElement.parent.addBefore(KtPsiFactory(psiElement).createNewLine(), psiElement)
+            }
+            "after()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.reversed().forEach {
+                psiElement.parent.addAfter(it, psiElement)
+                psiElement.parent.addAfter(KtPsiFactory(psiElement).createNewLine(), psiElement)
+            } else -> throw IllegalArgumentException()
+        }
         return
+    }
+
+    private fun buildAdviceCode(text: String, psiElement: PsiElement): KtBlockExpression {
+        return KtPsiFactory(psiElement).createBlock(text)
     }
 }

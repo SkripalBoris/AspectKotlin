@@ -109,14 +109,11 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
             val boolExpr = buildExpression(ctx.pointcutExpression())
-            val adviceCode = KtPsiFactory(TargetProjectContainer.project).createBlock(
-                    "run {\n" + ctx.methodBody().block().blockStatement().
+            val adviceCode = ctx.methodBody().block().blockStatement().
                             map { it.text }.
-                            foldRight(""){total, next -> "$total\n$next"} + "}"
-            )
+                            foldRight(""){total, next -> "$total\n$next"}
             advices.add(Advice(ctx.adviceSpec().text, boolExpr, adviceCode))
-
-            return Advice("", NodeItem("", ""), adviceCode)
+            return Advice("", NodeItem("", ""), "")
         }
 
         private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {

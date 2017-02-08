@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
 
     prepareNewFiles(srcDir, newSrcDir, targetFiles, pomFile, newPomFile)
     compileNewProject(newPomFile)
-    removeNewFiles(newPomFile, newSrcDir)
+//    removeNewFiles(newPomFile, newSrcDir)
     return
 }
 
@@ -102,7 +102,7 @@ fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtF
 fun compileNewProject(pathToPom: String) {
         val request = DefaultInvocationRequest()
     request.pomFile = File(pathToPom)
-    request.goals = mutableListOf("compile")
+    request.goals = mutableListOf("package")
     val invoker = DefaultInvoker()
     invoker.mavenHome = File("/usr/share/maven")
     invoker.execute(request)
