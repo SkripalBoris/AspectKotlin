@@ -2,9 +2,7 @@ package psi.visitors
 
 import com.intellij.psi.PsiElement
 import models.aspect.Advice
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 
 /**
  * Created by sba on 31.01.17.
@@ -21,24 +19,40 @@ object AdviceVisitor {
     private fun recursiveAdviceInjector(psiElement: PsiElement, advice: Advice) {
         if (advice.calcExpression(psiElement))
             this.setAdviceCode(psiElement, advice)
-        psiElement.children.forEach { recursiveAdviceInjector(it, advice) }
+        else
+            psiElement.children.forEach { recursiveAdviceInjector(it, advice) }
     }
 
     private fun setAdviceCode(psiElement: PsiElement, advice: Advice) {
+//        when (advice.adviceInsertPlace) {
+//            "before()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.forEach {
+//                psiElement.parent.addBefore(it, psiElement)
+//                psiElement.parent.addBefore(KtPsiFactory(psiElement).createNewLine(), psiElement)
+//            }
+//            "after()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.reversed().forEach {
+//                psiElement.parent.addAfter(it, psiElement)
+//                psiElement.parent.addAfter(KtPsiFactory(psiElement).createNewLine(), psiElement)
+//            } else -> throw IllegalArgumentException()
+//        }
         when (advice.adviceInsertPlace) {
-            "before()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.forEach {
-                psiElement.parent.addBefore(it, psiElement)
-                psiElement.parent.addBefore(KtPsiFactory(psiElement).createNewLine(), psiElement)
+            "before()" -> {
+                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.adviceCode}${psiElement.text}}")
+                refreshUserMap(psiElement, buf)
+                psiElement.replace(buf)
             }
-            "after()" -> this.buildAdviceCode(advice.adviceCode, psiElement).statements.reversed().forEach {
-                psiElement.parent.addAfter(it, psiElement)
-                psiElement.parent.addAfter(KtPsiFactory(psiElement).createNewLine(), psiElement)
-            } else -> throw IllegalArgumentException()
+            "after()" ->  {
+                val buf = KtPsiFactory(psiElement).createExpression("run{val ____a = ${psiElement.text}\n${advice.adviceCode}____a}")
+                refreshUserMap(psiElement, buf)
+                psiElement.replace(buf)
+            }
+            else -> throw IllegalArgumentException()
         }
-        return
     }
 
-    private fun buildAdviceCode(text: String, psiElement: PsiElement): KtBlockExpression {
-        return KtPsiFactory(psiElement).createBlock(text)
+    private fun refreshUserMap(oldElement: PsiElement, targetElement: PsiElement) {
+        if (oldElement.javaClass == targetElement.javaClass && oldElement.text == targetElement.text)
+            (oldElement as KtExpressionImpl).copyUserDataTo(targetElement as KtExpressionImpl)
+        else
+            targetElement.children.forEach { refreshUserMap(oldElement, it) }
     }
 }
