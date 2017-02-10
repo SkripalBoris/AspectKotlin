@@ -4,8 +4,11 @@ aspect A  {
     pointcut parsePC(): call(fun parseExpression());
 
     after(): fooPC() && printPC() {
-        println("Hello!!")
-        println("world!!")
+        println("Hello after!!")
+    }
+
+    before(): fooPC() && printPC() {
+        println("Hello before!!")
     }
 
     after(): parsePC() {

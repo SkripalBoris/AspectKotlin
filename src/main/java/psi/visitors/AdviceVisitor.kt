@@ -34,19 +34,19 @@ object AdviceVisitor {
 //                psiElement.parent.addAfter(KtPsiFactory(psiElement).createNewLine(), psiElement)
 //            } else -> throw IllegalArgumentException()
 //        }
+        val par = psiElement.parent
         when (advice.adviceInsertPlace) {
             "before()" -> {
                 val buf = KtPsiFactory(psiElement).createExpression("run{${advice.adviceCode}${psiElement.text}}")
-                refreshUserMap(psiElement, buf)
                 psiElement.replace(buf)
             }
             "after()" ->  {
                 val buf = KtPsiFactory(psiElement).createExpression("run{val ____a = ${psiElement.text}\n${advice.adviceCode}____a}")
-                refreshUserMap(psiElement, buf)
                 psiElement.replace(buf)
             }
             else -> throw IllegalArgumentException()
         }
+        refreshUserMap(psiElement, par)
     }
 
     private fun refreshUserMap(oldElement: PsiElement, targetElement: PsiElement) {
