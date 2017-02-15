@@ -1,0 +1,69 @@
+\documentclass{beamer}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+% Стиль презентации
+\usetheme{Warsaw}
+\begin{document}
+	
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{footline}{%
+		\hspace{0.94\paperwidth}%
+		\usebeamerfont{title in head/foot}%
+		\insertframenumber\,/\,\inserttotalframenumber%
+	}
+	\title[Разработка АОП для Kotlin]
+	{Исследование и разработка аспектно-ориентированных расширений языка 
+	Kotlin}
+	
+	\author[Б.А. Скрипаль]{
+		Б.А. Скрипаль гр. 63501/3\\
+		Руководитель: Ицыксон В.М.\\
+		Аттестация №3
+	}
+	\institute{Санкт-Петербургский политехнический университет Петра Великого}
+	\date[15.02.2017]{}  
+	% Создание заглавной страницы
+	\frame{\titlepage} 
+	
+	\begin{frame}
+		\frametitle{План работы}
+		\begin{itemize}
+			\item [\checkmark] Обзор существующих аспектно-ориентированных 
+			расширений для других языков;
+			\item [\checkmark] Формулирование требований к создаваемому 
+			расширению;
+			\item [\checkmark] Начальное описание грамматики аспектов для языка 
+			Kotlin;
+			\item [\checkmark --] Анализ PSI и построение срезов;
+			\item [\checkmark --] Применение советов к программе;
+			\item [\checkmark --] Доработка грамматики аспектов;
+			\item [--] Реализация плагина для IntelliJ IDEA;
+			\item [--] Тестирование;
+			\item [--] Написание пояснительной записки.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Состояние дел}
+        Сделано:
+		\begin{itemize}
+            \item Анализ промежуточного представления программы;
+            \item Создание прототипа;
+            \item Начато написание пояснительной записки.
+        \end{itemize}
+
+        Планируется сделать:
+        \begin{itemize}
+            \item Доработка способа внедрения советов;
+            \item Доработка формирования срезов;
+            \item Доработка прототипа;
+            \item Продолжение написания пояснительной записки.
+        \end{itemize}
+        Оценка степени готовности:
+        \begin{itemize}
+            \item Практическая часть - 30\%;
+            \item Пояснительная записка - 10\%.
+        \end{itemize}
+    \end{frame}
+\end{document}

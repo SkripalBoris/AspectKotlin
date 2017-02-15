@@ -1,0 +1,67 @@
+\documentclass{beamer}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+% Стиль презентации
+\usetheme{Warsaw}
+\begin{document}
+	
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{footline}{%
+		\hspace{0.94\paperwidth}%
+		\usebeamerfont{title in head/foot}%
+		\insertframenumber\,/\,\inserttotalframenumber%
+	}
+	\title[Разработка АОП для Kotlin]
+	{Исследование и разработка аспектно - ориентированных расширений языка 
+	Kotlin}
+	
+	\author[Б.А. Скрипаль]{
+		Б.А. Скрипаль гр. 63501/3\\
+		Руководитель: Ицыксон В.М.\\
+		Аттестация №2
+	}
+	\institute{Санкт-Петербургский политехнический университет Петра Великого}
+	\date[16.11.2016]{}  
+	% Создание заглавной страницы
+	\frame{\titlepage} 
+	
+	\begin{frame}
+		\frametitle{Описание задачи}
+		Аспектно - ориентированный подход позволяет описывать и внедрять 
+		сквозную функциональность.
+		
+		Задача: разработка аспектно - ориентированного расширения для языка 
+		Kotlin.
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{План работы}
+		\begin{itemize}
+			\item [\checkmark] обзор существующих аспектно - ориентированных 
+			расширений для других языков;
+			\item [\checkmark] формулирование требований к создаваемому 
+			расширению;
+			\item [\checkmark] начальное описание грамматики аспектов для языка 
+			Kotlin;
+			\item Анализ AST и построение срезов;
+			\item Применение советов к программе;
+			\item Доработка грамматики аспектов;
+			\item Реализация плагина для IntelliJ IDEA;
+			\item Тестирование;
+			\item Написание пояснительной записки.
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Что сделано}
+		Произведен обзор существующий аспектно - ориентированных расширений:
+		\begin{itemize}
+			\item Spring AOP;
+			\item AspectJ;
+			\item PostShark
+		\end{itemize}
+		
+		Описана начальная грамматика аспектов при помощи ANTLR4.
+	\end{frame}
+\end{document}
