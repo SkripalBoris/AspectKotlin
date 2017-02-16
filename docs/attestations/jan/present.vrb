@@ -1,0 +1,10 @@
+\frametitle{Немного о том, что сделано}
+    	\begin{itemize}
+    		\item Описание срезов:
+    			\begin{verbatim}
+pointcut fooPC(): execution(fun Foo.foo())
+pointcut printPC(): call(fun kotlin.io.println(String))
+    			\end{verbatim}
+    	\end{itemize}
+    \end{frame}
+\end{document}

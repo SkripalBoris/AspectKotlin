@@ -17,7 +17,7 @@
 	Kotlin}
 	
 	\author[Б.А. Скрипаль]{
-		Б.А. Скрипаль гр. 63501/3\\
+		Скрипаль Б.А. гр. 63501/3\\
 		Руководитель: Ицыксон В.М.\\
 		Аттестация №3
 	}
@@ -35,9 +35,9 @@
 			расширению;
 			\item [\checkmark] Начальное описание грамматики аспектов для языка 
 			Kotlin;
-			\item [\checkmark --] Анализ PSI и построение срезов;
-			\item [\checkmark --] Применение советов к программе;
-			\item [\checkmark --] Доработка грамматики аспектов;
+			\item [+] Анализ PSI и построение срезов;
+			\item [+] Применение советов к программе;
+			\item [+] Доработка грамматики аспектов;
 			\item [--] Реализация плагина для IntelliJ IDEA;
 			\item [--] Тестирование;
 			\item [--] Написание пояснительной записки.
@@ -65,5 +65,71 @@
             \item Практическая часть - 30\%;
             \item Пояснительная записка - 10\%.
         \end{itemize}
+    \end{frame}
+
+    \begin{frame}[fragile=singleslide]
+    	\frametitle{Немного о том, что сделано}
+    	\begin{itemize}
+    		\item Описание срезов:
+    			\begin{verbatim}
+pointcut fooPC(): execution(fun Foo.foo())
+pointcut printPC(): call(fun kotlin.io.println(String))
+    			\end{verbatim}
+    		\item Описание советов:
+    			\begin{verbatim}
+after(): fooPC() && printPC() {
+  println("Hello after!!")
+}
+
+before(): fooPC() && printPC() {
+  println("Hello before!!")
+}
+    			\end{verbatim}
+    		\item Разметка элементов PSI.
+    	\end{itemize}
+    \end{frame}
+
+    \begin{frame}[fragile=singleslide]
+    	\frametitle{Немного о том, что сделано}
+    	При применении кода совета к точке включения, они оборачиваются в
+    	функцию <<run>>;
+    	\begin{itemize}
+    		\item[+] Легко вставлять совет, например, когда функции вызываются
+    		  последовательно, например:
+    		  \begin{verbatim}
+val a = a.foo().bar()
+    		  \end{verbatim}
+    		  превращается в:
+    		  \begin{verbatim}
+val a = a.run{ val buf = foo(); advice_code; buf}.bar()
+    		  \end{verbatim}
+    		\item [--] При применении нескольких советов к одной точке включения
+    		  возникают вложенные функции <<run>>;
+    		\item [--] При внесении точки включения внутрь тела функции <<run>>
+    		  необходимо обновлять метки.
+    	\end{itemize}
+    \end{frame}
+
+    \begin{frame}[fragile=singleslide]
+    	\frametitle{Немного о том, что сделано}
+    		\begin{verbatim}
+class Foo {
+  fun foo() {
+    run{
+      val ____a = run{
+        println("Hello before!!")
+        println("Hello world")
+      }
+      println("Hello after!!")
+      ____a
+    }
+    this.bar(1,this)
+  }
+
+  fun bar(a: Int, b: Foo) {
+    println("Bar hello")
+  }
+}
+    	\end{verbatim}
     \end{frame}
 \end{document}
