@@ -2,6 +2,17 @@
 \usepackage[english,russian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{base}{
+  language=Java,
+  emptylines=1,
+  breaklines=true,
+  basicstyle=\ttfamily\color{black},
+  moredelim=**[is][\color{red}]{@}{@},
+  showstringspaces=false,
+}
+
 % Стиль презентации
 \usetheme{Warsaw}
 \begin{document}
@@ -71,12 +82,12 @@
     	\frametitle{Немного о том, что сделано}
     	\begin{itemize}
     		\item Описание срезов:
-    			\begin{verbatim}
+    			\begin{lstlisting}[frame=single,style=base]
 pointcut fooPC(): execution(fun Foo.foo())
 pointcut printPC(): call(fun kotlin.io.println(String))
-    			\end{verbatim}
+    			\end{lstlisting}
     		\item Описание советов:
-    			\begin{verbatim}
+    			\begin{lstlisting}[frame=single,style=base]
 after(): fooPC() && printPC() {
   println("Hello after!!")
 }
@@ -84,7 +95,7 @@ after(): fooPC() && printPC() {
 before(): fooPC() && printPC() {
   println("Hello before!!")
 }
-    			\end{verbatim}
+    			\end{lstlisting}
     		\item Разметка элементов PSI.
     	\end{itemize}
     \end{frame}
@@ -96,15 +107,15 @@ before(): fooPC() && printPC() {
     	\begin{itemize}
     		\item[+] Легко вставлять совет, например, когда функции вызываются
     		  последовательно, например:
-    		  \begin{verbatim}
+    		  \begin{lstlisting}[frame=single,style=base]
 val a = a.foo().bar()
-    		  \end{verbatim}
+    		  \end{lstlisting}
     		  превращается в:
-    		  \begin{verbatim}
+    		  \begin{lstlisting}[frame=single,style=base]
 val a = a.run{ val buf = foo(); advice_code; buf}.bar()
-    		  \end{verbatim}
-    		\item [--] При применении нескольких советов к одной точке включения
-    		  возникают вложенные функции <<run>>;
+    		  \end{lstlisting}
+    		\item [--] При применении нескольких советов в одном месте к одной
+              точке включения нельзя предсказать порядок выполнения советов;
     		\item [--] При внесении точки включения внутрь тела функции <<run>>
     		  необходимо обновлять метки.
     	\end{itemize}
@@ -112,17 +123,17 @@ val a = a.run{ val buf = foo(); advice_code; buf}.bar()
 
     \begin{frame}[fragile=singleslide]
     	\frametitle{Немного о том, что сделано}
-    		\begin{verbatim}
+    		\begin{lstlisting}[frame=single,style=base]
 class Foo {
   fun foo() {
-    run{
-      val ____a = run{
-        println("Hello before!!")
+@    run{@
+@      val ____a = run{@
+@        println("Hello before!!")@
         println("Hello world")
-      }
-      println("Hello after!!")
-      ____a
-    }
+@      }@
+@      println("Hello after!!")@
+@      ____a@
+@    }@
     this.bar(1,this)
   }
 
@@ -130,6 +141,6 @@ class Foo {
     println("Bar hello")
   }
 }
-    	\end{verbatim}
+    	\end{lstlisting}
     \end{frame}
 \end{document}
