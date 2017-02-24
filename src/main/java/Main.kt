@@ -16,8 +16,8 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.TransformerFactory
 
 fun main(args: Array<String>) {
-//    val targetProjectDir = "/home/sba/Projects/kotlin-examples/maven/hello-world/"
-    val targetProjectDir = "/home/sba/Projects/targetProjects/test1/"
+    val targetProjectDir = "/home/sba/Projects/kotlin-examples/maven/hello-world/"
+//    val targetProjectDir = "/home/sba/Projects/targetProjects/test1/"
     val pomFile = targetProjectDir + "pom.xml"
     val srcDir = targetProjectDir + "src"
     val newPomFile = targetProjectDir + "pom2.xml"

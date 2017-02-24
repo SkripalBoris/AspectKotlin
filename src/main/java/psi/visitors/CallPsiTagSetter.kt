@@ -38,9 +38,10 @@ object CallPsiTagSetter: PsiTagSetter {
         val funName = resolvedFunDescriptor.name.asString()
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
-            if (aspectItem.methodPattern.name != funName)
+            if (!funName.matches(aspectItem.methodPattern.name.replace("*", ".*").toRegex()))
                 return false
-            if (!aspectItem.methodPattern.type.isEmpty() && aspectItem.methodPattern.type != funPackage)
+            if (!aspectItem.methodPattern.type.isEmpty() &&
+                    !funPackage.matches(aspectItem.methodPattern.type.replace(".", "\\.").replace("*", ".*").toRegex()))
                 return false
             return true
         }

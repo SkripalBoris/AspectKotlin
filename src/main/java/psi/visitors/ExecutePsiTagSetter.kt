@@ -6,6 +6,7 @@ import models.aspect.items.ExecutionNodeItem
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import psi.TargetProjectContainer
@@ -16,7 +17,7 @@ import psi.TargetProjectContainer
 
 object ExecutePsiTagSetter : PsiTagSetter {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
-        psiElement.collectDescendantsOfType<KtFunction>().forEach {
+        psiElement.collectDescendantsOfType<KtNamedFunction>().forEach {
             if (checkFunction(it, aspectItem)) {
                 if (it.bodyExpression != null)
                     it.bodyExpression!!.children.forEach { func ->
@@ -39,10 +40,11 @@ object ExecutePsiTagSetter : PsiTagSetter {
 
     private fun checkFunction(psiElement: KtFunction, aspectItem: AspectItem): Boolean {
         if (aspectItem is ExecutionNodeItem) {
-            if (aspectItem.methodPattern.name != psiElement.name)
+            if (!psiElement.name!!.matches(aspectItem.methodPattern.name.replace("*", ".*").toRegex()))
                 return false
-            if (!aspectItem.methodPattern.type.isEmpty() &&
-                    psiElement.containingClassOrObject!!.fqName.toString() != aspectItem.methodPattern.type)
+            if (!aspectItem.methodPattern.type.isEmpty() && ( psiElement.containingClassOrObject == null ||
+                    !psiElement.containingClassOrObject!!.fqName.toString().matches(
+                            aspectItem.methodPattern.type.replace(".", "\\.").replace("*", ".*").toRegex())))
                 return false
             return true
         }
