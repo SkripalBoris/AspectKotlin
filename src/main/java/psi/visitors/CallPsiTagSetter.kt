@@ -14,8 +14,7 @@ import psi.TargetProjectContainer
  * Created by sba on 07.01.17.
  */
 
-// CallUtils org.jetbrains.kotlin.resolve.calls.callUtil
-object CallPsiTagSetter: PsiTagSetter {
+object CallPsiTagSetter: FunctionTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
             if (checkFunction(it, aspectItem))
@@ -38,13 +37,8 @@ object CallPsiTagSetter: PsiTagSetter {
         val funName = resolvedFunDescriptor.name.asString()
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
-            if (!funName.matches(aspectItem.methodPattern.name.replace("*", ".*").toRegex()))
-                return false
-            if (!aspectItem.methodPattern.type.isEmpty() &&
-                    !funPackage.matches(aspectItem.methodPattern.type.replace(".", "\\.").replace("*", ".*").toRegex()))
-                return false
-            return true
+            return this.checkType(aspectItem.methodPattern.name, funName, aspectItem.methodPattern.type, funPackage)
         }
-        return false
+        throw IllegalArgumentException("Illegal aspectItem")
     }
 }

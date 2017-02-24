@@ -15,7 +15,7 @@ import psi.TargetProjectContainer
  * Created by sba on 08.01.17.
  */
 
-object ExecutePsiTagSetter : PsiTagSetter {
+object ExecutePsiTagSetter : FunctionTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtNamedFunction>().forEach {
             if (checkFunction(it, aspectItem)) {
@@ -38,16 +38,11 @@ object ExecutePsiTagSetter : PsiTagSetter {
         return
     }
 
-    private fun checkFunction(psiElement: KtFunction, aspectItem: AspectItem): Boolean {
+    private fun checkFunction(psiElement: KtNamedFunction, aspectItem: AspectItem): Boolean {
+        val functionPackage = if (psiElement.containingClassOrObject == null) "" else psiElement.containingClassOrObject!!.fqName.toString()
         if (aspectItem is ExecutionNodeItem) {
-            if (!psiElement.name!!.matches(aspectItem.methodPattern.name.replace("*", ".*").toRegex()))
-                return false
-            if (!aspectItem.methodPattern.type.isEmpty() && ( psiElement.containingClassOrObject == null ||
-                    !psiElement.containingClassOrObject!!.fqName.toString().matches(
-                            aspectItem.methodPattern.type.replace(".", "\\.").replace("*", ".*").toRegex())))
-                return false
-            return true
+            return this.checkType(aspectItem.methodPattern.name, psiElement.name!!, aspectItem.methodPattern.type, functionPackage)
         }
-        return false
+        throw IllegalArgumentException("Illegal aspectItem")
     }
 }
