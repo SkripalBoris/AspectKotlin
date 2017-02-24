@@ -16,9 +16,10 @@ class MethodPattern(var annotations: List<String>, var modifiers: List<String>, 
             retStr += "$it "
         }
 
-        retStr += type
-
-        retStr += "fun $name("
+        if (type.isEmpty())
+            retStr += "fun $name("
+        else
+            retStr += "fun $type.$name("
 
         if (params.isNotEmpty())
             params.forEach {
