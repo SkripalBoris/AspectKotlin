@@ -6,6 +6,11 @@ package models.aspect.items
 
 //TODO Поддержка не только простых типов
 class MethodPattern(var annotations: List<String>, var modifiers: List<String>, var type: String, var name: String, var params: List<String>, var returnType: String?) {
+    init {
+        if (returnType == null)
+            returnType = "Unit"
+    }
+
     override fun toString(): String {
         var retStr = ""
         annotations.forEach {

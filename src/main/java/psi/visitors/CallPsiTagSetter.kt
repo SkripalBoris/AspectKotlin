@@ -38,7 +38,8 @@ object CallPsiTagSetter: FunctionTagSetter() {
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
             return this.checkName(aspectItem.methodPattern.name, funName) &&
-                    this.checkType(aspectItem.methodPattern.type, funPackage)
+                    this.checkType(aspectItem.methodPattern.type, funPackage) &&
+                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }

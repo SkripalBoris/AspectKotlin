@@ -40,9 +40,11 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
 
     private fun checkFunction(psiElement: KtNamedFunction, aspectItem: AspectItem): Boolean {
         val functionPackage = if (psiElement.containingClassOrObject == null) "" else psiElement.containingClassOrObject!!.fqName.toString()
+        val retType = if (psiElement.hasDeclaredReturnType()) psiElement.typeReference!!.text else "Unit"
         if (aspectItem is ExecutionNodeItem) {
             return this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
-                    this.checkType(aspectItem.methodPattern.type, functionPackage)
+                    this.checkType(aspectItem.methodPattern.type, functionPackage) &&
+                    this.checkType(aspectItem.methodPattern.returnType!!, retType)
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }
