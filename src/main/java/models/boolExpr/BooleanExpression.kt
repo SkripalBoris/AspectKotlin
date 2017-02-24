@@ -1,4 +1,3 @@
-
 package models.boolExpr
 
 import com.intellij.psi.PsiElement
@@ -99,6 +98,7 @@ class NodeItem(identifier: String, modifier: String?) : Terminal(identifier) {
 
         this.identifier = identifier
     }
+
     override fun toString(): String {
         var retString = ""
 
@@ -107,7 +107,7 @@ class NodeItem(identifier: String, modifier: String?) : Terminal(identifier) {
 
         retString += this.identifier
 
-        for(mod in modifierList)
+        for (mod in modifierList)
             retString += ")"
         return retString
     }

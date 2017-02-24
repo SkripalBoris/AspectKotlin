@@ -11,9 +11,9 @@ import psi.visitors.AdviceVisitor
 import psi.visitors.PointcutTagSetter
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.stream.StreamResult
-import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 fun main(args: Array<String>) {
     val targetProjectDir = "/home/sba/Projects/kotlin-examples/maven/hello-world/"
@@ -68,13 +68,13 @@ fun main(args: Array<String>) {
     return
 }
 
-fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtFile>, pomFileName:String, newPomFileName: String) {
+fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtFile>, pomFileName: String, newPomFileName: String) {
     val projectDir = File(projectPath)
     if (projectDir.exists())
         throw Exception("Directory already exists")
 
     files.forEach {
-        var pathToFile = projectPath + it.originalFile.virtualFile.path.substring(oldProjectPath.lastIndex+1)
+        var pathToFile = projectPath + it.originalFile.virtualFile.path.substring(oldProjectPath.lastIndex + 1)
         val pathToFileDir = pathToFile.substring(0, pathToFile.lastIndex - it.originalFile.name.lastIndex)
         val fileDir = File(pathToFileDir)
         if (fileDir.exists()) {
@@ -101,7 +101,7 @@ fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtF
 }
 
 fun compileNewProject(pathToPom: String) {
-        val request = DefaultInvocationRequest()
+    val request = DefaultInvocationRequest()
     request.pomFile = File(pathToPom)
     request.goals = mutableListOf("package")
     val invoker = DefaultInvoker()
@@ -109,7 +109,7 @@ fun compileNewProject(pathToPom: String) {
     invoker.execute(request)
 }
 
-fun removeNewFiles(pomFileName: String, newSrcDir:String) {
+fun removeNewFiles(pomFileName: String, newSrcDir: String) {
     File(pomFileName).delete()
     File(newSrcDir).deleteRecursively()
 }

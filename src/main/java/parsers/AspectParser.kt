@@ -3,7 +3,8 @@ package parsers
 import models.aspect.Aspect
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
-import parsers.antlrParsers.*
+import parsers.antlrParsers.AspectGrammarLexer
+import parsers.antlrParsers.AspectGrammarParser
 import parsers.visitors.AspectVisitor
 import java.io.FileInputStream
 

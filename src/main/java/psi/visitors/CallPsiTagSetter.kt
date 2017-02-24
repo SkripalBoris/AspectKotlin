@@ -14,7 +14,7 @@ import psi.TargetProjectContainer
  * Created by sba on 07.01.17.
  */
 
-object CallPsiTagSetter: FunctionTagSetter() {
+object CallPsiTagSetter : FunctionTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
             if (checkFunction(it, aspectItem))

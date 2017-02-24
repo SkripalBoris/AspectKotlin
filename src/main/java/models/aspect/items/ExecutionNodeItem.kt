@@ -15,6 +15,6 @@ class ExecutionNodeItem(var methodPattern: MethodPattern) : AspectItem() {
 
     override fun calcExpression(psiElement: PsiElement): Boolean {
         val tags = psiElement.getUserData(TargetProjectContainer.tagKey)
-        return  tags != null && this.key in tags
+        return tags != null && this.key in tags
     }
 }

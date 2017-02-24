@@ -2,7 +2,9 @@ package psi.visitors
 
 import com.intellij.psi.PsiElement
 import models.aspect.Advice
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtExpressionImpl
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 /**
  * Created by sba on 31.01.17.
@@ -40,7 +42,7 @@ object AdviceVisitor {
                 val buf = KtPsiFactory(psiElement).createExpression("run{${advice.adviceCode}${psiElement.text}}")
                 psiElement.replace(buf)
             }
-            "after()" ->  {
+            "after()" -> {
                 val buf = KtPsiFactory(psiElement).createExpression("run{val ____a = ${psiElement.text}\n${advice.adviceCode}____a}")
                 psiElement.replace(buf)
             }
