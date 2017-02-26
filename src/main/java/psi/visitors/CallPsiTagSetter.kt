@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import psi.TargetProjectContainer
 
 /**
@@ -37,9 +38,32 @@ object CallPsiTagSetter : FunctionTagSetter() {
         val funName = resolvedFunDescriptor.name.asString()
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
-            return this.checkName(aspectItem.methodPattern.name, funName) &&
+            if (! (this.checkName(aspectItem.methodPattern.name, funName) &&
                     this.checkType(aspectItem.methodPattern.type, funPackage) &&
-                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())
+                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())))
+                return false
+            aspectItem.methodPattern.modifiers.forEach {
+                when (it) {
+                    "public" -> {
+                        if (resolvedFunDescriptor.visibility.name != "public")
+                            return false
+                    }
+
+                    "private" -> {
+                        if (resolvedFunDescriptor.visibility.name != "private" ||
+                                resolvedFunDescriptor.visibility.name != "protected")
+                            return false
+                    }
+
+                    "protected" -> {
+                        if (resolvedFunDescriptor.visibility.name != "protected")
+                            return false
+                }
+
+                else -> throw IllegalArgumentException("Unexpected modifier")
+                }
+            }
+            return true
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }

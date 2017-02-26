@@ -6,8 +6,7 @@ import models.aspect.items.ExecutionNodeItem
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.*
 import psi.TargetProjectContainer
 
 /**
@@ -41,9 +40,33 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
         val functionPackage = if (psiElement.containingClassOrObject == null) "" else psiElement.containingClassOrObject!!.fqName.toString()
         val retType = if (psiElement.hasDeclaredReturnType()) psiElement.typeReference!!.text else "Unit"
         if (aspectItem is ExecutionNodeItem) {
-            return this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
+            // Проверяем соответствие имени и местоположения функции
+            if (! (this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
                     this.checkType(aspectItem.methodPattern.type, functionPackage) &&
-                    this.checkType(aspectItem.methodPattern.returnType!!, retType)
+                    this.checkType(aspectItem.methodPattern.returnType!!, retType)))
+                return false
+            // Проверка модификаторов
+            aspectItem.methodPattern.modifiers.forEach {
+                when (it) {
+                    "public" -> {
+                        if (psiElement.isPrivate())
+                            return false
+                    }
+
+                    "private" -> {
+                        if (!psiElement.isPrivate())
+                            return false
+                    }
+
+                    "protected" -> {
+                        if (!psiElement.isProtected())
+                            return false
+                    }
+
+                    else -> throw IllegalArgumentException("Unexpected modifier")
+                }
+            }
+            return true
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }

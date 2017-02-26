@@ -49,9 +49,19 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
         }
 
         private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
+            fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<String> {
+                if (modifier == null)
+                    return mutableListOf()
+                if (modifier.methodModifiersPattern().isEmpty())
+                    return mutableListOf(modifier.methodModifier().text)
+                val retList = buildModifiersList(modifier.methodModifiersPattern().first())
+                retList.add(modifier.methodModifier().text)
+                return retList
+            }
+
             fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {
                 val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<String>() else methodPattern.annotationPattern().annotationTypePattern().map { it.text }
-                val modifiers = if (methodPattern.methodModifiersPattern() == null) mutableListOf<String>() else methodPattern.methodModifiersPattern().methodModifiersPattern().map { it.text }
+                val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
                 val type = if (methodPattern.typePattern() == null || methodPattern.typePattern().simpleTypePattern() == null) "" else methodPattern.typePattern().simpleTypePattern().text
                 val name = methodPattern.simpleNamePattern().text
                 val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<String>() else methodPattern.formalParametersPattern().formalsPattern().children.map { it.text }
