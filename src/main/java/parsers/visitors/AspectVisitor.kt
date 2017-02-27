@@ -2,10 +2,7 @@ package parsers.visitors
 
 import models.aspect.Advice
 import models.aspect.Aspect
-import models.aspect.items.CallNodeItem
-import models.aspect.items.ExecutionNodeItem
-import models.aspect.items.MethodPattern
-import models.aspect.items.ReferencePointcutNodeItem
+import models.aspect.items.*
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.*
 import parsers.antlrParsers.AspectGrammarBaseVisitor
@@ -49,23 +46,41 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
         }
 
         private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
-            fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<String> {
+            fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeParameter> {
                 if (modifier == null)
                     return mutableListOf()
                 if (modifier.methodModifiersPattern().isEmpty())
-                    return mutableListOf(modifier.methodModifier().text)
+                    return mutableListOf(MaybeNegativeParameter(modifier.methodModifier().text, false))
                 val retList = buildModifiersList(modifier.methodModifiersPattern().first())
-                retList.add(modifier.methodModifier().text)
+                retList.add(MaybeNegativeParameter(modifier.methodModifier().text, false))
                 return retList
             }
 
+            //TODO all negative
             fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {
-                val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<String>() else methodPattern.annotationPattern().annotationTypePattern().map { it.text }
+                val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.annotationPattern().annotationTypePattern().map { MaybeNegativeParameter(it.text, false) }
                 val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
-                val type = if (methodPattern.typePattern() == null || methodPattern.typePattern().simpleTypePattern() == null) "" else methodPattern.typePattern().simpleTypePattern().text
-                val name = methodPattern.simpleNamePattern().text
-                val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<String>() else methodPattern.formalParametersPattern().formalsPattern().children.map { it.text }
-                val retType = if (methodPattern.retTypePattern() == null) null else methodPattern.retTypePattern().text
+                val type = if (methodPattern.typePattern() == null || methodPattern.typePattern().simpleTypePattern() == null)
+                    MaybeNegativeParameter("", false)
+                else
+                    MaybeNegativeParameter(methodPattern.typePattern().simpleTypePattern().text, false)
+                val name = MaybeNegativeParameter(methodPattern.simpleNamePattern().text, false)
+                val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.formalParametersPattern().formalsPattern().children.map {
+                    val parameter = (it as AspectGrammarParser.OptionalParensTypePatternContext).typePattern()
+                    val retVal = if (parameter.childCount == 2 && parameter.children[0].text == "!")
+                        MaybeNegativeParameter(parameter.children[1].text, true)
+                    else
+                        MaybeNegativeParameter(parameter.text, false)
+                    retVal
+                }
+                val retType = if (methodPattern.retTypePattern() == null)
+                    null
+                else
+                    if (methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!")
+                        MaybeNegativeParameter(methodPattern.retTypePattern().typePattern().text, true)
+                    else
+                        MaybeNegativeParameter(methodPattern.retTypePattern().typePattern().text, false)
+
                 return MethodPattern(annotations, modifiers, type, name, params, retType)
             }
 

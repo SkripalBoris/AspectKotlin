@@ -40,10 +40,11 @@ object CallPsiTagSetter : FunctionTagSetter() {
         if (aspectItem is CallNodeItem) {
             if (! (this.checkName(aspectItem.methodPattern.name, funName) &&
                     this.checkType(aspectItem.methodPattern.type, funPackage) &&
-                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())))
+                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString()) &&
+                    this.checkValueParams(aspectItem.methodPattern.params, resolvedFunDescriptor.valueParameters)))
                 return false
             aspectItem.methodPattern.modifiers.forEach {
-                when (it) {
+                when (it.text) {
                     "public" -> {
                         if (resolvedFunDescriptor.visibility.name != "public")
                             return false
