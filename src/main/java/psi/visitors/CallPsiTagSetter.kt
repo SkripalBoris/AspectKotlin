@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import psi.TargetProjectContainer
 
 /**
@@ -38,7 +37,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
         val funName = resolvedFunDescriptor.name.asString()
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
-            if (! (this.checkName(aspectItem.methodPattern.name, funName) &&
+            if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
                     this.checkType(aspectItem.methodPattern.type, funPackage) &&
                     this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString()) &&
                     this.checkValueParams(aspectItem.methodPattern.params, resolvedFunDescriptor.valueParameters)))
@@ -59,9 +58,9 @@ object CallPsiTagSetter : FunctionTagSetter() {
                     "protected" -> {
                         if (resolvedFunDescriptor.visibility.name != "protected")
                             return false
-                }
+                    }
 
-                else -> throw IllegalArgumentException("Unexpected modifier")
+                    else -> throw IllegalArgumentException("Unexpected modifier")
                 }
             }
             return true

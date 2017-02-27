@@ -22,7 +22,7 @@ abstract class FunctionTagSetter : PsiTagSetter {
         if (expectedValuesParams.isEmpty())
             return true
 
-        for (i in 0..(expectedValuesParams.size-1)) {
+        for (i in 0..(expectedValuesParams.size - 1)) {
             if (expectedValuesParams[i].negative && expectedValuesParams[i].text == realValueParams[i].type.constructor.toString())
                 return false
             if (!expectedValuesParams[i].negative && expectedValuesParams[i].text != realValueParams[i].type.constructor.toString())

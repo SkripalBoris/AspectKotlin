@@ -6,7 +6,10 @@ import models.aspect.items.ExecutionNodeItem
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
+import org.jetbrains.kotlin.psi.psiUtil.isProtected
 import psi.TargetProjectContainer
 
 /**
@@ -41,7 +44,7 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
         val retType = if (psiElement.hasDeclaredReturnType()) psiElement.typeReference!!.text else "Unit"
         if (aspectItem is ExecutionNodeItem) {
             // Проверяем соответствие имени и местоположения функции
-            if (! (this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
+            if (!(this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
                     this.checkType(aspectItem.methodPattern.type, functionPackage) &&
                     this.checkType(aspectItem.methodPattern.returnType!!, retType)))
                 return false
