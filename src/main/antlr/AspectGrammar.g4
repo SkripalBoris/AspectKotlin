@@ -99,7 +99,7 @@ retTypePattern
 
 //Паттерн типа
 typePattern
-	:	simpleTypePattern
+	:	simpleTypePattern ('?' | '!!')?
 	|	'!' typePattern
 	|	'(' annotationPattern? typePattern ')'
 	|	typePattern '&&' typePattern

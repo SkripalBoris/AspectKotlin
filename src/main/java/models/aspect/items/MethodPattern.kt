@@ -8,7 +8,7 @@ package models.aspect.items
 class MethodPattern(var annotations: List<MaybeNegativeParameter>, var modifiers: List<MaybeNegativeParameter>, var type: MaybeNegativeParameter, var name: MaybeNegativeParameter, var params: List<MaybeNegativeParameter>, var returnType: MaybeNegativeParameter?) {
     init {
         if (returnType == null)
-            returnType = MaybeNegativeParameter("Unit", false)
+            returnType = MaybeNegativeParameter("Unit", false, ParameterType.ANYTHING)
     }
 
     override fun toString(): String {

@@ -23,10 +23,12 @@ abstract class FunctionTagSetter : PsiTagSetter {
             return true
 
         for (i in 0..(expectedValuesParams.size - 1)) {
-            if (expectedValuesParams[i].negative && expectedValuesParams[i].text == realValueParams[i].type.constructor.toString())
+            if (! checkType(expectedValuesParams[i],realValueParams[i].type.constructor.toString() ))
                 return false
-            if (!expectedValuesParams[i].negative && expectedValuesParams[i].text != realValueParams[i].type.constructor.toString())
-                return false
+//            if (expectedValuesParams[i].negative && expectedValuesParams[i].text == realValueParams[i].type.constructor.toString())
+//                return false
+//            if (!expectedValuesParams[i].negative && expectedValuesParams[i].text != realValueParams[i].type.constructor.toString())
+//                return false
         }
         return true
     }

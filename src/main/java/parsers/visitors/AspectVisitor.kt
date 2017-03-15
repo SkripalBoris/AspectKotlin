@@ -5,8 +5,11 @@ import models.aspect.Aspect
 import models.aspect.items.*
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.*
+import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
+import kotlin.reflect.jvm.internal.impl.serialization.ProtoBuf
 
 
 /**
@@ -67,19 +70,40 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                 val name = MaybeNegativeParameter(methodPattern.simpleNamePattern().text, false)
                 val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.formalParametersPattern().formalsPattern().children.map {
                     val parameter = (it as AspectGrammarParser.OptionalParensTypePatternContext).typePattern()
-                    val retVal = if (parameter.childCount == 2 && parameter.children[0].text == "!")
-                        MaybeNegativeParameter(parameter.children[1].text, true)
-                    else
-                        MaybeNegativeParameter(parameter.text, false)
-                    retVal
+
+                    val negative = parameter.childCount == 2 && parameter.children[0].text == "!"
+
+                    val typeNameNode =
+                            if (parameter.children.first() is TerminalNodeImpl)
+                                parameter.children.last() as ParserRuleContext
+                            else
+                                parameter
+                    val typeName = typeNameNode.children.first().text
+                    var nullableType = ParameterType.ANYTHING
+                    if (typeNameNode.childCount == 2) {
+                        nullableType = if (typeNameNode.children[1].text == "?")
+                            ParameterType.NULLABLE
+                        else
+                            ParameterType.NOT_NULL
+                    }
+
+                    MaybeNegativeParameter(typeName, negative, nullableType)
                 }
                 val retType = if (methodPattern.retTypePattern() == null)
                     null
-                else
-                    if (methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!")
-                        MaybeNegativeParameter(methodPattern.retTypePattern().typePattern().text, true)
-                    else
-                        MaybeNegativeParameter(methodPattern.retTypePattern().typePattern().text, false)
+                else {
+                    val negative = methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!"
+                    val typeNameNode = (methodPattern.retTypePattern().typePattern() as ParserRuleContext)
+                    val typeName = typeNameNode.children.first().text
+                    var nullableType = ParameterType.ANYTHING
+                    if (typeNameNode.childCount == 2) {
+                        nullableType = if (typeNameNode.children[1].text == "?")
+                            ParameterType.NULLABLE
+                        else
+                            ParameterType.NOT_NULL
+                    }
+                    MaybeNegativeParameter(typeName, negative, nullableType )
+                }
 
                 return MethodPattern(annotations, modifiers, type, name, params, retType)
             }

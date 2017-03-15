@@ -6,9 +6,13 @@ typeList
     ;
 
 //Описание типа
+//typeType
+//    :   classOrInterfaceType ('[' ']')*
+//    |   primitiveType ('[' ']')*
+//    ;
 typeType
-    :   classOrInterfaceType ('[' ']')*
-    |   primitiveType ('[' ']')*
+    :   classOrInterfaceType
+    |   primitiveType
     ;
 
 //Примитивные типы
