@@ -38,8 +38,8 @@ object CallPsiTagSetter : FunctionTagSetter() {
         val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is CallNodeItem) {
             if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
-                    this.checkType(aspectItem.methodPattern.type, funPackage) &&
-                    this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString()) &&
+                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
+                            aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())) &&
                     this.checkValueParams(aspectItem.methodPattern.params, resolvedFunDescriptor.valueParameters)))
                 return false
             aspectItem.methodPattern.modifiers.forEach {

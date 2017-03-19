@@ -45,8 +45,8 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
         if (aspectItem is ExecutionNodeItem) {
             // Проверяем соответствие имени и местоположения функции
             if (!(this.checkName(aspectItem.methodPattern.name, psiElement.name!!) &&
-                    this.checkType(aspectItem.methodPattern.type, functionPackage) &&
-                    this.checkType(aspectItem.methodPattern.returnType!!, retType)))
+                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, functionPackage)) &&
+                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType!!, retType))))
                 return false
             // Проверка модификаторов
             aspectItem.methodPattern.modifiers.forEach {

@@ -79,12 +79,12 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                             else
                                 parameter
                     val typeName = typeNameNode.children.first().text
-                    var nullableType = ParameterType.ANYTHING
+                    var nullableType = NullabilityType.ANYTHING
                     if (typeNameNode.childCount == 2) {
                         nullableType = if (typeNameNode.children[1].text == "?")
-                            ParameterType.NULLABLE
+                            NullabilityType.NULLABLE
                         else
-                            ParameterType.NOT_NULL
+                            NullabilityType.NOT_NULL
                     }
 
                     MaybeNegativeParameter(typeName, negative, nullableType)
@@ -95,12 +95,12 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                     val negative = methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!"
                     val typeNameNode = (methodPattern.retTypePattern().typePattern() as ParserRuleContext)
                     val typeName = typeNameNode.children.first().text
-                    var nullableType = ParameterType.ANYTHING
+                    var nullableType = NullabilityType.ANYTHING
                     if (typeNameNode.childCount == 2) {
                         nullableType = if (typeNameNode.children[1].text == "?")
-                            ParameterType.NULLABLE
+                            NullabilityType.NULLABLE
                         else
-                            ParameterType.NOT_NULL
+                            NullabilityType.NOT_NULL
                     }
                     MaybeNegativeParameter(typeName, negative, nullableType )
                 }

@@ -1,6 +1,7 @@
 package psi.visitors
 
 import models.aspect.items.MaybeNegativeParameter
+import models.aspect.items.NullabilityType
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
 /**
@@ -9,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 abstract class FunctionTagSetter : PsiTagSetter {
     protected fun checkType(expectedTypePatternString: MaybeNegativeParameter, realType: String): Boolean {
         return expectedTypePatternString.text.isEmpty() ||
-                expectedTypePatternString.negative.xor(realType.matches(expectedTypePatternString.text.replace(".", "\\.").replace("*", ".*").toRegex()))
+                realType.matches(expectedTypePatternString.text.replace(".", "\\.").replace("*", ".*").toRegex())
     }
 
     protected fun checkName(expectedNamePatternString: MaybeNegativeParameter, realName: String): Boolean {
@@ -23,12 +24,12 @@ abstract class FunctionTagSetter : PsiTagSetter {
             return true
 
         for (i in 0..(expectedValuesParams.size - 1)) {
-            if (! checkType(expectedValuesParams[i],realValueParams[i].type.constructor.toString() ))
+            var matchRes = checkType(expectedValuesParams[i], realValueParams[i].type.constructor.toString())
+            if (expectedValuesParams[i].nullableModifier != NullabilityType.ANYTHING)
+                matchRes = matchRes && realValueParams[i].type.isMarkedNullable.xor(expectedValuesParams[i].nullableModifier == NullabilityType.NOT_NULL)
+
+            if (!expectedValuesParams[i].negative.xor(matchRes))
                 return false
-//            if (expectedValuesParams[i].negative && expectedValuesParams[i].text == realValueParams[i].type.constructor.toString())
-//                return false
-//            if (!expectedValuesParams[i].negative && expectedValuesParams[i].text != realValueParams[i].type.constructor.toString())
-//                return false
         }
         return true
     }
