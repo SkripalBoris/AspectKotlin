@@ -17,16 +17,16 @@ abstract class FunctionTagSetter : PsiTagSetter {
         return expectedNamePatternString.negative.xor(realName.matches(expectedNamePatternString.text.replace("*", ".*").toRegex()))
     }
 
-    protected fun checkValueParams(expectedValuesParams: List<MaybeNegativeParameter>, realValueParams: List<ValueParameterDescriptor>): Boolean {
+    protected fun checkValueParams(expectedValuesParams: List<MaybeNegativeParameter>, realValueParams: List<MaybeNegativeParameter>): Boolean {
         if (expectedValuesParams.size != realValueParams.size)
             return false
         if (expectedValuesParams.isEmpty())
             return true
 
         for (i in 0..(expectedValuesParams.size - 1)) {
-            var matchRes = checkType(expectedValuesParams[i], realValueParams[i].type.constructor.toString())
+            var matchRes = checkType(expectedValuesParams[i], realValueParams[i].text)
             if (expectedValuesParams[i].nullableModifier != NullabilityType.ANYTHING)
-                matchRes = matchRes && realValueParams[i].type.isMarkedNullable.xor(expectedValuesParams[i].nullableModifier == NullabilityType.NOT_NULL)
+                matchRes = matchRes && (expectedValuesParams[i].nullableModifier == realValueParams[i].nullableModifier)
 
             if (!expectedValuesParams[i].negative.xor(matchRes))
                 return false

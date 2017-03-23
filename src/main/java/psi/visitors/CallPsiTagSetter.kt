@@ -3,11 +3,15 @@ package psi.visitors
 import com.intellij.psi.PsiElement
 import models.aspect.items.AspectItem
 import models.aspect.items.CallNodeItem
+import models.aspect.items.MaybeNegativeParameter
+import models.aspect.items.NullabilityType
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import psi.TargetProjectContainer
 
 /**
@@ -35,12 +39,18 @@ object CallPsiTagSetter : FunctionTagSetter() {
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
         val resolvedFunDescriptor = psiElement.getResolvedCall(TargetProjectContainer.context!!)!!.candidateDescriptor
         val funName = resolvedFunDescriptor.name.asString()
-        val funPackage = resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
+        val funPackage = if (resolvedFunDescriptor.isExtension) resolvedFunDescriptor.extensionReceiverParameter!!.value.type.toString() else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
+        val realParams = resolvedFunDescriptor.valueParameters.map {
+            val typeName = it.type.constructor.toString()
+            val nullableModifier = if (it.type.isMarkedNullable) NullabilityType.NULLABLE else NullabilityType.NOT_NULL
+            MaybeNegativeParameter(typeName, false, nullableModifier)
+        }
+
         if (aspectItem is CallNodeItem) {
             if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
                     aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
                             aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())) &&
-                    this.checkValueParams(aspectItem.methodPattern.params, resolvedFunDescriptor.valueParameters)))
+                    this.checkValueParams(aspectItem.methodPattern.params, realParams)))
                 return false
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.text) {
