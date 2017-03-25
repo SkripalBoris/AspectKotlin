@@ -25,6 +25,7 @@ advice
 adviceSpec
 	:	'before' formalParameters
 	|	'after' formalParameters
+	|	'around' formalParameters
 	|	'after' formalParameters 'returning' ('(' formalParameter? ')')?
 	|	'after' formalParameters 'throwing' ('(' formalParameter? ')')?
 	;

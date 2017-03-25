@@ -46,6 +46,10 @@ object AdviceVisitor {
                 val buf = KtPsiFactory(psiElement).createExpression("run{val ____a = ${psiElement.text}\n${advice.adviceCode}____a}")
                 psiElement.replace(buf)
             }
+            "around()" -> {
+                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.adviceCode}\nval ____a = ${psiElement.text}\n${advice.adviceCode}____a}")
+                psiElement.replace(buf)
+            }
             else -> throw IllegalArgumentException()
         }
         refreshUserMap(psiElement, par)
