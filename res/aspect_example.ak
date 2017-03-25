@@ -1,8 +1,11 @@
 aspect A  {
+
     pointcut fooPC(): execution(fun Foo.*())
     pointcut printPC(): call(public fun kotlin.io.pri*(!Any!!): Unit!!)
     pointcut parsePC(): call(fun parseExpression())
-    pointcut callFoo(): call(fun Foo.*(String): Boolean)
+
+    pointcut callFoo(): call(extension fun Foo.*(String): Boolean)
+
 
    after(): fooPC() && printPC() {
         println("Hello after!!")

@@ -592,6 +592,18 @@ public class AspectGrammarBaseListener implements AspectGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExtensionModifier(AspectGrammarParser.ExtensionModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExtensionModifier(AspectGrammarParser.ExtensionModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSimpleNamePattern(AspectGrammarParser.SimpleNamePatternContext ctx) { }
 	/**
 	 * {@inheritDoc}

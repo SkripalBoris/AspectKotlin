@@ -59,8 +59,16 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                 return retList
             }
 
-            //TODO all negative
             fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {
+                var extensionModifier = ExtensionType.ANYTHING
+                if (methodPattern.extensionModifier() != null) {
+                    if (methodPattern.extensionModifier().children.first().text == "!") {
+                        extensionModifier = ExtensionType.NOT_EXTENSION
+                    } else {
+                        extensionModifier = ExtensionType.EXTENSION
+                    }
+                }
+
                 val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.annotationPattern().annotationTypePattern().map { MaybeNegativeParameter(it.text, false) }
                 val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
                 val type = if (methodPattern.typePattern() == null || methodPattern.typePattern().simpleTypePattern() == null)
@@ -105,7 +113,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                     MaybeNegativeParameter(typeName, negative, nullableType )
                 }
 
-                return MethodPattern(annotations, modifiers, type, name, params, retType)
+                return MethodPattern(annotations, modifiers, type, name, params, retType, extensionModifier)
             }
 
             if (pointcutExpression.childCount == 1) {

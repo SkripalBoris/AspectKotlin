@@ -1,10 +1,7 @@
 package psi.visitors
 
 import com.intellij.psi.PsiElement
-import models.aspect.items.AspectItem
-import models.aspect.items.CallNodeItem
-import models.aspect.items.MaybeNegativeParameter
-import models.aspect.items.NullabilityType
+import models.aspect.items.*
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNullableType
@@ -51,6 +48,10 @@ object CallPsiTagSetter : FunctionTagSetter() {
                     aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
                             aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())) &&
                     this.checkValueParams(aspectItem.methodPattern.params, realParams)))
+                return false
+            if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&
+                    resolvedFunDescriptor.isExtension &&
+                    aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
                 return false
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.text) {
