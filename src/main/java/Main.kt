@@ -16,7 +16,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 fun main(args: Array<String>) {
-    val targetProjectDir = "/home/sba/Projects/targetProjects/hello-world/"
+    val targetProjectDir = "/home/boris/Projects/targetProjects/hello-world/"
 //    val targetProjectDir = "/home/sba/Projects/targetProjects/test1/"
     val pomFile = targetProjectDir + "pom.xml"
     val srcDir = targetProjectDir + "src"
@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
     TargetProjectContainer.project = targetFiles[0].project
     TargetProjectContainer.context = FooBarCompiler.analyzeBunchOfSources(env, targetFiles, cfg)
 
-    val aspect = AspectParser.parseFile("/home/sba/Projects/AspectKotlin/res/aspect_example.ak")
+    val aspect = AspectParser.parseFile("/home/boris/Projects/AspectKotlin/res/aspect_example.ak")
 
     // Размечаем psi тэгами точек включения
     aspect.pointcuts.forEach {
@@ -105,7 +105,7 @@ fun compileNewProject(pathToPom: String) {
     request.pomFile = File(pathToPom)
     request.goals = mutableListOf("package")
     val invoker = DefaultInvoker()
-    invoker.mavenHome = File("/usr/share/maven")
+    invoker.mavenHome = File("/opt/maven")
     invoker.execute(request)
 }
 
