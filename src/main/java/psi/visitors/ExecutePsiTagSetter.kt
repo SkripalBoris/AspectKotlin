@@ -62,7 +62,7 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
                 return false
 
             if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
-                    psiElement.modifierList != null && psiElement.modifierList!!.allChildren.all { it -> it.text == "inline" } &&
+                    psiElement.modifierList != null && psiElement.modifierList!!.allChildren.any { it -> it.text == "inline" } &&
                     aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
                 return false
             // Проверка модификаторов
