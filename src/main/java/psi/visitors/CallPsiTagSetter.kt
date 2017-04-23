@@ -2,6 +2,7 @@ package psi.visitors
 
 import com.intellij.psi.PsiElement
 import models.aspect.items.*
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNullableType
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import psi.TargetProjectContainer
 
 /**
@@ -53,6 +55,11 @@ object CallPsiTagSetter : FunctionTagSetter() {
                     resolvedFunDescriptor.isExtension &&
                     aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
                 return false
+            if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
+                    (resolvedFunDescriptor as SimpleFunctionDescriptorImpl).isInline &&
+                    aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
+                return false
+
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.text) {
                     "public" -> {

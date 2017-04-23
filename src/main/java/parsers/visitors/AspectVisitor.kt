@@ -69,6 +69,15 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                     }
                 }
 
+                var inlineModifier = InlineType.ANYTHING
+                if (methodPattern.inlineModifier() != null) {
+                    if (methodPattern.inlineModifier().children.first().text == "!") {
+                        inlineModifier = InlineType.NOT_INLINE
+                    } else {
+                        inlineModifier = InlineType.INLINE
+                    }
+                }
+
                 val annotations = if (methodPattern.annotationPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.annotationPattern().annotationTypePattern().map { MaybeNegativeParameter(it.text, false) }
                 val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
                 val type = if (methodPattern.typePattern() == null || methodPattern.typePattern().simpleTypePattern() == null)
@@ -101,7 +110,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                     null
                 else {
                     val negative = methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!"
-                    val typeNameNode = (methodPattern.retTypePattern().typePattern() as ParserRuleContext)
+                    val typeNameNode = methodPattern.retTypePattern().typePattern()
                     val typeName = typeNameNode.children.first().text
                     var nullableType = NullabilityType.ANYTHING
                     if (typeNameNode.childCount == 2) {
@@ -113,7 +122,7 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                     MaybeNegativeParameter(typeName, negative, nullableType )
                 }
 
-                return MethodPattern(annotations, modifiers, type, name, params, retType, extensionModifier)
+                return MethodPattern(annotations, modifiers, type, name, params, retType, extensionModifier, inlineModifier)
             }
 
             if (pointcutExpression.childCount == 1) {

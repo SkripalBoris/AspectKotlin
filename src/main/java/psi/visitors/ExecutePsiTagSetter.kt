@@ -60,6 +60,11 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
                     psiElement.isExtensionDeclaration() &&
                     aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
                 return false
+
+            if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
+                    psiElement.modifierList != null && psiElement.modifierList!!.allChildren.all { it -> it.text == "inline" } &&
+                    aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
+                return false
             // Проверка модификаторов
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.text) {
