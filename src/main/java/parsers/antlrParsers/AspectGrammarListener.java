@@ -1,4 +1,4 @@
-// Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.6
+// Generated from /home/boris/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.6
 package parsers.antlrParsers;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -543,6 +543,16 @@ public interface AspectGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExtensionModifier(AspectGrammarParser.ExtensionModifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#inlineModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterInlineModifier(AspectGrammarParser.InlineModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#inlineModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitInlineModifier(AspectGrammarParser.InlineModifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#simpleNamePattern}.
 	 * @param ctx the parse tree

@@ -1,4 +1,4 @@
-// Generated from /home/sba/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.6
+// Generated from /home/boris/Projects/AspectKotlin/src/main/antlr/AspectGrammar.g4 by ANTLR 4.6
 package parsers.antlrParsers;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -599,6 +599,18 @@ public class AspectGrammarBaseListener implements AspectGrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExtensionModifier(AspectGrammarParser.ExtensionModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInlineModifier(AspectGrammarParser.InlineModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInlineModifier(AspectGrammarParser.InlineModifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

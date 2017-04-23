@@ -159,7 +159,7 @@ methodOrConstructorPattern
 	;
 
 methodPattern
-	:	annotationPattern? methodModifiersPattern? extensionModifier? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
+	:	annotationPattern? methodModifiersPattern? extensionModifier? inlineModifier? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
 	;
 
 methodModifiersPattern
@@ -168,6 +168,10 @@ methodModifiersPattern
 
 extensionModifier
     : '!'? 'extension'
+    ;
+
+inlineModifier
+    : '!'? 'inline'
     ;
 
 simpleNamePattern
