@@ -4,8 +4,8 @@ aspect A  {
     pointcut printPC(): call(public fun kotlin.io.pri*(!Any!!): Unit!!)
     pointcut parsePC(): call(fun parseExpression())
 
-    pointcut callFoo(): call(inline fun Foo.*(String))
-
+    pointcut callFoo(): execution(inline fun Foo.*(String))
+    pointcut tFoo(): target(Foo)
 
    after(): fooPC() && printPC() {
         println("Hello after!!")
@@ -23,7 +23,7 @@ aspect A  {
             println("work before")
         }
 
-    around(): callFoo() {
-        println("As inline call")
+    around(): tFoo() {
+        println("Foo call")
     }
 }

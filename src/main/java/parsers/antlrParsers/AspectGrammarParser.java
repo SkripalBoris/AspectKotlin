@@ -485,7 +485,7 @@ public class AspectGrammarParser extends Parser {
 					setState(173);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (_la==T__60 || _la==Identifier) {
+					if (((((_la - 51)) & ~0x3f) == 0 && ((1L << (_la - 51)) & ((1L << (T__50 - 51)) | (1L << (T__51 - 51)) | (1L << (T__52 - 51)) | (1L << (T__53 - 51)) | (1L << (T__54 - 51)) | (1L << (T__55 - 51)) | (1L << (T__60 - 51)) | (1L << (Identifier - 51)))) != 0)) {
 						{
 						setState(172);
 						formalParameter();
@@ -518,7 +518,7 @@ public class AspectGrammarParser extends Parser {
 					setState(183);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					if (_la==T__60 || _la==Identifier) {
+					if (((((_la - 51)) & ~0x3f) == 0 && ((1L << (_la - 51)) & ((1L << (T__50 - 51)) | (1L << (T__51 - 51)) | (1L << (T__52 - 51)) | (1L << (T__53 - 51)) | (1L << (T__54 - 51)) | (1L << (T__55 - 51)) | (1L << (T__60 - 51)) | (1L << (Identifier - 51)))) != 0)) {
 						{
 						setState(182);
 						formalParameter();
@@ -4358,7 +4358,7 @@ public class AspectGrammarParser extends Parser {
 			setState(699);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==T__60 || _la==Identifier) {
+			if (((((_la - 51)) & ~0x3f) == 0 && ((1L << (_la - 51)) & ((1L << (T__50 - 51)) | (1L << (T__51 - 51)) | (1L << (T__52 - 51)) | (1L << (T__53 - 51)) | (1L << (T__54 - 51)) | (1L << (T__55 - 51)) | (1L << (T__60 - 51)) | (1L << (Identifier - 51)))) != 0)) {
 				{
 				setState(698);
 				formalParameterList();
@@ -4445,11 +4445,11 @@ public class AspectGrammarParser extends Parser {
 	}
 
 	public static class FormalParameterContext extends ParserRuleContext {
-		public VariableDeclaratorIdContext variableDeclaratorId() {
-			return getRuleContext(VariableDeclaratorIdContext.class,0);
-		}
 		public TypeTypeContext typeType() {
 			return getRuleContext(TypeTypeContext.class,0);
+		}
+		public VariableDeclaratorIdContext variableDeclaratorId() {
+			return getRuleContext(VariableDeclaratorIdContext.class,0);
 		}
 		public List<VariableModifierContext> variableModifier() {
 			return getRuleContexts(VariableModifierContext.class);
@@ -4498,11 +4498,11 @@ public class AspectGrammarParser extends Parser {
 				_la = _input.LA(1);
 			}
 			setState(717);
-			variableDeclaratorId();
+			typeType();
 			setState(718);
 			match(T__4);
 			setState(719);
-			typeType();
+			variableDeclaratorId();
 			}
 		}
 		catch (RecognitionException re) {
@@ -6867,7 +6867,7 @@ public class AspectGrammarParser extends Parser {
 		"\2\u02c6\u02c4\3\2\2\2\u02c6\u02c7\3\2\2\2\u02c7Y\3\2\2\2\u02c8\u02c6"+
 		"\3\2\2\2\u02c9\u02cb\5^\60\2\u02ca\u02c9\3\2\2\2\u02cb\u02ce\3\2\2\2\u02cc"+
 		"\u02ca\3\2\2\2\u02cc\u02cd\3\2\2\2\u02cd\u02cf\3\2\2\2\u02ce\u02cc\3\2"+
-		"\2\2\u02cf\u02d0\5\\/\2\u02d0\u02d1\7\7\2\2\u02d1\u02d2\5L\'\2\u02d2["+
+		"\2\2\u02cf\u02d0\5L\'\2\u02d0\u02d1\7\7\2\2\u02d1\u02d2\5\\/\2\u02d2["+
 		"\3\2\2\2\u02d3\u02d8\7k\2\2\u02d4\u02d5\7-\2\2\u02d5\u02d7\7.\2\2\u02d6"+
 		"\u02d4\3\2\2\2\u02d7\u02da\3\2\2\2\u02d8\u02d6\3\2\2\2\u02d8\u02d9\3\2"+
 		"\2\2\u02d9]\3\2\2\2\u02da\u02d8\3\2\2\2\u02db\u02dc\7?\2\2\u02dc_\3\2"+

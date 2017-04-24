@@ -137,6 +137,10 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                         val methodPattern = (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.ExecutionPointcutContext).methodOrConstructorPattern().methodPattern()
                         return ExecutionNodeItem(fillMethod(methodPattern))
                     }
+                    if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.TargetPointcutContext) {
+                        val typeName =  (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text
+                        return TargetNodeItem(MaybeNegativeParameter(typeName, false))
+                    }
                     return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
                 }
             }

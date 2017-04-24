@@ -3,6 +3,7 @@ package psi.visitors
 import com.intellij.psi.PsiElement
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
+import models.aspect.items.TargetNodeItem
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.And
 import models.boolExpr.BooleanExpression
@@ -50,6 +51,11 @@ object PointcutTagSetter {
 
         if (node is ExecutionNodeItem) {
             ExecutePsiTagSetter.visitFile(file, node)
+            return
+        }
+
+        if (node is TargetNodeItem) {
+            TargetPsiTagSetter.visitFile(file, node)
             return
         }
     }

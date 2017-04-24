@@ -53,7 +53,7 @@ formalParameterList
 
 //Параметр
 formalParameter
-    :   variableModifier* variableDeclaratorId ':' typeType
+    :   variableModifier* typeType ':' variableDeclaratorId
     ;
 
 //Описание имени параметра
