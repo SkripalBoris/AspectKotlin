@@ -5,7 +5,7 @@ aspect A  {
     pointcut parsePC(): call(fun parseExpression())
 
     pointcut callFoo(): execution(inline fun Foo.*(String))
-    pointcut tFoo(): target(Foo)
+    pointcut tFoo(foo: Baz): target(foo)
 
    after(): fooPC() && printPC() {
         println("Hello after!!")
