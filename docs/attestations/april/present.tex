@@ -1,0 +1,80 @@
+\documentclass{beamer}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{base}{
+  language=Java,
+  emptylines=1,
+  breaklines=true,
+  basicstyle=\ttfamily\color{black},
+  moredelim=**[is][\color{red}]{@}{@},
+  showstringspaces=false,
+}
+
+% Стиль презентации
+\usetheme{Warsaw}
+\begin{document}
+	
+	\setbeamertemplate{navigation symbols}{}
+	\setbeamertemplate{footline}{%
+		\hspace{0.94\paperwidth}%
+		\usebeamerfont{title in head/foot}%
+		\insertframenumber\,/\,\inserttotalframenumber%
+	}
+	\title[Разработка АОП для Kotlin]
+	{Разработка аспектно-ориентированного расширения для языка Kotlin}
+	
+	\author[Б.А. Скрипаль]{
+		Скрипаль Б.А. гр. 63501/3\\
+		Руководитель: Ицыксон В.М.\\
+		Аттестация №4
+	}
+	\institute{Санкт-Петербургский политехнический университет Петра Великого}
+	\date[25.04.2017]{25.04.2017}  
+	% Создание заглавной страницы
+	\frame{\titlepage} 
+	
+	\begin{frame}
+		\frametitle{План работы}
+		\begin{itemize}
+			\item [\checkmark] Обзор существующих аспектно-ориентированных 
+			расширений для других языков
+			\item [\checkmark] Формулирование требований к создаваемому 
+			расширению
+			\item [\checkmark] Начальное описание грамматики аспектов для языка 
+			Kotlin
+			\item [\checkmark] Анализ PSI и построение срезов
+			\item [\checkmark] Применение советов к программе
+			\item [+] Доработка грамматики аспектов
+			\item [+] Тестирование
+			\item [+] Написание пояснительной записки
+			\item [--] Реализация плагина для IntelliJ IDEA
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Состояние дел}
+        Сделано:
+		\begin{itemize}
+            \item Возможность задания в срезах inline и extension функций
+            \item Способы внедрения совета
+            \item Написана статья
+            \item Пишется пояснительная записка
+        \end{itemize}
+
+        Планируется сделать:
+        \begin{itemize}
+            \item Обращение к аргументам функций
+            \item Доработка способов формирования срезов
+            \item Доработка прототипа
+            \item Продолжение написания пояснительной записки
+        \end{itemize}
+        Оценка степени готовности:
+        \begin{itemize}
+            \item Практическая часть - 60\%;
+            \item Пояснительная записка - 40\%.
+        \end{itemize}
+    \end{frame}
+\end{document}
