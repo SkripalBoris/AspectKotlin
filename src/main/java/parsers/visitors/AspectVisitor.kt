@@ -39,16 +39,16 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
         var pointcuts = mutableListOf<Pointcut>()
 
         override fun visitPointcut(ctx: AspectGrammarParser.PointcutContext): Pointcut {
-            val boolExpr = buildExpression(ctx.pointcutExpression())
+            val boolExpr = buildExpression(ctx.pointcutExpression(), ctx.formalParameters().formalParameterList())
             pointcuts.add(Pointcut(ctx.id().text, boolExpr))
             return Pointcut("", NodeItem("", ""))
         }
 
-        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
-            return expression(pointcutExpression)
+        private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext, paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
+            return expression(pointcutExpression, paramList)
         }
 
-        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {
+        private fun expression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext, paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
             fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeParameter> {
                 if (modifier == null)
                     return mutableListOf()
@@ -138,7 +138,16 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                         return ExecutionNodeItem(fillMethod(methodPattern))
                     }
                     if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.TargetPointcutContext) {
-                        val typeName =  (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text
+                        var typeName =  (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text
+                        if (paramList != null) {
+                            paramList.formalParameter().forEach {
+                                val identifier = it.variableDeclaratorId().Identifier().text
+                                if ( identifier == typeName) {
+                                    typeName = identifier
+                                    return@forEach
+                                }
+                            }
+                        }
                         return TargetNodeItem(MaybeNegativeParameter(typeName, false))
                     }
                     return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
@@ -147,23 +156,23 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
             if (pointcutExpression.childCount == 2) {
                 val not = Not()
-                not.setChild(expression(pointcutExpression.pointcutExpression(0)))
+                not.setChild(expression(pointcutExpression.pointcutExpression(0), paramList))
                 return not
             }
 
             if (pointcutExpression.childCount == 3) {
                 if (pointcutExpression.getChild(0).text == "(")
-                    return expression(pointcutExpression.pointcutExpression(0))
+                    return expression(pointcutExpression.pointcutExpression(0), paramList)
                 else if (pointcutExpression.getChild(1).text == "||") {
                     val or = Or()
-                    or.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
-                    or.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    or.setLeftNode(expression(pointcutExpression.pointcutExpression(0), paramList))
+                    or.setRightNode(expression(pointcutExpression.pointcutExpression(1), paramList))
                     return or
                 } else if (pointcutExpression.getChild(1).text == "&&") {
                     val and = And()
 
-                    and.setLeftNode(expression(pointcutExpression.pointcutExpression(0)))
-                    and.setRightNode(expression(pointcutExpression.pointcutExpression(1)))
+                    and.setLeftNode(expression(pointcutExpression.pointcutExpression(0), paramList))
+                    and.setRightNode(expression(pointcutExpression.pointcutExpression(1), paramList))
                     return and
                 }
             }
