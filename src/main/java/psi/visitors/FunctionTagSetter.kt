@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 abstract class FunctionTagSetter : PsiTagSetter {
     protected fun checkType(expectedTypePatternString: MaybeNegativeParameter, realType: String): Boolean {
         return expectedTypePatternString.text.isEmpty() ||
-                realType.matches(expectedTypePatternString.text.replace(".", "\\.").replace("*", ".*").toRegex())
+                realType.replace(" ", "").matches(expectedTypePatternString.text.replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
     }
 
     protected fun checkName(expectedNamePatternString: MaybeNegativeParameter, realName: String): Boolean {

@@ -19,12 +19,11 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
         psiElement.collectDescendantsOfType<KtNamedFunction>().forEach {
             if (checkFunction(it, aspectItem)) {
                 if (it.bodyExpression != null)
-                    it.bodyExpression!!.children.forEach { func ->
-                        if (func is KtCallExpression)
-                            if (func.getUserData(TargetProjectContainer.tagKey) == null)
-                                func.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
-                            else
-                                func.getUserData(TargetProjectContainer.tagKey)!!.add(aspectItem.key)
+                    it.bodyExpression!!.collectDescendantsOfType<KtCallExpression>().forEach { func ->
+                        if (func.getUserData(TargetProjectContainer.tagKey) == null)
+                            func.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
+                        else
+                            func.getUserData(TargetProjectContainer.tagKey)!!.add(aspectItem.key)
                     }
             }
         }

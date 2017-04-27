@@ -6,10 +6,10 @@ import models.aspect.items.*
 import models.aspect.pointcut.Pointcut
 import models.boolExpr.*
 import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.misc.Interval
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
-import kotlin.reflect.jvm.internal.impl.serialization.ProtoBuf
 
 
 /**
@@ -85,27 +85,30 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
                 else
                     MaybeNegativeParameter(methodPattern.typePattern().simpleTypePattern().text, false)
                 val name = MaybeNegativeParameter(methodPattern.simpleNamePattern().text, false)
-                val params = if (methodPattern.formalParametersPattern().formalsPattern() == null) mutableListOf<MaybeNegativeParameter>() else methodPattern.formalParametersPattern().formalsPattern().children.map {
-                    val parameter = (it as AspectGrammarParser.OptionalParensTypePatternContext).typePattern()
+                val params = mutableListOf<MaybeNegativeParameter>()
+                if (methodPattern.formalParametersPattern().formalsPattern() != null)
+                    methodPattern.formalParametersPattern().formalsPattern().children.filter { it !is TerminalNodeImpl }.forEach {
+                        val parameter = if (it is AspectGrammarParser.OptionalParensTypePatternContext) it.typePattern() else (it as AspectGrammarParser.FormalsPatternContext).optionalParensTypePattern().typePattern()
 
-                    val negative = parameter.childCount == 2 && parameter.children[0].text == "!"
+                        val negative = parameter.childCount == 2 && parameter.children[0].text == "!"
 
-                    val typeNameNode =
-                            if (parameter.children.first() is TerminalNodeImpl)
-                                parameter.children.last() as ParserRuleContext
+                        val typeNameNode =
+                                if (parameter.children.first() is TerminalNodeImpl)
+                                    parameter.children.last() as ParserRuleContext
+                                else
+                                    parameter
+                        val typeName = typeNameNode.children.first().text
+                        var nullableType = NullabilityType.ANYTHING
+                        if (typeNameNode.childCount == 2) {
+                            nullableType = if (typeNameNode.children[1].text == "?")
+                                NullabilityType.NULLABLE
                             else
-                                parameter
-                    val typeName = typeNameNode.children.first().text
-                    var nullableType = NullabilityType.ANYTHING
-                    if (typeNameNode.childCount == 2) {
-                        nullableType = if (typeNameNode.children[1].text == "?")
-                            NullabilityType.NULLABLE
-                        else
-                            NullabilityType.NOT_NULL
+                                NullabilityType.NOT_NULL
+                        }
+                        params.add(MaybeNegativeParameter(typeName, negative, nullableType))
+                    } else {
+                        throw IllegalArgumentException()
                     }
-
-                    MaybeNegativeParameter(typeName, negative, nullableType)
-                }
                 val retType = if (methodPattern.retTypePattern() == null)
                     null
                 else {
@@ -185,9 +188,8 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
         override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
             val boolExpr = buildExpression(ctx.pointcutExpression())
-            val adviceCode = ctx.methodBody().block().blockStatement().
-                    map { it.text }.
-                    foldRight("") { total, next -> "$total\n$next" }
+            val adviceCode = ctx.start.inputStream.getText(Interval(ctx.methodBody().block().start.startIndex + 1,
+                    ctx.methodBody().block().stop.stopIndex - 1))
             advices.add(Advice(ctx.adviceSpec().text, boolExpr, adviceCode))
             return Advice("", NodeItem("", ""), "")
         }
