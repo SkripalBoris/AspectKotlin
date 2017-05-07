@@ -142,25 +142,29 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
     }
 
     private fun buildPackage(context: ParserRuleContext): String {
+        if (context is AspectGrammarParser.OptionalParensTypePatternContext)
+            context.annotationPattern()?.let{
+                return it.text
+            }
         return ""
     }
 
     private fun buildType(typeContext: ParserRuleContext?): ParameterModel {
         if (typeContext is AspectGrammarParser.OptionalParensTypePatternContext) {
             val simpleType = buildSimpleType(typeContext.typePattern())
-            buildPackage(typeContext)
+            simpleType.packageName = buildPackage(typeContext)
             return simpleType
         }
 
         if (typeContext is AspectGrammarParser.FormalsPatternContext) {
             val simpleType = buildSimpleType(typeContext.optionalParensTypePattern().typePattern())
-            buildPackage(typeContext)
+            simpleType.packageName = buildPackage(typeContext)
             return simpleType
         }
 
         if (typeContext is AspectGrammarParser.RetTypePatternContext) {
             val simpleType = buildSimpleType(typeContext.typePattern())
-            buildPackage(typeContext)
+            simpleType.packageName = buildPackage(typeContext)
             return simpleType
         }
         return ParameterModel()
@@ -168,18 +172,20 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
 
     fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {
         var extensionModifier = ExtensionType.ANYTHING
-        if (methodPattern.extensionModifier() != null)
-            extensionModifier = if (methodPattern.extensionModifier().children.first().text == "!")
+        methodPattern.extensionModifier()?.let { modifier ->
+            extensionModifier = if (modifier.children.first().text == "!")
                 ExtensionType.NOT_EXTENSION
             else
                 ExtensionType.EXTENSION
+        }
 
         var inlineModifier = InlineType.ANYTHING
-        if (methodPattern.inlineModifier() != null)
-            inlineModifier = if (methodPattern.inlineModifier().children.first().text == "!")
+        methodPattern.inlineModifier()?.let { modifier ->
+            inlineModifier = if (modifier.children.first().text == "!")
                 InlineType.NOT_INLINE
             else
                 InlineType.INLINE
+        }
 
         val annotations = if (methodPattern.annotationPattern() == null)
             mutableListOf<ParameterModel>()
@@ -195,46 +201,9 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
         methodPattern.formalParametersPattern().formalsPattern()?.let {formals ->
             formals.children.filter { it !is TerminalNodeImpl }.forEach {
                 val parameter = buildType(it as ParserRuleContext)
-                /*val parameter = if (it is AspectGrammarParser.OptionalParensTypePatternContext)
-                    it.typePattern()
-                else
-                    (it as AspectGrammarParser.FormalsPatternContext).optionalParensTypePattern().typePattern()
-
-                val negative = parameter.childCount == 2 && parameter.children[0].text == "!"
-
-                val typeNameNode =
-                        if (parameter.children.first() is TerminalNodeImpl)
-                            parameter.children.last() as ParserRuleContext
-                        else
-                            parameter
-                val typeName = typeNameNode.children.first().text
-                var nullableType = NullabilityType.ANYTHING
-                if (typeNameNode.childCount == 2) {
-                    nullableType = if (typeNameNode.children[1].text == "?")
-                        NullabilityType.NULLABLE
-                    else
-                        NullabilityType.NOT_NULL
-                }
-                params.add(ParameterModel(typeName, negative = negative, nullableModifier = nullableType))
-                */
                 params.add(parameter)
             }
         }
-//        val retType = if (methodPattern.retTypePattern() == null)
-//            null
-//        else {
-//            val negative = methodPattern.retTypePattern().childCount == 2 && methodPattern.retTypePattern().children[0].text == "!"
-//            val typeNameNode = methodPattern.retTypePattern().typePattern()
-//            val typeName = typeNameNode.children.first().text
-//            var nullableType = NullabilityType.ANYTHING
-//            if (typeNameNode.childCount == 2) {
-//                nullableType = if (typeNameNode.children[1].text == "?")
-//                    NullabilityType.NULLABLE
-//                else
-//                    NullabilityType.NOT_NULL
-//            }
-//            ParameterModel(typeName, negative = negative, nullableModifier = nullableType)
-//        }
         val retType = buildType(methodPattern.retTypePattern())
 
         return MethodPattern(annotations, modifiers, type, name, params, retType, extensionModifier, inlineModifier)
