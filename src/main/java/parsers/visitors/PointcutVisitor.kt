@@ -108,10 +108,10 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
                     negative = true
             }
             type.simpleTypePattern()?.let { simpleType ->
-                // Березм только первый элемент, т.к. не поддерживаем несколько типов
-                simpleType.dottedNamePattern().typeType().firstOrNull()?.let { type ->
+                // Берем только первый элемент, т.к. не поддерживаем несколько типов
+                simpleType.dottedNamePattern().typeType().firstOrNull()?.let { typeType ->
                     var nullability = NullabilityType.ANYTHING
-                    type.nullabilityModifier()?.let { nullabilityMod ->
+                    typeType.nullabilityModifier()?.let { nullabilityMod ->
                         nullabilityMod.notNullModifier()?.let {
                             nullability = NullabilityType.NOT_NULL
                         }
@@ -119,13 +119,13 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
                             nullability = NullabilityType.NULLABLE
                         }
                     }
-                    type.classOrInterfaceType()?.let { classOrInterface ->
+                    typeType.classOrInterfaceType()?.let { classOrInterface ->
                         buildPackage(classOrInterface)
-                        return ParameterModel(typeName = classOrInterface.text,
+                        return ParameterModel(typeName = classOrInterface.Identifier().fold(""){total, next -> total + next},
                                 nullableModifier = nullability,
                                 negative = negative)
                     }
-                    type.primitiveType()?.let { primitiveType ->
+                    typeType.primitiveType()?.let { primitiveType ->
                         return ParameterModel(typeName = primitiveType.text,
                                 nullableModifier = nullability,
                                 negative = negative)
@@ -194,7 +194,7 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
 
         val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
 
-        val type = this.buildSimpleType(methodPattern.typePattern())
+        val type = if(methodPattern.typePattern() != null) ParameterModel(methodPattern.typePattern().simpleTypePattern().text) else ParameterModel()
 
         val name = ParameterModel(methodPattern.simpleNamePattern().text)
         val params = mutableListOf<ParameterModel>()

@@ -48,7 +48,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
         if (aspectItem is CallNodeItem) {
             if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
                     aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
-                            aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType!!, resolvedFunDescriptor.returnType.toString())) &&
+                            aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, resolvedFunDescriptor.returnType.toString())) &&
                     this.checkValueParams(aspectItem.methodPattern.params, realParams)))
                 return false
             if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&

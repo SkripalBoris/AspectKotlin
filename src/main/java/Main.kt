@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
 
     prepareNewFiles(srcDir, newSrcDir, targetFiles, pomFile, newPomFile)
     compileNewProject(newPomFile)
-    removeNewFiles(newPomFile, newSrcDir)
+  //  removeNewFiles(newPomFile, newSrcDir)
     return
 }
 

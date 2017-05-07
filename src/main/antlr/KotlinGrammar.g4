@@ -27,7 +27,7 @@ primitiveType
 
 //Тип класс или интерфейс
 classOrInterfaceType
-    :   Identifier typeArguments? ('.' Identifier typeArguments? )* ('?' | '!!')?
+    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
     ;
 
 //Список типов
