@@ -764,6 +764,36 @@ public interface AspectGrammarListener extends ParseTreeListener {
 	 */
 	void exitMethodModifier(AspectGrammarParser.MethodModifierContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#nullabilityModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterNullabilityModifier(AspectGrammarParser.NullabilityModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#nullabilityModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitNullabilityModifier(AspectGrammarParser.NullabilityModifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#nullModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterNullModifier(AspectGrammarParser.NullModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#nullModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitNullModifier(AspectGrammarParser.NullModifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#notNullModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterNotNullModifier(AspectGrammarParser.NotNullModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#notNullModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitNotNullModifier(AspectGrammarParser.NotNullModifierContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#constructorModifier}.
 	 * @param ctx the parse tree
 	 */

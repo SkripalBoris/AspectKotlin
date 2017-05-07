@@ -42,7 +42,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
         val realParams = resolvedFunDescriptor.valueParameters.map {
             val typeName = it.type.constructor.toString()
             val nullableModifier = if (it.type.isMarkedNullable) NullabilityType.NULLABLE else NullabilityType.NOT_NULL
-            MaybeNegativeParameter(typeName, false, nullableModifier)
+            ParameterModel(typeName, nullableModifier = nullableModifier)
         }
 
         if (aspectItem is CallNodeItem) {
@@ -61,7 +61,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
                 return false
 
             aspectItem.methodPattern.modifiers.forEach {
-                when (it.text) {
+                when (it.typeName) {
                     "public" -> {
                         if (resolvedFunDescriptor.visibility.name != "public")
                             return false

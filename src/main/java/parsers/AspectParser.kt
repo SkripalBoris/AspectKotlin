@@ -14,7 +14,7 @@ object AspectParser {
         val lexer = AspectGrammarLexer(input)
         val tokens = CommonTokenStream(lexer)
         val parser = AspectGrammarParser(tokens)
-        var tree = parser.aspectDeclaration()
+        val tree = parser.aspectDeclaration()
 
         return AspectVisitor().visit(tree)
     }

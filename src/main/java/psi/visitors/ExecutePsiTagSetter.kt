@@ -46,7 +46,7 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
         val realTypes = psiElement.valueParameters.map {
             val nullabilityType = if (it.text.last() == '?') NullabilityType.NULLABLE else NullabilityType.NOT_NULL
             val type = it.children.first().text
-            MaybeNegativeParameter(type, false, nullabilityType)
+            ParameterModel(type, nullableModifier = nullabilityType)
         }
         if (aspectItem is ExecutionNodeItem) {
             // Проверяем соответствие имени и местоположения функции
@@ -66,7 +66,7 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
                 return false
             // Проверка модификаторов
             aspectItem.methodPattern.modifiers.forEach {
-                when (it.text) {
+                when (it.typeName) {
                     "public" -> {
                         if (psiElement.isPrivate())
                             return false

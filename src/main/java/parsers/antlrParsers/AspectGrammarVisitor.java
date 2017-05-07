@@ -460,6 +460,24 @@ public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodModifier(AspectGrammarParser.MethodModifierContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AspectGrammarParser#nullabilityModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullabilityModifier(AspectGrammarParser.NullabilityModifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AspectGrammarParser#nullModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNullModifier(AspectGrammarParser.NullModifierContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AspectGrammarParser#notNullModifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNotNullModifier(AspectGrammarParser.NotNullModifierContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#constructorModifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

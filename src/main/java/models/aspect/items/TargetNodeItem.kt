@@ -6,7 +6,7 @@ import psi.TargetProjectContainer
 /**
  * Created by boris on 25.04.17.
  */
-class TargetNodeItem(var type: MaybeNegativeParameter) : AspectItem() {
+class TargetNodeItem(var type: ParameterModel) : AspectItem() {
 
     override fun toString(): String {
         return "(target($type))"

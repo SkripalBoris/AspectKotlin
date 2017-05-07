@@ -17,10 +17,17 @@ enum class InlineType {
 }
 
 //TODO Поддержка не только простых типов
-class MethodPattern(var annotations: List<MaybeNegativeParameter>, var modifiers: List<MaybeNegativeParameter>, var type: MaybeNegativeParameter, var name: MaybeNegativeParameter, var params: List<MaybeNegativeParameter>, var returnType: MaybeNegativeParameter?, var extensionModifier: ExtensionType = ExtensionType.ANYTHING, var inlineModifier: InlineType = InlineType.ANYTHING) {
+class MethodPattern(var annotations: List<ParameterModel>,
+                    var modifiers: List<ParameterModel>,
+                    var type: ParameterModel,
+                    var name: ParameterModel,
+                    var params: List<ParameterModel>,
+                    var returnType: ParameterModel,
+                    var extensionModifier: ExtensionType = ExtensionType.ANYTHING,
+                    var inlineModifier: InlineType = InlineType.ANYTHING) {
     init {
-        if (returnType == null)
-            returnType = MaybeNegativeParameter("Unit", false, NullabilityType.ANYTHING)
+        if (returnType.typeName.isEmpty())
+            returnType.typeName = "Unit"
     }
 
     override fun toString(): String {
@@ -36,19 +43,19 @@ class MethodPattern(var annotations: List<MaybeNegativeParameter>, var modifiers
         when (this.extensionModifier) {
             ExtensionType.EXTENSION -> retStr += "extension "
             ExtensionType.NOT_EXTENSION -> retStr += "!extension "
-            ExtensionType.ANYTHING -> retStr
+            ExtensionType.ANYTHING -> {}
         }
 
         when (this.inlineModifier) {
             InlineType.INLINE -> retStr += "inline "
             InlineType.NOT_INLINE -> retStr += "!inline "
-            InlineType.ANYTHING -> retStr
+            InlineType.ANYTHING -> {}
         }
 
-        if (type.text.isEmpty())
-            retStr += "fun $name("
+        if (type.typeName.isEmpty())
+            retStr += " fun $name("
         else
-            retStr += "fun $type.$name("
+            retStr += " fun $type.$name("
 
         if (params.isNotEmpty())
             params.forEach {
@@ -57,11 +64,8 @@ class MethodPattern(var annotations: List<MaybeNegativeParameter>, var modifiers
                     retStr += ", "
             }
 
-        retStr += ")"
+        retStr += ") : $returnType"
 
-        if (returnType != null) {
-            retStr += ": $returnType"
-        }
         return retStr
     }
 }

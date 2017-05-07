@@ -11,8 +11,8 @@ typeList
 //    |   primitiveType ('[' ']')*
 //    ;
 typeType
-    :   classOrInterfaceType
-    |   primitiveType
+    :   classOrInterfaceType nullabilityModifier?
+    |   primitiveType nullabilityModifier?
     ;
 
 //Примитивные типы
@@ -27,7 +27,7 @@ primitiveType
 
 //Тип класс или интерфейс
 classOrInterfaceType
-    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
+    :   Identifier typeArguments? ('.' Identifier typeArguments? )* ('?' | '!!')?
     ;
 
 //Список типов
@@ -81,6 +81,18 @@ methodModifier
 		|	'final'
 		)
 	;
+
+nullabilityModifier
+    : nullModifier | notNullModifier
+    ;
+
+nullModifier
+    :   '?'
+    ;
+
+notNullModifier
+    :   '!!'
+    ;
 
 // Модификаторы конструктора
 constructorModifier
