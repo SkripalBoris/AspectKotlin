@@ -2,7 +2,7 @@ package parsers.visitors
 
 import models.aspect.Advice
 import models.aspect.items.ReferencePointcutNodeItem
-import models.aspect.pointcut.Pointcut
+import models.aspect.Pointcut
 import models.boolExpr.*
 import org.antlr.v4.runtime.misc.Interval
 import parsers.antlrParsers.AspectGrammarBaseVisitor

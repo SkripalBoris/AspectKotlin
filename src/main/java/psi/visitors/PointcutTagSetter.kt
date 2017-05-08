@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
 import models.aspect.items.TargetNodeItem
-import models.aspect.pointcut.Pointcut
+import models.aspect.Pointcut
 import models.boolExpr.And
 import models.boolExpr.BooleanExpression
 import models.boolExpr.Not

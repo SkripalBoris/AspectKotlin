@@ -1,6 +1,6 @@
 package models.aspect
 
-import models.aspect.pointcut.Pointcut
+import models.aspect.Pointcut
 
 /**
  * Created by sba on 30.11.16.

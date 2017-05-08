@@ -1,7 +1,7 @@
 package parsers.visitors
 
 import models.aspect.items.*
-import models.aspect.pointcut.Pointcut
+import models.aspect.Pointcut
 import models.boolExpr.*
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl

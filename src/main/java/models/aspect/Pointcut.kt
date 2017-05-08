@@ -1,4 +1,4 @@
-package models.aspect.pointcut
+package models.aspect
 
 import com.intellij.psi.PsiElement
 import models.aspect.items.AspectItem

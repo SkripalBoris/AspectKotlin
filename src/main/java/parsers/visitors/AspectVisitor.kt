@@ -1,7 +1,7 @@
 package parsers.visitors
 
 import models.aspect.Aspect
-import models.aspect.pointcut.Pointcut
+import models.aspect.Pointcut
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
 
