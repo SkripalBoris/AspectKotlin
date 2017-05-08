@@ -37,21 +37,22 @@ object AdviceVisitor {
 //            } else -> throw IllegalArgumentException()
 //        }
         val par = psiElement.parent
-        when (advice.adviceInsertPlace) {
-            "before()" -> {
-                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\n${advice.functionName}()\n${psiElement.text}}")
-                psiElement.replace(buf)
-            }
-            "after()" -> {
-                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\nval ____a = ${psiElement.text}\n${advice.functionName}()\n____a}")
-                psiElement.replace(buf)
-            }
-            "around()" -> {
-                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\n${advice.functionName}()\nval ____a = ${psiElement.text}\n${advice.functionName}()\n____a}")
-                psiElement.replace(buf)
-            }
-            else -> throw IllegalArgumentException()
-        }
+        psiElement.replace(KtPsiFactory(psiElement).createExpression(advice.wrapPointcut(psiElement.text)))
+//        when (advice.adviceInsertPlace) {
+//            "before()" -> {
+//                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\n${advice.functionName}()\n${psiElement.text}}")
+//                psiElement.replace(buf)
+//            }
+//            "after()" -> {
+//                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\nval ____a = ${psiElement.text}\n${advice.functionName}()\n____a}")
+//                psiElement.replace(buf)
+//            }
+//            "around()" -> {
+//                val buf = KtPsiFactory(psiElement).createExpression("run{${advice.getFunction()}\n${advice.functionName}()\nval ____a = ${psiElement.text}\n${advice.functionName}()\n____a}")
+//                psiElement.replace(buf)
+//            }
+//            else -> throw IllegalArgumentException()
+//        }
         refreshUserMap(psiElement, par)
     }
 

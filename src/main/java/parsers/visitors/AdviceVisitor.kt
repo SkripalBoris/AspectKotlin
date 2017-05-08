@@ -1,8 +1,7 @@
 package parsers.visitors
 
-import models.aspect.Advice
+import models.aspect.*
 import models.aspect.items.ReferencePointcutNodeItem
-import models.aspect.Pointcut
 import models.boolExpr.*
 import org.antlr.v4.runtime.misc.Interval
 import parsers.antlrParsers.AspectGrammarBaseVisitor
@@ -18,8 +17,14 @@ class AdviceVisitor(var pointcutList: List<Pointcut>) : AspectGrammarBaseVisitor
         val boolExpr = buildExpression(ctx.pointcutExpression())
         val adviceCode = ctx.start.inputStream.getText(Interval(ctx.methodBody().block().start.startIndex + 1,
                 ctx.methodBody().block().stop.stopIndex - 1))
-        advices.add(Advice(ctx.adviceSpec().text, boolExpr, adviceCode))
-        return Advice("", NodeItem("", ""), "")
+        val advice = when (ctx.adviceSpec().children.first().text) {
+            "before" -> BeforeAdvice(boolExpr, adviceCode)
+            "after" -> AfterAdvice(boolExpr, adviceCode)
+            "around" -> AroundAdvice(boolExpr, adviceCode)
+            else -> throw NotImplementedError()
+        }
+        advices.add(advice)
+        return advice
     }
 
     private fun buildExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext): BooleanExpression {

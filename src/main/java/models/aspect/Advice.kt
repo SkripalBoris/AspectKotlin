@@ -9,11 +9,11 @@ import java.security.SecureRandom
  * Created by sba on 30.11.16.
  */
 
-class Advice(var adviceInsertPlace: String, var pointcutExpression: BooleanExpression, var adviceCode: String) : AspectItem() {
+open class Advice(var pointcutExpression: BooleanExpression, var adviceCode: String) : AspectItem() {
     var functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
 
     override fun toString(): String {
-        return "$adviceInsertPlace $pointcutExpression {\n$adviceCode\n}"
+        return "$pointcutExpression {\n$adviceCode\n}"
     }
 
     override fun calcExpression(psiElement: PsiElement): Boolean {
@@ -22,5 +22,9 @@ class Advice(var adviceInsertPlace: String, var pointcutExpression: BooleanExpre
 
     fun getFunction(): String {
         return "fun $functionName(){\n$adviceCode}\n"
+    }
+
+    open fun wrapPointcut(pointcutStr: String): String {
+        throw NotImplementedError()
     }
 }
