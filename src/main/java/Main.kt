@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
 
     prepareNewFiles(srcDir, newSrcDir, targetFiles, pomFile, newPomFile)
     compileNewProject(newPomFile)
-  //  removeNewFiles(newPomFile, newSrcDir)
+    removeNewFiles(newPomFile, newSrcDir)
     return
 }
 
@@ -74,7 +74,7 @@ fun prepareNewFiles(oldProjectPath: String, projectPath: String, files: List<KtF
         throw Exception("Directory already exists")
 
     files.forEach {
-        var pathToFile = projectPath + it.originalFile.virtualFile.path.substring(oldProjectPath.lastIndex + 1)
+        val pathToFile = projectPath + it.originalFile.virtualFile.path.substring(oldProjectPath.lastIndex + 1)
         val pathToFileDir = pathToFile.substring(0, pathToFile.lastIndex - it.originalFile.name.lastIndex)
         val fileDir = File(pathToFileDir)
         if (fileDir.exists()) {

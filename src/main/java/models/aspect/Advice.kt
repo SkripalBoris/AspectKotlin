@@ -11,7 +11,6 @@ import java.security.SecureRandom
  */
 
 open class Advice(var pointcutExpression: BooleanExpression, var adviceCode: String, var parameterList: List<ArgumentModel>) : AspectItem() {
-    var functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
 
     override fun toString(): String {
         val paramStr = parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }
@@ -22,11 +21,12 @@ open class Advice(var pointcutExpression: BooleanExpression, var adviceCode: Str
         return this.pointcutExpression.calcExpression(psiElement)
     }
 
-    fun getFunction(): String {
-        return "fun $functionName(){\n$adviceCode}\n"
+    fun getFunction(): Pair<String, String> {
+        val functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
+        return Pair("$functionName()", "fun $functionName(){\n$adviceCode}\n")
     }
 
-    open fun wrapPointcut(pointcutStr: String): String {
+    open fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
         throw NotImplementedError()
     }
 }
