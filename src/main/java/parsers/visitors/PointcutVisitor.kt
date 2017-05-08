@@ -41,20 +41,12 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
                     return ExecutionNodeItem(fillMethod(methodPattern))
                 }
                 if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.TargetPointcutContext) {
-                    var nullabilityType = NullabilityType.ANYTHING
-                    var type = ParameterModel((pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text,  nullableModifier = nullabilityType)
+                    var type = ParameterModel((pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text,  nullableModifier = NullabilityType.ANYTHING)
                     if (paramList != null) {
                         paramList.formalParameter().forEach {
                             val identifier = it.variableDeclaratorId().Identifier().text
                             if (identifier == type.typeName) {
-                                val typeName = it.typeType().classOrInterfaceType().Identifier().fold("") { total, next -> total + next.toString() }
-                                it.typeType().nullabilityModifier()?.let { nullMod ->
-                                    nullabilityType = if (nullMod.nullModifier() != null)
-                                        NullabilityType.NOT_NULL
-                                    else
-                                        NullabilityType.NULLABLE
-                                }
-                                type = ParameterModel(typeName, nullableModifier = nullabilityType)
+                                type = buildType(it.typeType())
                                 return@forEach
                             }
                         }
@@ -98,76 +90,6 @@ class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
         val retList = buildModifiersList(modifier.methodModifiersPattern().first())
         retList.add(ParameterModel(modifier.methodModifier().text, false))
         return retList
-    }
-
-    private fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): ParameterModel {
-        typeContext?.let { type ->
-            var negative = false
-            type.children.firstOrNull()?.let {
-                if (it is TerminalNodeImpl && it.text == "!")
-                    negative = true
-            }
-            type.simpleTypePattern()?.let { simpleType ->
-                // Берем только первый элемент, т.к. не поддерживаем несколько типов
-                simpleType.dottedNamePattern().typeType().firstOrNull()?.let { typeType ->
-                    var nullability = NullabilityType.ANYTHING
-                    typeType.nullabilityModifier()?.let { nullabilityMod ->
-                        nullabilityMod.notNullModifier()?.let {
-                            nullability = NullabilityType.NOT_NULL
-                        }
-                        nullabilityMod.nullModifier()?.let {
-                            nullability = NullabilityType.NULLABLE
-                        }
-                    }
-                    typeType.classOrInterfaceType()?.let { classOrInterface ->
-                        buildPackage(classOrInterface)
-                        return ParameterModel(typeName = classOrInterface.Identifier().fold(""){total, next -> total + next},
-                                nullableModifier = nullability,
-                                negative = negative)
-                    }
-                    typeType.primitiveType()?.let { primitiveType ->
-                        return ParameterModel(typeName = primitiveType.text,
-                                nullableModifier = nullability,
-                                negative = negative)
-                    }
-                }
-            }
-            type.typePattern().firstOrNull()?.let {
-                val retType = this.buildSimpleType(it)
-                retType.negative = negative
-                return retType
-            }
-        }
-        return ParameterModel()
-    }
-
-    private fun buildPackage(context: ParserRuleContext): String {
-        if (context is AspectGrammarParser.OptionalParensTypePatternContext)
-            context.annotationPattern()?.let{
-                return it.text
-            }
-        return ""
-    }
-
-    private fun buildType(typeContext: ParserRuleContext?): ParameterModel {
-        if (typeContext is AspectGrammarParser.OptionalParensTypePatternContext) {
-            val simpleType = buildSimpleType(typeContext.typePattern())
-            simpleType.packageName = buildPackage(typeContext)
-            return simpleType
-        }
-
-        if (typeContext is AspectGrammarParser.FormalsPatternContext) {
-            val simpleType = buildSimpleType(typeContext.optionalParensTypePattern().typePattern())
-            simpleType.packageName = buildPackage(typeContext)
-            return simpleType
-        }
-
-        if (typeContext is AspectGrammarParser.RetTypePatternContext) {
-            val simpleType = buildSimpleType(typeContext.typePattern())
-            simpleType.packageName = buildPackage(typeContext)
-            return simpleType
-        }
-        return ParameterModel()
     }
 
     fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {
