@@ -6,7 +6,7 @@ import psi.TargetProjectContainer
 /**
  * Created by sba on 31.01.17.
  */
-class ReferencePointcutNodeItem(val referencePointcutKey: Int) : AspectItem() {
+class ReferencePointcutNodeItem(val identifier: String, var referencePointcutKey: Int) : AspectItem() {
     override fun calcExpression(psiElement: PsiElement): Boolean {
         val tags = psiElement.getUserData(TargetProjectContainer.tagKey)
         return tags != null && this.referencePointcutKey in tags

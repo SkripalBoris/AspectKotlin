@@ -2,6 +2,11 @@ package parsers.visitors
 
 import models.aspect.Aspect
 import models.aspect.Pointcut
+import models.aspect.items.ReferencePointcutNodeItem
+import models.boolExpr.And
+import models.boolExpr.BooleanExpression
+import models.boolExpr.Not
+import models.boolExpr.Or
 import parsers.antlrParsers.AspectGrammarBaseVisitor
 import parsers.antlrParsers.AspectGrammarParser
 
@@ -10,22 +15,56 @@ import parsers.antlrParsers.AspectGrammarParser
  * Created by sba on 30.11.16.
  */
 class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
-    var pointcutList: List<Pointcut>
-
-    init {
-        pointcutList = mutableListOf()
-    }
 
     override fun visitAspectDeclaration(ctx: AspectGrammarParser.AspectDeclarationContext): Aspect {
         val id = ctx.Identifier().text
         val pointcutVisitor = PointcutVisitor()
         pointcutVisitor.visit(ctx)
 
-        pointcutList = pointcutVisitor.pointcuts
+        val pointcutList = pointcutVisitor.pointcuts
 
-        val adviceVisitor = AdviceVisitor(pointcutList = pointcutList)
+        val adviceVisitor = AdviceVisitor(pointcutList)
         adviceVisitor.visit(ctx)
 
-        return Aspect(id, pointcutList, adviceVisitor.advices)
+
+        val adviceList = adviceVisitor.advices
+
+        pointcutList.forEach {
+            addReferencePointcutKey(it.pointcutExpression, pointcutList)
+        }
+
+        adviceList.forEach {
+            addReferencePointcutKey(it.pointcutExpression, pointcutList)
+        }
+
+        return Aspect(id, pointcutList, adviceList)
+    }
+
+    fun addReferencePointcutKey(item: BooleanExpression, pointcutList: List<Pointcut>) {
+        if (item is And) {
+            addReferencePointcutKey(item.getLeftNode(), pointcutList)
+            addReferencePointcutKey(item.getRightNode(), pointcutList)
+            return
+        }
+
+        if (item is Or) {
+            addReferencePointcutKey(item.getLeftNode(), pointcutList)
+            addReferencePointcutKey(item.getRightNode(), pointcutList)
+            return
+        }
+
+        if (item is Not) {
+            addReferencePointcutKey(item.getChild(), pointcutList)
+            return
+        }
+
+        if (item is ReferencePointcutNodeItem) {
+            pointcutList.forEach {
+                if (it.id == item.identifier) {
+                    item.referencePointcutKey = it.key
+                    return
+                }
+            }
+        }
     }
 }
