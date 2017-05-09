@@ -251,7 +251,7 @@ KotlinLetterOrDigit
     :   [a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
     ;
 
-// §3.10.1 Integer Literals
+// 3.10.1 Integer Literals
 
 IntegerLiteral
     :   DecimalIntegerLiteral
@@ -381,7 +381,7 @@ BinaryDigitOrUnderscore
     |   '_'
     ;
 
-// §3.10.2 Floating-Point Literals
+// 3.10.2 Floating-Point Literals
 
 FloatingPointLiteral
     :   DecimalFloatingPointLiteral
@@ -442,14 +442,14 @@ BinaryExponentIndicator
     :   [pP]
     ;
 
-// §3.10.3 Boolean Literals
+// 3.10.3 Boolean Literals
 
 BooleanLiteral
     :   'True'
     |   'False'
     ;
 
-// §3.10.4 Character Literals
+// 3.10.4 Character Literals
 
 CharacterLiteral
     :   '\'' SingleCharacter '\''
@@ -460,7 +460,7 @@ fragment
 SingleCharacter
     :   ~['\\]
     ;
-// §3.10.5 String Literals
+// 3.10.5 String Literals
 StringLiteral
     :   '"' StringCharacters? '"'
     ;
@@ -473,7 +473,7 @@ StringCharacter
     :   ~["\\]
     |   EscapeSequence
     ;
-// §3.10.6 Escape Sequences for Character and String Literals
+// 3.10.6 Escape Sequences for Character and String Literals
 fragment
 EscapeSequence
     :   '\\' [btnfr"'\\]
