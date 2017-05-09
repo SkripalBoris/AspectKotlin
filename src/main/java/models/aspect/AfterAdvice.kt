@@ -8,13 +8,14 @@ import models.boolExpr.BooleanExpression
  */
 class AfterAdvice(pointcutExpression: BooleanExpression,
                   adviceCode: String,
-                  parameterList: List<ArgumentModel>): Advice(pointcutExpression, adviceCode, parameterList) {
+                  parameterList: List<ArgumentModel>,
+                  pointcutList: List<Pointcut>): Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
     override fun toString(): String {
         return "after() ${super.toString()}"
     }
 
     override fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
-        val generatedFun = this.getFunction()
+        val generatedFun = this.getFunction(targetIdentifier)
         return "run{${generatedFun.second}\nval ____a = $pointcutStr\n${generatedFun.first}\n____a}"
     }
 }

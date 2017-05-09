@@ -26,9 +26,9 @@ class AdviceVisitor(var pointcutList: MutableList<Pointcut>) : AspectGrammarBase
                 ctx.methodBody().block().stop.stopIndex - 1))
         val argumentsList = buildArgumentList(ctx)
         val advice = when (ctx.adviceSpec().children.first().text) {
-            "before" -> BeforeAdvice(newBoolExpr, adviceCode, argumentsList)
-            "after" -> AfterAdvice(newBoolExpr, adviceCode, argumentsList)
-            "around" -> AroundAdvice(newBoolExpr, adviceCode, argumentsList)
+            "before" -> BeforeAdvice(newBoolExpr, adviceCode, argumentsList, pointcutList)
+            "after" -> AfterAdvice(newBoolExpr, adviceCode, argumentsList, pointcutList)
+            "around" -> AroundAdvice(newBoolExpr, adviceCode, argumentsList, pointcutList)
             else -> throw NotImplementedError()
         }
         advices.add(advice)

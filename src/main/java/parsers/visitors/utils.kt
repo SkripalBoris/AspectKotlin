@@ -117,16 +117,18 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
         }
         if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.TargetPointcutContext) {
             var type = ParameterModel((pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text, nullableModifier = NullabilityType.ANYTHING)
-            if (paramList != null) {
+            var paramIdentifier = ""
+            paramList?.let {
                 paramList.formalParameter().forEach {
                     val identifier = it.variableDeclaratorId().Identifier().text
                     if (identifier == type.typeName) {
+                        paramIdentifier = identifier
                         type = buildType(it.typeType())
                         return@forEach
                     }
                 }
             }
-            return TargetNodeItem(type)
+            return TargetNodeItem(ArgumentModel(type, paramIdentifier))
         }
         return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
     }

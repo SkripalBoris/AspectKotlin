@@ -35,7 +35,7 @@ object TargetPsiTagSetter : FunctionTagSetter() {
         val resolvedFunDescriptor = psiElement.getResolvedCall(TargetProjectContainer.context!!)!!.candidateDescriptor
         val funPackage = if (resolvedFunDescriptor.isExtension) resolvedFunDescriptor.extensionReceiverParameter!!.value.type.toString() else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         if (aspectItem is TargetNodeItem) {
-            return this.checkType(aspectItem.type, funPackage)
+            return this.checkType(aspectItem.type.argumentType, funPackage)
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }
