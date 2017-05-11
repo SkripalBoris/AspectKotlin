@@ -130,29 +130,23 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
             }
             return TargetNodeItem(ArgumentModel(type, paramIdentifier))
         }
-        return NodeItem(pointcutExpression.getChild(0).getChild(2).text, pointcutExpression.getChild(0).getChild(0).text)
+        throw NotImplementedError("Not implemented yet")
     }
 
     if (pointcutExpression.childCount == 2) {
-        val not = Not()
-        not.setChild(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList))
-        return not
+        return Not(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList))
     }
 
     if (pointcutExpression.childCount == 3) {
         if (pointcutExpression.getChild(0).text == "(")
             return pointcutExpression(pointcutExpression.pointcutExpression(0), paramList)
         else if (pointcutExpression.getChild(1).text == "||") {
-            val or = Or()
-            or.setLeftNode(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList))
-            or.setRightNode(pointcutExpression(pointcutExpression.pointcutExpression(1), paramList))
-            return or
+            return Or(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList),
+                    pointcutExpression(pointcutExpression.pointcutExpression(1), paramList))
         } else if (pointcutExpression.getChild(1).text == "&&") {
-            val and = And()
 
-            and.setLeftNode(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList))
-            and.setRightNode(pointcutExpression(pointcutExpression.pointcutExpression(1), paramList))
-            return and
+            return And(pointcutExpression(pointcutExpression.pointcutExpression(0), paramList),
+                    pointcutExpression(pointcutExpression.pointcutExpression(1), paramList))
         }
     }
     throw IllegalArgumentException()

@@ -32,8 +32,14 @@ object TargetPsiTagSetter : FunctionTagSetter() {
     }
 
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
-        val resolvedFunDescriptor = psiElement.getResolvedCall(TargetProjectContainer.context!!)!!.candidateDescriptor
-        val funPackage = if (resolvedFunDescriptor.isExtension) resolvedFunDescriptor.extensionReceiverParameter!!.value.type.toString() else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
+        val resolvedCall = psiElement.getResolvedCall(TargetProjectContainer.context!!)?: return false
+        val resolvedFunDescriptor = resolvedCall.candidateDescriptor
+        val funPackage = if (resolvedFunDescriptor.isExtension) run {
+                val extensionReceiver = resolvedFunDescriptor.extensionReceiverParameter ?: return false
+                extensionReceiver.value.type.toString()
+            }
+        else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
+
         if (aspectItem is TargetNodeItem) {
             return this.checkType(aspectItem.type.argumentType, funPackage)
         }

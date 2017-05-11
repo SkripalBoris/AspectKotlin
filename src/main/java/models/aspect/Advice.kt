@@ -60,11 +60,11 @@ open class Advice(var pointcutExpression: BooleanExpression,
                 throw Exception("Undefined pointcut id")
             }
             if (boolExpNode is And)
-                return "${getTargetIdentifier(boolExpNode.getLeftNode())}${getTargetIdentifier(boolExpNode.getRightNode())}"
+                return "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
             if (boolExpNode is Or)
-                return "${getTargetIdentifier(boolExpNode.getLeftNode())}${getTargetIdentifier(boolExpNode.getRightNode())}"
+                return "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
             if (boolExpNode is Not)
-                return getTargetIdentifier(boolExpNode.getChild())
+                return getTargetIdentifier(boolExpNode.child)
             if (boolExpNode is TargetNodeItem)
                 return boolExpNode.type.identifier
             return ""

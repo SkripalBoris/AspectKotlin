@@ -24,7 +24,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
                 if (it.getUserData(TargetProjectContainer.tagKey) == null)
                     it.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
                 else
-                    it.getUserData(TargetProjectContainer.tagKey)!!.add(aspectItem.key)
+                    it.getUserData(TargetProjectContainer.tagKey)?.add(aspectItem.key)
         }
     }
 
@@ -36,9 +36,14 @@ object CallPsiTagSetter : FunctionTagSetter() {
     }
 
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
-        val resolvedFunDescriptor = psiElement.getResolvedCall(TargetProjectContainer.context!!)!!.candidateDescriptor
+        val resolvedCall = psiElement.getResolvedCall(TargetProjectContainer.context!!) ?: return false
+        val resolvedFunDescriptor = resolvedCall.candidateDescriptor
+        val funPackage = if (resolvedFunDescriptor.isExtension) run {
+            val extensionReceiver = resolvedFunDescriptor.extensionReceiverParameter ?: return false
+            extensionReceiver.value.type.toString()
+        }
+        else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         val funName = resolvedFunDescriptor.name.asString()
-        val funPackage = if (resolvedFunDescriptor.isExtension) resolvedFunDescriptor.extensionReceiverParameter!!.value.type.toString() else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
         val realParams = resolvedFunDescriptor.valueParameters.map {
             val typeName = it.type.constructor.toString()
             val nullableModifier = if (it.type.isMarkedNullable) NullabilityType.NULLABLE else NullabilityType.NOT_NULL
@@ -48,7 +53,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
         if (aspectItem is CallNodeItem) {
             if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
                     aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
-                            aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, resolvedFunDescriptor.returnType.toString())) &&
+                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, resolvedFunDescriptor.returnType.toString())) &&
                     this.checkValueParams(aspectItem.methodPattern.params, realParams)))
                 return false
             if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&

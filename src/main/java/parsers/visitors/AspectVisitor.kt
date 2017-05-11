@@ -42,19 +42,19 @@ class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
 
     fun addReferencePointcutKey(item: BooleanExpression, pointcutList: List<Pointcut>) {
         if (item is And) {
-            addReferencePointcutKey(item.getLeftNode(), pointcutList)
-            addReferencePointcutKey(item.getRightNode(), pointcutList)
+            addReferencePointcutKey(item.left, pointcutList)
+            addReferencePointcutKey(item.right, pointcutList)
             return
         }
 
         if (item is Or) {
-            addReferencePointcutKey(item.getLeftNode(), pointcutList)
-            addReferencePointcutKey(item.getRightNode(), pointcutList)
+            addReferencePointcutKey(item.left, pointcutList)
+            addReferencePointcutKey(item.right, pointcutList)
             return
         }
 
         if (item is Not) {
-            addReferencePointcutKey(item.getChild(), pointcutList)
+            addReferencePointcutKey(item.child, pointcutList)
             return
         }
 

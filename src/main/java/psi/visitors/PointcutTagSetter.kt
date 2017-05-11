@@ -29,17 +29,17 @@ object PointcutTagSetter {
     private fun visitBooleanExpression(node: BooleanExpression, file: KtFile) {
         // Если операнд, то переходим к его подвыражению
         if (node is Not) {
-            visitBooleanExpression(node.getChild(), file)
+            visitBooleanExpression(node.child, file)
             return
         }
         if (node is Or) {
-            visitBooleanExpression(node.getLeftNode(), file)
-            visitBooleanExpression(node.getRightNode(), file)
+            visitBooleanExpression(node.left, file)
+            visitBooleanExpression(node.right, file)
             return
         }
         if (node is And) {
-            visitBooleanExpression(node.getLeftNode(), file)
-            visitBooleanExpression(node.getRightNode(), file)
+            visitBooleanExpression(node.left, file)
+            visitBooleanExpression(node.right, file)
             return
         }
 
@@ -62,7 +62,7 @@ object PointcutTagSetter {
 
     private fun recursiveSetPointcutTag(psiElement: PsiElement, pointcut: Pointcut) {
         if (pointcut.calcExpression(psiElement))
-            psiElement.getUserData(TargetProjectContainer.tagKey)!!.add(pointcut.key)
+            psiElement.getUserData(TargetProjectContainer.tagKey)?.add(pointcut.key)
         psiElement.children.forEach { recursiveSetPointcutTag(it, pointcut) }
     }
 }
