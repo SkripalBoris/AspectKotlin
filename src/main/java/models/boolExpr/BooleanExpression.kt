@@ -1,7 +1,6 @@
 package models.boolExpr
 
 import com.intellij.psi.PsiElement
-import javax.naming.OperationNotSupportedException
 
 
 /**
@@ -19,7 +18,7 @@ interface BooleanExpression {
 Реализации
  */
 
-class Or(var left: BooleanExpression, var right: BooleanExpression) : BooleanExpression {
+class Or(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
     override fun toString(): String {
         return String.format("($left || $right)")
     }
@@ -29,7 +28,7 @@ class Or(var left: BooleanExpression, var right: BooleanExpression) : BooleanExp
     }
 }
 
-class And(var left: BooleanExpression, var right: BooleanExpression) : BooleanExpression {
+class And(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
     override fun toString(): String {
         return String.format("($left && $right)")
     }
@@ -39,7 +38,7 @@ class And(var left: BooleanExpression, var right: BooleanExpression) : BooleanEx
     }
 }
 
-class Not(var child: BooleanExpression) : BooleanExpression {
+class Not(val child: BooleanExpression) : BooleanExpression {
     override fun toString(): String {
         return String.format("!($child)")
     }

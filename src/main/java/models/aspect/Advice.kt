@@ -15,9 +15,9 @@ import java.security.SecureRandom
  * Created by sba on 30.11.16.
  */
 
-open class Advice(var pointcutExpression: BooleanExpression,
-                  var adviceCode: String,
-                  var parameterList: List<ArgumentModel>,
+open class Advice(val pointcutExpression: BooleanExpression,
+                  val adviceCode: String,
+                  val parameterList: List<ArgumentModel>,
                   val pointcutList : List<Pointcut>) : AspectItem() {
 
     override fun toString(): String {

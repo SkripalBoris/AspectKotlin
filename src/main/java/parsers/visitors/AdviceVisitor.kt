@@ -11,7 +11,7 @@ import java.security.SecureRandom
 /**
  * Created by boris on 07.05.17.
  */
-class AdviceVisitor(var pointcutList: MutableList<Pointcut>) : AspectGrammarBaseVisitor<Advice>() {
+class AdviceVisitor(val pointcutList: MutableList<Pointcut>) : AspectGrammarBaseVisitor<Advice>() {
     var advices = mutableListOf<Advice>()
 
     override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {

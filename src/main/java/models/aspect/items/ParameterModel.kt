@@ -13,7 +13,7 @@ enum class NullabilityType {
 class ParameterModel(var typeName: String = "",
                      var negative: Boolean = false,
                      var packageName : String = "",
-                     var nullableModifier: NullabilityType = NullabilityType.ANYTHING) {
+                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING) {
     override fun toString(): String {
         var retStr = ""
         if (negative)

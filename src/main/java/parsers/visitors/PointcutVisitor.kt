@@ -8,7 +8,7 @@ import parsers.antlrParsers.AspectGrammarParser
  * Created by boris on 07.05.17.
  */
 class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
-    var pointcuts = mutableListOf<Pointcut>()
+    val pointcuts = mutableListOf<Pointcut>()
 
     override fun visitPointcut(ctx: AspectGrammarParser.PointcutContext): Pointcut {
         val boolExpr = buildPointcutExpression(ctx.pointcutExpression(), ctx.formalParameters().formalParameterList())

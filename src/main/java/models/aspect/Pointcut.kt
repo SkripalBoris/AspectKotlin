@@ -8,7 +8,7 @@ import models.boolExpr.BooleanExpression
  * Created by sba on 29.11.16.
  */
 
-class Pointcut(var id: String, var pointcutExpression: BooleanExpression) : AspectItem() {
+class Pointcut(val id: String, val pointcutExpression: BooleanExpression) : AspectItem() {
     override fun toString(): String {
         return "$id $pointcutExpression"
     }

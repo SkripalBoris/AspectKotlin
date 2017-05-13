@@ -17,14 +17,14 @@ enum class InlineType {
 }
 
 //TODO Поддержка не только простых типов
-class MethodPattern(var annotations: List<ParameterModel>,
-                    var modifiers: List<ParameterModel>,
-                    var type: ParameterModel,
-                    var name: ParameterModel,
-                    var params: List<ParameterModel>,
-                    var returnType: ParameterModel,
-                    var extensionModifier: ExtensionType = ExtensionType.ANYTHING,
-                    var inlineModifier: InlineType = InlineType.ANYTHING) {
+class MethodPattern(val annotations: List<ParameterModel>,
+                    val modifiers: List<ParameterModel>,
+                    val type: ParameterModel,
+                    val name: ParameterModel,
+                    val params: List<ParameterModel>,
+                    val returnType: ParameterModel,
+                    val extensionModifier: ExtensionType = ExtensionType.ANYTHING,
+                    val inlineModifier: InlineType = InlineType.ANYTHING) {
     init {
         if (returnType.typeName.isEmpty())
             returnType.typeName = "Unit"
