@@ -66,7 +66,7 @@ object CallPsiTagSetter : FunctionTagSetter() {
                 return false
 
             aspectItem.methodPattern.modifiers.forEach {
-                when (it.typeName) {
+                when (it.name) {
                     "public" -> {
                         if (resolvedFunDescriptor.visibility.name != "public")
                             return false

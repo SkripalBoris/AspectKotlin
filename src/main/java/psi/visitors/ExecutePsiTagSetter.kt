@@ -67,7 +67,7 @@ object ExecutePsiTagSetter : FunctionTagSetter() {
                 return false
             // Проверка модификаторов
             aspectItem.methodPattern.modifiers.forEach {
-                when (it.typeName) {
+                when (it.name) {
                     "public" -> {
                         if (psiElement.isPrivate())
                             return false

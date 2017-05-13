@@ -116,7 +116,7 @@
 
 Правило согласно которому производится описание срезов, представлено в листинге
 \ref{lst:pointcut_expression_rule}:
-\begin{lstlisting}[language=Java, label={lst:pointcut_expression_rule},
+\begin{lstlisting}[style={java}, label={lst:pointcut_expression_rule},
   caption={Правило описания среза pointcutExpression}]
 pointcutExpression
   :  (pointcutPrimitive | referencePointcut)
@@ -175,87 +175,254 @@ pointcutExpression
 \subsubsection{Интерфейс BooleanExpression}
 \label{ssub:BooleanExpression}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{lstlisting}[language=Java, label={lst:BooleanExpression},
-  caption={Интерфейс BooleanExpression}]
-interface BooleanExpression {
-    fun calcExpression(
-    	psiElement: PsiElement): Boolean
-}
-\end{lstlisting}
-
 Интерфейс \textit{BooleanExpression} является базовым для дерева логического
 выражения, составляемого для описания среза.
 Данный интерфейс описывает метод \textit{calcExpression}, принимающий узел PSI и возвращающий, принадлежит ли данный узел к описанию среза или нет.
+
+\begin{lstlisting}[style={java}, label={lst:BooleanExpression},
+  caption={Интерфейс BooleanExpression}]
+interface BooleanExpression {
+    fun calcExpression(psiElement: PsiElement): Boolean
+}
+\end{lstlisting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Класс Or}
 \label{ssub:Or}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{lstlisting}[language=Java, label={lst:Or},
-  caption={Класс Or}]
-class Or(var left: BooleanExpression,
-	var right: BooleanExpression) :
-	BooleanExpression {
-	...
-    override fun calcExpression(
-    	psiElement: PsiElement): Boolean {
-        return left.calcExpression(psiElement) ||
-        	right.calcExpression(psiElement)
-    }
-}
-\end{lstlisting}
-
-Данный класс предназначен для описания узла логического выражения,
+Класс \textit{Or} предназначен для описания узла логического выражения,
 соответствующего оператору дизъюнкции.
 Класс наследуется от интерфейса \textit{BooleanExpression} и содержит двух
 потомков \textit{left} и \textit{right}.
 При вызове метода \textit{calcExpression}, метод возвращает результат вычисления
 данного метода у потомков, соединенный операцией дизъюнкции.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Класс And}
-\label{ssub:And}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{lstlisting}[language=Java, label={lst:And},
-  caption={Класс And}]
-class And(var left: BooleanExpression,
-	var right: BooleanExpression) :
+
+\begin{lstlisting}[style={java}, label={lst:Or},
+  caption={Класс Or}]
+class Or(val left: BooleanExpression, val right: BooleanExpression) :
 	BooleanExpression {
 	...
-    override fun calcExpression(
-    	psiElement: PsiElement): Boolean {
-        return left.calcExpression(psiElement) &&
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return left.calcExpression(psiElement) ||
         	right.calcExpression(psiElement)
     }
 }
 \end{lstlisting}
-
-Данный класс предназначен для описания узла логического выражения,
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс And}
+\label{ssub:And}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{And} предназначен для описания узла логического выражения,
 соответствующего оператору конъюнкции.
 Класс наследуется от интерфейса \textit{BooleanExpression} и содержит двух
 потомков \textit{left} и \textit{right}.
 При вызове метода \textit{calcExpression}, метод возвращает результат вычисления
 данного метода у потомков, соединенный операцией конъюнкции.
+
+\begin{lstlisting}[style={java}, label={lst:And},
+  caption={Класс And}]
+class And(val left: BooleanExpression, val right: BooleanExpression) :
+	BooleanExpression {
+	...
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return left.calcExpression(psiElement) &&
+        	right.calcExpression(psiElement)
+    }
+}
+\end{lstlisting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Класс Not}
 \label{ssub:Not}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{lstlisting}[language=Java, label={lst:Not},
-  caption={Класс Not}]
-class Not(var child: BooleanExpression) :
-	BooleanExpression {
- ...
-    override fun calcExpression(
-    	psiElement: PsiElement): Boolean {
-        return !child.calcExpression(psiElement)
-    }
-}
-\end{lstlisting}
-
-Данный класс предназначен для описания узла логического выражения,
+Класс \textit{Not} предназначен для описания узла логического выражения,
 соответствующего оператору инверсии.
 Класс наследуется от интерфейса \textit{BooleanExpression} и содержит одного
 потомка \textit{child}.
 При вызове метода \textit{calcExpression}, метод возвращает инвертированный
 результат вычисления данного метода у потомка.
+
+\begin{lstlisting}[style={java}, label={lst:Not},
+  caption={Класс Not}]
+class Not(val child: BooleanExpression) :
+	BooleanExpression {
+ ...
+    override fun calcExpression(psiElement: PsiElement): Boolean {
+        return !child.calcExpression(psiElement)
+    }
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс AspectItem}
+\label{ssub:AspectItem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Абстрактный класс \textit{AspectItem} реализует интерфейс
+\textit{BooleanExpression} и является базовым классом для всех классов,
+представляющих сигнатуры в описании срезов.
+Класс содержит поле \textit{key}, хранящее в себе уникальный идентификатор
+элемента класса (в рамках данной реализации в качестве ключа был выбран хэш
+объекта).
+
+\begin{lstlisting}[style={java}, label={lst:AspectItem},
+  caption={Класс AspectItem}]
+abstract class AspectItem : BooleanExpression {
+    val key = this.hashCode()
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс CallNodeItem}
+\label{ssub:CallNodeItem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{CallNodeItem} наследуется от абстрактного класса
+\textit{AspectItem} и предназначен для представления терминального узла
+описания среза, соответствующего сигнатуре \textit{call}.
+Данный класс содержит поле \textit{methodPattern}, хранящее представление
+описания метода.
+
+\begin{lstlisting}[style={java}, label={lst:CallNodeItem},
+  caption={Класс CallNodeItem}]
+class CallNodeItem(val methodPattern: MethodPattern) : AspectItem() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс ExecutionNodeItem}
+\label{ssub:ExecutionNodeItem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{ExecutionNodeItem} наследуется от абстрактного класса
+\textit{AspectItem} и предназначен для представления терминального узла
+описания среза, соответствующего сигнатуре \textit{execution}.
+Данный класс содержит поле \textit{methodPattern}, хранящее представление
+описания метода.
+
+\begin{lstlisting}[style={java}, label={lst:ExecutionNodeItem},
+  caption={Класс ExecutionNodeItem}]
+class ExecutionNodeItem(val methodPattern: MethodPattern)
+	: AspectItem() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс ReferencePointcutNodeItem}
+\label{ssub:ReferencePointcutNodeItem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{ReferencePointcutNodeItem} наследуется от абстрактного класса
+\textit{AspectItem} и предназначен для представления терминального узла
+описания среза, соответствующего ссылке на другой срез.
+Данный класс содержит поле \textit{identifier}, хранящее идентификатор среза,
+на которого происходит ссылка и поле \textit{referencePointcutKey}, хранящее
+идентификатор целевого среза.
+
+\begin{lstlisting}[style={java}, label={lst:ReferencePointcutNodeItem},
+  caption={Класс ReferencePointcutNodeItem}]
+class ReferencePointcutNodeItem(val identifier: String,
+	var referencePointcutKey: Int) : AspectItem() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс TargetNodeItem}
+\label{ssub:TargetNodeItem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{TargetNodeItem} наследуется от абстрактного класса
+\textit{AspectItem} и предназначен для представления терминального узла
+описания среза, соответствующего сигнатуре \textit{target}.
+Данный класс содержит поле \textit{type} типа \textit{ArgumentModel}, хранящее
+в себе тип, указанный в сигнатуре \textit{target}, а также идентификатор
+переменной, при помощи которого можно производить обращение к элементу на
+котором производится вызов метода внутри кода совета.
+
+\begin{lstlisting}[style={java}, label={lst:TargetNodeItem},
+  caption={Класс TargetNodeItem}]
+class TargetNodeItem(val type: ArgumentModel) : AspectItem() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс ArgumentModel}
+\label{ssub:ArgumentModel}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{ArgumentModel} предназначен для представления аргументов совета и
+среза, а также для хранения типа и идентификатора переменной при использовании
+правила \textit{target}.
+Данный класс содержит поле \textit{argumentType}, хранящее в себе тип аргумента
+и \textit{identifier}, содержащее идентификатор аргумента.
+
+\begin{lstlisting}[style={java}, label={lst:ArgumentModel},
+  caption={Класс ArgumentModel}]
+class ArgumentModel(val argumentType: ParameterModel,
+	val identifier: String) {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Перечисление NullabilityType}
+\label{ssub:NullabilityType}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Перечисление \textit{NullabilityType} предназначено для хранения Nullability 
+аргумента.
+Перечисление имеет следующие значения:
+\begin{itemize}
+	\item \textit{NULLABLE}~--- аргумент может принимать значения null;
+	\item \textit{NOT\_NULL}~--- аргумент может принимать только не null
+		  значения;
+	\item \textit{ANYTHING}~--- не имеет разницы, какие значения может
+		  принимать аргумент.
+\end{itemize}
+
+\begin{lstlisting}[style={java}, label={lst:NullabilityType},
+  caption={Перечисление NullabilityType}]
+enum class NullabilityType {
+    NULLABLE,
+    NOT_NULL,
+    ANYTHING
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс MaybeNegativeModel}
+\label{ssub:MaybeNegativeModel}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Перечисление \textit{MaybeNegativeModel} предназначено для хранения элементов, которые могут быть заданы со знаком инверсии.
+Класс имеет следующие поля:
+\begin{itemize}
+	\item \textit{name}~--- имя;
+	\item \textit{negative}~--- флаг, сигнализирующий о том, используется ли
+		  инверсия при задании типа или нет (по умолчанию имеет значение
+		  \textit{false}).
+\end{itemize}
+
+\begin{lstlisting}[style={java}, label={lst:MaybeNegativeModel},
+  caption={Класс MaybeNegativeModel}]
+open class MaybeNegativeModel(var name: String = "",
+                              var negative: Boolean = false) {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс ParameterModel}
+\label{ssub:ParameterModel}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Перечисление \textit{ParameterModel} предназначено для хранения типа,
+наследуется от класса \textit{MaybeNegativeModel}.
+Класс имеет следующие поля:
+\begin{itemize}
+	\item \textit{name}~--- имя типа;
+	\item \textit{negative}~--- флаг, сигнализирующий о том, используется ли
+		  инверсия при задании типа или нет (по умолчанию имеет значение
+		  \textit{false});
+	\item \textit{packageName}~--- имя пакета;
+	\item \textit{nullableModifier}~--- nullability модификатор типа (по
+		  умолчанию ANYTHING).
+\end{itemize}
+
+\begin{lstlisting}[style={java}, label={lst:ParameterModel},
+  caption={Класс ParameterModel}]
+class ParameterModel(name: String = "",
+                     negative: Boolean = false,
+                     var packageName : String = "",
+                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING):
+                     MaybeNegativeModel(name, negative) {
+...
+}
+\end{lstlisting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Выводы}
 \label{sec:development_conclusion}

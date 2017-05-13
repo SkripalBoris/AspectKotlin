@@ -1,5 +1,6 @@
 package psi.visitors
 
+import models.aspect.items.MaybeNegativeModel
 import models.aspect.items.ParameterModel
 import models.aspect.items.NullabilityType
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -9,12 +10,12 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
  */
 abstract class FunctionTagSetter : PsiTagSetter {
     protected fun checkType(expectedTypePatternString: ParameterModel, realType: String): Boolean {
-        return expectedTypePatternString.typeName.isEmpty() ||
-                realType.replace(" ", "").matches(expectedTypePatternString.typeName.replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
+        return expectedTypePatternString.name.isEmpty() ||
+                realType.replace(" ", "").matches(expectedTypePatternString.name.replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
     }
 
-    protected fun checkName(expectedNamePatternString: ParameterModel, realName: String): Boolean {
-        return expectedNamePatternString.negative.xor(realName.matches(expectedNamePatternString.typeName.replace("*", ".*").toRegex()))
+    protected fun checkName(expectedNamePatternString: MaybeNegativeModel, realName: String): Boolean {
+        return expectedNamePatternString.negative.xor(realName.matches(expectedNamePatternString.name.replace("*", ".*").toRegex()))
     }
 
     protected fun checkValueParams(expectedValuesParams: List<ParameterModel>, realValueParams: List<ParameterModel>): Boolean {
@@ -24,7 +25,7 @@ abstract class FunctionTagSetter : PsiTagSetter {
             return true
 
         for (i in 0..(expectedValuesParams.size - 1)) {
-            var matchRes = checkType(expectedValuesParams[i], realValueParams[i].typeName)
+            var matchRes = checkType(expectedValuesParams[i], realValueParams[i].name)
             if (expectedValuesParams[i].nullableModifier != NullabilityType.ANYTHING)
                 matchRes = matchRes && (expectedValuesParams[i].nullableModifier == realValueParams[i].nullableModifier)
 

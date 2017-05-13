@@ -10,10 +10,10 @@ enum class NullabilityType {
     ANYTHING
 }
 
-class ParameterModel(var typeName: String = "",
-                     var negative: Boolean = false,
+class ParameterModel(name: String = "",
+                     negative: Boolean = false,
                      var packageName : String = "",
-                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING) {
+                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING): MaybeNegativeModel(name, negative) {
     override fun toString(): String {
         var retStr = ""
         if (negative)
@@ -21,7 +21,7 @@ class ParameterModel(var typeName: String = "",
 
         if (! packageName.isEmpty())
             retStr += "$packageName."
-        retStr += typeName
+        retStr += name
 
         when (nullableModifier) {
             NullabilityType.NULLABLE -> retStr += "?"

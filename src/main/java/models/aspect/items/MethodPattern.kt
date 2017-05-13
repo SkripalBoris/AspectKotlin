@@ -17,17 +17,17 @@ enum class InlineType {
 }
 
 //TODO Поддержка не только простых типов
-class MethodPattern(val annotations: List<ParameterModel>,
-                    val modifiers: List<ParameterModel>,
+class MethodPattern(val annotations: List<MaybeNegativeModel>,
+                    val modifiers: List<MaybeNegativeModel>,
                     val type: ParameterModel,
-                    val name: ParameterModel,
+                    val name: MaybeNegativeModel,
                     val params: List<ParameterModel>,
                     val returnType: ParameterModel,
                     val extensionModifier: ExtensionType = ExtensionType.ANYTHING,
                     val inlineModifier: InlineType = InlineType.ANYTHING) {
     init {
-        if (returnType.typeName.isEmpty())
-            returnType.typeName = "Unit"
+        if (returnType.name.isEmpty())
+            returnType.name = "Unit"
     }
 
     override fun toString(): String {
@@ -52,7 +52,7 @@ class MethodPattern(val annotations: List<ParameterModel>,
             InlineType.ANYTHING -> {}
         }
 
-        if (type.typeName.isEmpty())
+        if (type.name.isEmpty())
             retStr += " fun $name("
         else
             retStr += " fun $type.$name("

@@ -40,7 +40,7 @@ Kotlin.
 аспекта и, затем, тело аспекта, заключенное в фигурные скобки.
 Пример описания аспекта с идентификатором \textit{FooAspect} приведен в листинге
 ~\ref{lst:custom_aspect_example}.
-  \begin{lstlisting}[language=Java, label={lst:custom_aspect_example}, 
+  \begin{lstlisting}[style={java}, label={lst:custom_aspect_example}, 
   caption={Пример описания аспекта в разрабатываемом прототипе}]
 aspect FooAspect  {
   ... Тело аспекта
@@ -501,7 +501,7 @@ PSI кода совета в PSI проекта.
 
 Для наглядности, рассмотрим участок кода, приведенный в листинге
 \ref{lst:target_ex}:
-\begin{lstlisting}[label=lst:target_ex,
+\begin{lstlisting}[style={java}, label=lst:target_ex,
     caption={Пример целевой точки внедрения}]
 ...
 val res = A.foo().bar().baz()
@@ -511,7 +511,7 @@ val res = A.foo().bar().baz()
 \textit{foo}.
 Одним из стандартных способов решения данной задачи является разнесение вызовов
 функций, представленный в листинге \ref{lst:standart_decomp_ex}:
-\begin{lstlisting}[label=lst:standart_decomp_ex,
+\begin{lstlisting}[style={java}, label=lst:standart_decomp_ex,
     caption={Пример разнесения вызовов методов}]
 ...
 val fooRes = A.foo()
@@ -525,7 +525,7 @@ val res = barRes.baz()
 последовательный вызов функций является аргументов какой-либо другой функции.
 В качестве примера рассмотрим участок программного кода, приведенный в листинге
 \ref{lst:target_in_argument_ex}:
-\begin{lstlisting}[label=lst:target_in_argument_ex,
+\begin{lstlisting}[style={java}, label=lst:target_in_argument_ex,
     caption={Пример целевой точки внедрения, передаваемой в качестве аргумента другому методу}]
 ...
 val res = quux(A.foo().bar().baz())
@@ -536,7 +536,7 @@ val res = quux(A.foo().bar().baz())
 качестве аргумента.
 При этом модифицированный код программы был бы приведен к виду, представленному
 в листинге \ref{lst:standart_decomp_args_ex}.
-\begin{lstlisting}[label=lst:standart_decomp_args_ex,
+\begin{lstlisting}[style={java}, label=lst:standart_decomp_args_ex,
     caption={Пример разнесения вызовов методов, переданных в качестве аргументов}]
 ...
 val fooRes = A.foo()
@@ -567,7 +567,7 @@ val res = quux(bazRes)
 в промежуточную переменную, объявленную внутри враппера.
 Следующим шагом является вставка кода совета после вызова функции \textit{foo} и возвращение сохраненного результата из функции \textit{run}.
 Результат преобразования представлен в листинге~\ref{lst:apply_advice_with_run_ex}.
-\begin{lstlisting}[label=lst:apply_advice_with_run_ex,
+\begin{lstlisting}[style={java}, label=lst:apply_advice_with_run_ex,
     caption={Пример внедрения кода совета с использованием функции run}]
 ...
 val res = A.foo().run{
@@ -587,7 +587,7 @@ val res = A.foo().run{
 непосредственно из функции \textit{run}.
 В таком случае, применение совета будет иметь вид, аналогичный представленному
 в листинге \ref{lst:apply_advice_before_with_run_ex}.
-\begin{lstlisting}[label=lst:apply_advice_before_with_run_ex,
+\begin{lstlisting}[style={java}, label=lst:apply_advice_before_with_run_ex,
     caption={Пример внедрения кода совета после точки объединения с использованием функции run}]
 ...
 val res = A.foo().run{
@@ -617,7 +617,7 @@ val res = A.foo().run{
 
 В качестве примера рассмотрим участок кода, приведенный в листинге
 \ref{lst:target_advice_pointcut_example}:
-\begin{lstlisting}[label=lst:target_advice_pointcut_example,
+\begin{lstlisting}[style={java}, label=lst:target_advice_pointcut_example,
     caption={Пример точки внедрения}]
 ...
 val foo = Foo()
@@ -629,7 +629,7 @@ foo.bar()
 \textit{foo} будет передана внутрь метода-обёртки.
 Пример преобразования кода после применения совета приведен в листинге
 \ref{lst:target_advice_weaving_example}:
-\begin{lstlisting}[label=lst:target_advice_weaving_example,
+\begin{lstlisting}[style={java}, label=lst:target_advice_weaving_example,
     caption={Пример применения совета, имеющего сигнатуру \textit{target}}]
 ...
 val foo = Foo()

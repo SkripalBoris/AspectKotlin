@@ -266,7 +266,7 @@ Java --- он также может содержать переменные и �
 ранее описанные срезы, имеющие собственный идентификатор.
 В листинге~\ref{lst:aspectj_example} представлен пример описания аспекта в 
 AspectJ:
-  \begin{lstlisting}[language=Java, label={lst:aspectj_example}, 
+  \begin{lstlisting}[style={java}, label={lst:aspectj_example}, 
   caption={Пример описания аспектов в AspectJ}]
 aspect A  {
   pointcut fooPC(): execution(void Test.foo());
@@ -297,7 +297,7 @@ System.out.println (String).
 В листинге~\ref{lst:aspectj_annotaion_example} приведен пример аспекта,
 описанного в листинге~\ref{lst:aspectj_example}, но описанного при помощи
 специальных аннотаций.
-  \begin{lstlisting}[language=Java, label={lst:aspectj_annotaion_example}, 
+  \begin{lstlisting}[style={java}, label={lst:aspectj_annotaion_example}, 
   caption={Пример описания аспектов в AspectJ при помощи аннотаций}]
 @Aspect
 public class A
@@ -410,7 +410,7 @@ SpringAOP поддерживает только динамическое вне�
   В листинге~\ref{lst:spring_aop} приведен простой пример описания аспекта, 
   который будет выводить строку \textit{Hello, world!} перед вызовом 
   публичных методов без параметров в пакете foo.
-  \begin{lstlisting}[language=Java, label={lst:spring_aop}, caption={Пример 
+  \begin{lstlisting}[style={java}, label={lst:spring_aop}, caption={Пример 
   описания аспекта при помощи Spting AOP.}]
 package foo;
   
@@ -475,7 +475,7 @@ PostSharp было представлен в 2004 году~\cite{postsharp_doc},
 
   В листинге~\ref{lst:postsharp} приведен простой пример описания аспекта, 
   перехватывающего вызовы методов и добавляющего соответствующие записи в лог.
-  \begin{lstlisting}[language=C, label={lst:postsharp}, caption={Пример 
+  \begin{lstlisting}[style={java},  label={lst:postsharp}, caption={Пример 
   описания аспекта при помощи PostSharp.}]
 [Serializable]
 public class LoggingAspect : OnMethodBoundaryAspect

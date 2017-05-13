@@ -31,12 +31,12 @@ fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): Param
                 }
                 typeType.classOrInterfaceType()?.let { classOrInterface ->
                     buildPackage(classOrInterface)
-                    return ParameterModel(typeName = classOrInterface.Identifier().fold("") { total, next -> total + next },
+                    return ParameterModel(name = classOrInterface.Identifier().fold("") { total, next -> total + next },
                             nullableModifier = nullability,
                             negative = negative)
                 }
                 typeType.primitiveType()?.let { primitiveType ->
-                    return ParameterModel(typeName = primitiveType.text,
+                    return ParameterModel(name = primitiveType.text,
                             nullableModifier = nullability,
                             negative = negative)
                 }
@@ -121,7 +121,7 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
             paramList?.let {
                 paramList.formalParameter().forEach {
                     val identifier = it.variableDeclaratorId().Identifier().text
-                    if (identifier == type.typeName) {
+                    if (identifier == type.name) {
                         paramIdentifier = identifier
                         type = buildType(it.typeType())
                         return@forEach
