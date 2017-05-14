@@ -5,19 +5,17 @@ import models.aspect.items.*
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import psi.TargetProjectContainer
 
 /**
  * Created by sba on 07.01.17.
  */
 
-object CallPsiTagSetter : FunctionTagSetter() {
+object CallPsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
             if (checkFunction(it, aspectItem))

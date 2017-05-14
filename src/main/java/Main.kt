@@ -5,9 +5,9 @@ import org.jetbrains.kootstrap.util.opt
 import org.jetbrains.kootstrap.util.targetRoots
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import parsers.AspectParser
+import parsers.visitors.parseFile
 import psi.TargetProjectContainer
-import psi.visitors.AdviceVisitor
+import psi.visitors.AdviceWeaver
 import psi.visitors.PointcutTagSetter
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
     TargetProjectContainer.project = targetFiles[0].project
     TargetProjectContainer.context = FooBarCompiler.analyzeBunchOfSources(env, targetFiles, cfg)
 
-    val aspect = AspectParser.parseFile("/home/boris/Projects/AspectKotlin/res/aspect_example.ak")
+    val aspect = parseFile("/home/boris/Projects/AspectKotlin/res/aspect_example.ak")
 
     // Размечаем psi тэгами точек включения
     aspect.pointcuts.forEach {
@@ -52,7 +52,7 @@ fun main(args: Array<String>) {
     }
 
     aspect.advices.forEach {
-        AdviceVisitor.visitFiles(targetFiles, it)
+        AdviceWeaver.visitFiles(targetFiles, it)
     }
 
 //    var buf = env.javaClass.getDeclaredField("sourceFiles")

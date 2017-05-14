@@ -442,12 +442,6 @@ public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVariableDeclaratorId(AspectGrammarParser.VariableDeclaratorIdContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AspectGrammarParser#variableModifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitVariableModifier(AspectGrammarParser.VariableModifierContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#typeOrIdentifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

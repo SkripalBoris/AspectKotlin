@@ -84,6 +84,13 @@
 	\item \textit{pointcutExpression} --- правило, содержащее описание среза.
 	\item \textit{methodBody} --- правило, содержащее описание тела совета.
 \end{itemize}
+Код правила, описывающего совет приведен в листинге \ref{lst:advice_rule}:
+\begin{lstlisting}[style={java}, label={lst:advice_rule},
+  caption={Правило описания совета advice}]
+advice
+	:	adviceSpec ('throws' typeList)? ':' pointcutExpression methodBody
+	;
+\end{lstlisting}
 
 Согласно правилу \textit{adviceSpec}, спецификация совета описывается по
 следующему правилу: на первом месте находится ключевое слово, описывающее
@@ -133,11 +140,124 @@ pointcutExpression
 Также различные узлы среза могут иметь знак инверсии, быть обернуты в круглые
 скобки или же быть связанными друг с другом при помощи операций конъюнкции или
 дизъюнкции.
-%%TODO
+
+Правило \textit{referencePointcut} описывается как идентификатор среза, на который производится ссылка и список параметров, которые могут использоваться в данном срезе.
+Текстовое представление данного правила приведено в листинге~\ref{lst:referencePointcut_rule}:
+\begin{lstlisting}[style={java}, label={lst:referencePointcut_rule},
+  caption={Правило описания ссылки на другой срез referencePointcut}]
+referencePointcut
+  : id formalParametersPattern
+  ;
+\end{lstlisting}
+
+Правило описания примитива среза \textit{pointcutPrimitive} приведено в листинге
+\ref{lst:pointcutPrimitive_rule}:
+\begin{lstlisting}[style={java}, label={lst:pointcutPrimitive_rule},
+  caption={Правило описания ссылки на другой срез referencePointcut}]
+pointcutPrimitive
+  :  'call' '(' methodOrConstructorPattern ')'  #CallPointcut
+  |  'execution' '(' methodOrConstructorPattern ')'  #ExecutionPointcut
+  |  'target' '(' typeOrIdentifier ')'  #TargetPointcut
+...
+	;
+\end{lstlisting}
+Как видно из листинга, примитивы \textit{call} и \textit{execution} содержат в себе правило \textit{methodOrConstructorPattern}, описывающее метод.
+Правило \textit{target} содержит в себе описание типа, на элементе которого должен быть вызван целевой метод.
+
+Описание правила \textit{methodOrConstructorPattern} приведено в листинге \ref{lst:methodOrConstructorPattern_rule}:
+\begin{lstlisting}[style={java}, label={lst:methodOrConstructorPattern_rule},
+  caption={Правило methodOrConstructorPattern}]
+methodOrConstructorPattern
+	:	methodPattern
+	|	constructorPattern
+	;
+\end{lstlisting}
+Как видно из листинга, данное правило содержит в себе правило описания двух правил: \textit{methodPattern}, описывающее метод и \textit{constructorPattern},
+описывающее конструктор.
+
+Код правила \textit{methodPattern} приведен в листинге \ref{lst:methodPattern_rule}:
+\begin{lstlisting}[style={java}, label={lst:methodPattern_rule},
+  caption={Правило methodPattern}]
+methodPattern
+	:	annotationPattern? methodModifiersPattern? extensionModifier? inlineModifier? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
+	;
+\end{lstlisting}
+Данное правило состоит из нескольких правил:
+\begin{itemize}
+	\item \textit{annotationPattern}~--- правило, описывающее аннотации метода;
+	\item \textit{methodModifiersPattern}~--- правило, описывающее модификаторы метода;
+	\item \textit{extensionModifier}~--- правило позволяющее задать является ли метод extension методом или нет;
+	\item \textit{inlineModifier}~--- правило позволяющее задать является ли данный метод inline методом или нет;
+	\item Ключевое слово \quotes{fun};
+	\item \textit{typePattern dotOrDotDot}~--- набор правил, позволяющий задать пакет и класс, к которому относится метод;
+	\item \textit{simpleNamePattern}~--- правило, позволяющее задать идентификатор метода;
+	\item \textit{formalParametersPattern}~--- правило, позволяющее задать список параметров метода;
+	\item \textit{retTypePattern}~--- правило, позволяющее задать тип возвращаемого методом значения.
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Файл KotlinGrammar.g4}
 \label{ssub:kotlin_grammar_g4}
-%%TODO
+В данном файле описаны правила языка Kotlin, необходимые для задания аспектов.
+Первом таким правилом является правило \textit{typeType}, представленное в листинге \ref{lst:typeType_rule}:
+\begin{lstlisting}[style={java}, label={lst:typeType_rule},
+  caption={Правило typeType}]
+typeType
+    :   classOrInterfaceType nullabilityModifier?
+    |   primitiveType nullabilityModifier?
+    ;
+\end{lstlisting}
+Согласно данному правилу, тип может быть как пользовательским (правило \textit{classOrInterfaceType}) или же стандартным (правило \textit{primitiveType}).
+Любой из этих типов может иметь модификатор, указывающий на то, что аргумент данного типа может принимать значение \textit{null}.
+
+Правило \textit{primitiveType}, описывающее примитивные типы языка Kotlin, приведены в листинге \ref{lst:primitiveType_rule}:
+\begin{lstlisting}[style={java}, label={lst:primitiveType_rule},
+  caption={Правило primitiveType}]
+primitiveType
+    :   'Double'
+    |   'Float'
+    |   'Long'
+    |   'Int'
+    |   'Short'
+    |   'Byte'
+    |   'Any'
+    ;
+\end{lstlisting}
+Как видно из листинга, к стандартным типам языка Kotlin был также добавлен тип \quotes{Any}, который используется в языке Kotlin для того, чтобы указать, что в качестве аргумента можно передать любой тип.
+
+Правило \textit{classOrInterfaceType} задает способ описания пользовательских типов.
+Код правила приведен в листинге \ref{lst:classOrInterfaceType_rule}:
+\begin{lstlisting}[style={java}, label={lst:classOrInterfaceType_rule},
+  caption={Правило classOrInterfaceType}]
+classOrInterfaceType
+    :   Identifier typeArguments? ('.' Identifier typeArguments? )*
+    ;
+\end{lstlisting}
+Как видно из листинга, правило описывающее имя класса состоит из идентификатора класса, а также необязательного списка аргументов типа (правило \textit{typeArguments}), которые могут повторяться от 1 до бесконечности раз, разделяясь символом \quotes{.}.
+
+Модификаторы метода перечисленны в правиле \textit{methodModifier} (листинг \ref{lst:methodModifier_rule}):
+\begin{lstlisting}[style={java}, label={lst:methodModifier_rule},
+  caption={Правило methodModifier}]
+methodModifier
+	:	(	'public'
+		|	'private'
+		|	'protected'
+		|	'internal'
+		|	'inline'
+		|	'synchronized'
+		|	'open'
+		|	'override'
+		)
+	;
+\end{lstlisting}
+
+Правило \textit{formalParameter} описывает способ задания параметров при описании совета (листинг \ref{lst:formalParameter_rule}):
+\begin{lstlisting}[style={java}, label={lst:formalParameter_rule},
+  caption={Правило formalParameter}]
+formalParameter
+    :   variableDeclaratorId ':' typeType
+    ;
+\end{lstlisting}
+Как видно из листинга, параметры задаются следующим образом: первым идет описание типа, затем символ \quotes{:}, а после него следует идентификатор параметра.
 
 Из файлов с описанием грамматики можно автоматически сгенерировать парсер на языке Java, который будет состоять из следующий классов:
 \begin{itemize}
@@ -154,7 +274,6 @@ pointcutExpression
 	\item \textit{AspectGrammarBaseListener} --- базовый класс, реализующий
 		  интерфейс \textit{AspectGrammarListener}.
 \end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Разработка структуры прототипа}
 \label{sub:aspect_weaving_part_development}
@@ -380,7 +499,8 @@ enum class NullabilityType {
 \subsubsection{Класс MaybeNegativeModel}
 \label{ssub:MaybeNegativeModel}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Перечисление \textit{MaybeNegativeModel} предназначено для хранения элементов, которые могут быть заданы со знаком инверсии.
+Класс \textit{MaybeNegativeModel} предназначен для хранения элементов, которые
+могут быть заданы со знаком инверсии.
 Класс имеет следующие поля:
 \begin{itemize}
 	\item \textit{name}~--- имя;
@@ -400,8 +520,8 @@ open class MaybeNegativeModel(var name: String = "",
 \subsubsection{Класс ParameterModel}
 \label{ssub:ParameterModel}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Перечисление \textit{ParameterModel} предназначено для хранения типа,
-наследуется от класса \textit{MaybeNegativeModel}.
+Класс \textit{ParameterModel} предназначено для хранения типа, наследуется от
+класса \textit{MaybeNegativeModel}.
 Класс имеет следующие поля:
 \begin{itemize}
 	\item \textit{name}~--- имя типа;
@@ -424,7 +544,297 @@ class ParameterModel(name: String = "",
 }
 \end{lstlisting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс Pointcut}
+\label{ssub:Pointcut}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{Pointcut} является наследником класса \textit{AspectItem} и
+предназначен для хранения модели среза.
+Класс имеет два поля: \textit{id}, хранящее идентификатор среза и
+\textit{pointcutExpression}, хранящее в себе описание среза.
+
+\begin{lstlisting}[style={java}, label={lst:Pointcut},
+  caption={Класс Pointcut}]
+class Pointcut(val id: String,
+	val pointcutExpression: BooleanExpression) : AspectItem() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс Advice}
+\label{ssub:Advice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Абстрактный класс \textit{Advice} является наследником класса
+\textit{AspectItem} и предназначен для хранения модели совета.
+Класс имеет следующие поля:
+\begin{itemize}
+	\item \textit{pointcutExpression}~--- описание среза совета;
+	\item \textit{adviceCode}~--- строка, хранящая в себе код совета;
+	\item \textit{parameterList}~--- список параметров совета;
+	\item \textit{pointcutList}~--- список срезов, объявленных в рамках аспекта.
+\end{itemize}
+
+Также данный класс имеет абстрактный метод \textit{wrapPointcut},
+предназначенный для добавления кода совета к точке внедрения.
+
+\begin{lstlisting}[style={java}, label={lst:Advice},
+  caption={Класс Advice}]
+abstract class Advice(val pointcutExpression: BooleanExpression,
+                  val adviceCode: String,
+                  val parameterList: List<ArgumentModel>,
+                  val pointcutList : List<Pointcut>) : AspectItem() {
+	abstract fun wrapPointcut(pointcutStr: String,
+		targetIdentifier: String): String
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс AfterAdvice}
+\label{ssub:AfterAdvice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{AfterAdvice} наследуется от абстрактного класса \textit{Advice} и
+предназначен для модели совета, осуществляющего внедрение кода совета после
+точки объединения.
+Класс содержит поля, аналогичные полям класса \textit{Advice}.
+
+\begin{lstlisting}[style={java}, label={lst:AfterAdvice},
+  caption={Класс AfterAdvice}]
+class AfterAdvice(pointcutExpression: BooleanExpression,
+                  adviceCode: String,
+                  parameterList: List<ArgumentModel>,
+                  pointcutList: List<Pointcut>):
+                  Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс AroundAdvice}
+\label{ssub:AroundAdvice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{AroundAdvice} наследуется от абстрактного класса \textit{Advice} и
+предназначен для модели совета, осуществляющего внедрение кода совета вместо
+точки объединения.
+Класс содержит поля, аналогичные полям класса \textit{Advice}.
+
+\begin{lstlisting}[style={java}, label={lst:AroundAdvice},
+  caption={Класс AroundAdvice}]
+class AroundAdvice(pointcutExpression: BooleanExpression,
+                   adviceCode: String,
+                   parameterList: List<ArgumentModel>,
+                   pointcutList: List<Pointcut>) : Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс BeforeAdvice}
+\label{ssub:BeforeAdvice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{BeforeAdvice} наследуется от абстрактного класса \textit{Advice} и
+предназначен для модели совета, осуществляющего внедрение кода совета до
+точки объединения.
+Класс содержит поля, аналогичные полям класса \textit{Advice}.
+
+\begin{lstlisting}[style={java}, label={lst:BeforeAdvice},
+  caption={Класс BeforeAdvice}]
+class BeforeAdvice(pointcutExpression: BooleanExpression,
+                   adviceCode: String,
+                   parameterList: List<ArgumentModel>,
+                   pointcutList: List<Pointcut>): Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс Aspect}
+\label{ssub:Aspect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{Aspect} предназначен для хранения модели аспекта.
+Данный класс имеет следующие поля:
+\begin{itemize}
+	\item \textit{id}~--- идентификатор аспекта;
+	\item \textit{pointcuts}~--- список срезов, объявленных внутри аспекта;
+	\item \textit{advices}~--- список советов, объявленных внутри аспекта.
+\end{itemize}
+
+\begin{lstlisting}[style={java}, label={lst:Aspect},
+  caption={Класс Aspect}]
+class Aspect(val id: String,
+	val pointcuts: List<Pointcut>,
+	val advices: List<Advice>)
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс PointcutVisitor}
+\label{ssub:PointcutVisitor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{PointcutVisitor} реализует паттерн \quotes{Посетитель} и
+предназначен для построения моделей именованных срезов, хранящихся в списке
+\textit{pointcuts}.
+Данный класс является наследником класса \textit{AspectGrammarBaseVisitor}.
+
+\begin{lstlisting}[style={java}, label={lst:PointcutVisitor},
+  caption={Класс PointcutVisitor}]
+class PointcutVisitor : AspectGrammarBaseVisitor<Pointcut>() {
+    val pointcuts = mutableListOf<Pointcut>()
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс AdviceVisitor}
+\label{ssub:AdviceVisitor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{AdviceVisitor} реализует паттерн \quotes{Посетитель} и
+предназначен для построения моделей советов, хранящихся в списке
+\textit{advices}.
+Также класс принимает список существующих в рамках данного аспекта срезов в качестве параметра \textit{pointcutList}.
+Данный класс является наследником класса \textit{AspectGrammarBaseVisitor}.
+
+\begin{lstlisting}[style={java}, label={lst:AdviceVisitor},
+  caption={Класс AdviceVisitor}]
+class AdviceVisitor(val pointcutList: MutableList<Pointcut>) : AspectGrammarBaseVisitor<Advice>() {
+    var advices = mutableListOf<Advice>()
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс AdviceVisitor}
+\label{ssub:AdviceVisitor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{AspectVisitor} реализует паттерн \quotes{Посетитель} и
+предназначен для построения модели аспекта.
+Данный класс является наследником класса \textit{AspectGrammarBaseVisitor}.
+
+\begin{lstlisting}[style={java}, label={lst:AspectVisitor},
+  caption={Класс AspectVisitor}]
+class AspectVisitor : AspectGrammarBaseVisitor<Aspect>() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Файл utils}
+\label{ssub:utils}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+В файле \textit{utils.kt} содержится набор служебных методов, используемых при
+составлении моделей срезов и советов.
+Файл содержит следующие методы:
+\begin{itemize}
+	\item \textit{buildSimpleType(typeContext: AspectGrammarParser.\\TypePatternContext?): ParameterModel}~--- метод, предназначенный для построения модели простого типа;
+	\item \textit{buildPackage(context: ParserRuleContext): String}~--- метод, предназначенный для построения имени пакета метода;
+	\item \textit{buildType(typeContext: ParserRuleContext?): ParameterModel}~--- метод, предназначенный для составления полного типа;
+	\item \textit{buildPointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext, paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression}~--- метод для построения дерева, соответствующего описанию среза;
+	\item \textit{pointcutExpression(pointcutExpression: AspectGrammarParser.\\PointcutExpressionContext, paramList: AspectGrammarParser.\\FormalParameterListContext?): BooleanExpression}~--- метод для составления выражения, соответствующего узлу дерева;
+	\item \textit{buildModifiersList(modifier: AspectGrammarParser.\\MethodModifiersPatternContext?): MutableList<\\MaybeNegativeModel>}~--- метод, предназначенный для построения списка модификаторов метода;
+	\item \textit{fillMethod(methodPattern: AspectGrammarParser.\\MethodPatternContext): MethodPattern}~--- выражение для построения модели описания метода.
+	\item \textit{fun parseFile(fileName: String): Aspect}~--- метод, предназначенный для инициализации построения модели аспекта.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Класс BaseTagSetter}
+\label{ssub:BaseTagSetter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Класс \textit{BaseTagSetter} является абстрактным классом для классов, осуществляющих разметку PSI тегами, соответствующим срезам.
+Данный класс определяет два абстрактных метода:
+\begin{itemize}
+	\item \textit{setTag(psiElement: PsiElement, aspectItem: AspectItem)}~--- метод, определяющий правила разметки узла PSI;
+	\item \textit{visitFile(file: KtFile, aspectItem: AspectItem)}~--- метод, определяющий правила анализа файла, например выбор из множества узлов PSI потенциальных кандидатов, соответствующих срезу.
+\end{itemize}
+\begin{lstlisting}[style={java}, label={lst:BaseTagSetter},
+  caption={Класс BaseTagSetter}]
+abstract class BaseTagSetter {
+    abstract fun setTag(psiElement: PsiElement, aspectItem: AspectItem)
+
+    abstract fun visitFile(file: KtFile, aspectItem: AspectItem)
+
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект CallPsiTagSetter}
+\label{ssub:CallPsiTagSetter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{CallPsiTagSetter} является наследником абстрактного класса
+\textit{BaseTagSetter} и предназначен для разметки узлов, соответствующих сигнатуре \textit{call}.
+
+\begin{lstlisting}[style={java}, label={lst:CallPsiTagSetter},
+  caption={Объект CallPsiTagSetter}]
+object CallPsiTagSetter : BaseTagSetter() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект ExecutePsiTagSetter}
+\label{ssub:ExecutePsiTagSetter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{ExecutePsiTagSetter} является наследником абстрактного класса
+\textit{BaseTagSetter} и предназначен для разметки узлов, соответствующих сигнатуре \textit{execution}.
+
+\begin{lstlisting}[style={java}, label={lst:ExecutePsiTagSetter},
+  caption={Объект ExecutePsiTagSetter}]
+object ExecutePsiTagSetter : BaseTagSetter() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект TargetPsiTagSetter}
+\label{ssub:TargetPsiTagSetter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{TargetPsiTagSetter} является наследником абстрактного класса
+\textit{BaseTagSetter} и предназначен для разметки узлов, соответствующих сигнатуре \textit{target}.
+
+\begin{lstlisting}[style={java}, label={lst:TargetPsiTagSetter},
+  caption={Объект TargetPsiTagSetter}]
+object TargetPsiTagSetter : BaseTagSetter() {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект PointcutTagSetter}
+\label{ssub:PointcutTagSetter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{PointcutTagSetter} предназначен для разметки PSI тегами, соответствующим тегам срезов совета.
+
+\begin{lstlisting}[style={java}, label={lst:PointcutTagSetter},
+  caption={Объект PointcutTagSetter}]
+object PointcutTagSetter {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект AdviceWeaver}
+\label{ssub:AdviceWeaver}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{AdviceWeaver} предназначен для реализации применения кода совета
+к точке внедрения.
+\begin{lstlisting}[style={java}, label={lst:AdviceWeaver},
+  caption={Объект AdviceWeaver}]
+object AdviceWeaver {
+...
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Объект TargetProjectContainer}
+\label{ssub:TargetProjectContainer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Объект \textit{TargetProjectContainer} предназначен для хранения информации о проекте, используемой при анализе и модификации PSI.
+К такой информации относится:
+\begin{itemize}
+	\item Экземпляр проекта, хранящийся в поле \textit{project};
+	\item Экземпляр контекста, хранящийся в поле \textit{context};
+	\item Ключ, под которым сохраняются теги в узлах PSI, хранящийся в поле \textit{tagKey}.
+\end{itemize}
+\begin{lstlisting}[style={java}, label={lst:TargetProjectContainer},
+  caption={Объект TargetProjectContainer}]
+object TargetProjectContainer {
+    var project: Project? = null
+    var context: BindingContext? = null
+    val tagKey: Key<MutableList<Int>> = Key("aspectTagKey")
+}
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Выводы}
 \label{sec:development_conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+В результате был разработан прототип приложения в соответствии со сформулированными требованиями.
+
+Была разработана грамматика аспектов для языка Kotlin на основе грамматики,
+используемой в фреймворке AspectJ.
+
+Была разработана чать, осуществляющая построение модели аспектов и последующее
+применение аспектов к PSI целевой программы.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -734,16 +734,6 @@ public interface AspectGrammarListener extends ParseTreeListener {
 	 */
 	void exitVariableDeclaratorId(AspectGrammarParser.VariableDeclaratorIdContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AspectGrammarParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableModifier(AspectGrammarParser.VariableModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link AspectGrammarParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableModifier(AspectGrammarParser.VariableModifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#typeOrIdentifier}.
 	 * @param ctx the parse tree
 	 */

@@ -1,14 +1,20 @@
 package psi.visitors
 
+import com.intellij.psi.PsiElement
+import models.aspect.items.AspectItem
 import models.aspect.items.MaybeNegativeModel
 import models.aspect.items.ParameterModel
 import models.aspect.items.NullabilityType
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Created by sba on 24.02.17.
  */
-abstract class FunctionTagSetter : PsiTagSetter {
+abstract class BaseTagSetter {
+    abstract fun setTag(psiElement: PsiElement, aspectItem: AspectItem)
+
+    abstract fun visitFile(file: KtFile, aspectItem: AspectItem)
+
     protected fun checkType(expectedTypePatternString: ParameterModel, realType: String): Boolean {
         return expectedTypePatternString.name.isEmpty() ||
                 realType.replace(" ", "").matches(expectedTypePatternString.name.replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())

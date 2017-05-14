@@ -6,10 +6,6 @@ typeList
     ;
 
 //Описание типа
-//typeType
-//    :   classOrInterfaceType ('[' ']')*
-//    |   primitiveType ('[' ']')*
-//    ;
 typeType
     :   classOrInterfaceType nullabilityModifier?
     |   primitiveType nullabilityModifier?
@@ -23,6 +19,7 @@ primitiveType
     |   'Int'
     |   'Short'
     |   'Byte'
+    |   'Any'
     ;
 
 //Тип класс или интерфейс
@@ -53,17 +50,12 @@ formalParameterList
 
 //Параметр
 formalParameter
-    :   variableModifier* variableDeclaratorId ':' typeType
+    :   variableDeclaratorId ':' typeType
     ;
 
 //Описание имени параметра
 variableDeclaratorId
-    :   Identifier ('[' ']')*
-    ;
-
-//Модификатор переменной
-variableModifier
-    :   'final'
+    :   Identifier
     ;
 
 typeOrIdentifier
@@ -77,8 +69,10 @@ methodModifier
 		|	'private'
 		|	'protected'
 		|	'internal'
+		|	'inline'
 		|	'synchronized'
-		|	'final'
+		|	'open'
+		|	'override'
 		)
 	;
 
@@ -104,7 +98,7 @@ fieldModifier
 		|	'private'
 		|	'protected'
 		|	'internal'
-		|	'final'
+		|	'open'
 		|   'override'
 		)
 	;
@@ -190,7 +184,7 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   variableModifier* 'val' variableDeclarators
+    :   ('val' | 'var') variableDeclarators
     ;
 
 variableDeclarators

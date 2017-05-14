@@ -13,7 +13,7 @@ import psi.TargetProjectContainer
 /**
  * Created by boris on 25.04.17.
  */
-object TargetPsiTagSetter : FunctionTagSetter() {
+object TargetPsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
             if (this.checkFunction(it, aspectItem))

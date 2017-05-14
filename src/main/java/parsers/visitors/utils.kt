@@ -1,14 +1,28 @@
 package parsers.visitors
 
+import models.aspect.Aspect
 import models.aspect.items.*
 import models.boolExpr.*
+import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNodeImpl
+import parsers.antlrParsers.AspectGrammarLexer
 import parsers.antlrParsers.AspectGrammarParser
+import java.io.FileInputStream
 
 /**
  * Created by boris on 08.05.17.
  */
+fun parseFile(fileName: String): Aspect {
+    val input = ANTLRInputStream(FileInputStream(fileName))
+    val lexer = AspectGrammarLexer(input)
+    val tokens = CommonTokenStream(lexer)
+    val parser = AspectGrammarParser(tokens)
+    val tree = parser.aspectDeclaration()
+
+    return AspectVisitor().visit(tree)
+}
 
 fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): ParameterModel {
     typeContext?.let { type ->
@@ -152,13 +166,13 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
     throw IllegalArgumentException()
 }
 
-fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<ParameterModel> {
+fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeModel> {
     if (modifier == null)
         return mutableListOf()
     if (modifier.methodModifiersPattern().isEmpty())
-        return mutableListOf(ParameterModel(modifier.methodModifier().text, false))
+        return mutableListOf(MaybeNegativeModel(modifier.methodModifier().text, false))
     val retList = buildModifiersList(modifier.methodModifiersPattern().first())
-    retList.add(ParameterModel(modifier.methodModifier().text, false))
+    retList.add(MaybeNegativeModel(modifier.methodModifier().text, false))
     return retList
 }
 

@@ -115,7 +115,7 @@ optionalParensTypePattern
 
 //Паттерн простого типа
 simpleTypePattern
-	:	dottedNamePattern '+'? ('[' ']')*
+	:	dottedNamePattern
   	;
 
 // Паттерн типа с двумя точками
@@ -180,7 +180,7 @@ simpleNamePattern
 	;
 
 constructorPattern
-	:	annotationPattern? constructorModifiersPattern? (typePattern dotOrDotDot)? 'new' formalParametersPattern
+	:	annotationPattern? constructorModifiersPattern? (typePattern dotOrDotDot)? formalParametersPattern
 	;
 
 constructorModifiersPattern

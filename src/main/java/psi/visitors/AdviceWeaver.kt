@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.psi.*
 /**
  * Created by sba on 31.01.17.
  */
-object AdviceVisitor {
+object AdviceWeaver {
     fun visitFiles(targetFiles: List<KtFile>, advice: Advice) {
         targetFiles.forEach { visitFile(it, advice) }
     }

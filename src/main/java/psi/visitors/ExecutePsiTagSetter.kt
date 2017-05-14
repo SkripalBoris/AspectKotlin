@@ -5,16 +5,14 @@ import models.aspect.items.*
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import psi.TargetProjectContainer
 
 /**
  * Created by sba on 08.01.17.
  */
 
-object ExecutePsiTagSetter : FunctionTagSetter() {
+object ExecutePsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtNamedFunction>().forEach {
             if (checkFunction(it, aspectItem)) {
