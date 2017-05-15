@@ -15,7 +15,7 @@ import java.security.SecureRandom
  * Created by sba on 30.11.16.
  */
 
-open class Advice(val pointcutExpression: BooleanExpression,
+abstract class Advice(val pointcutExpression: BooleanExpression,
                   val adviceCode: String,
                   val parameterList: List<ArgumentModel>,
                   val pointcutList : List<Pointcut>) : AspectItem() {
@@ -46,11 +46,9 @@ open class Advice(val pointcutExpression: BooleanExpression,
         return Pair("$functionName($argsString)", "fun $functionName($paramsString){\n$adviceCode}\n")
     }
 
-    open fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
-        throw NotImplementedError()
-    }
+    abstract fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String
 
-    private fun haveTarget(): String {
+    protected fun haveTarget(): String {
         // Считаем, что в каждом срезе может быть только один target
         fun getTargetIdentifier(boolExpNode: BooleanExpression) : String {
             if (boolExpNode is ReferencePointcutNodeItem) {

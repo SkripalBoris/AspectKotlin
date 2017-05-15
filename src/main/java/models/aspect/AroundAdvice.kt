@@ -16,6 +16,6 @@ class AroundAdvice(pointcutExpression: BooleanExpression,
 
     override fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
         val generatedFun = this.getFunction(targetIdentifier)
-        return "run{${generatedFun.second}\n${generatedFun.first}\nval ____a = $pointcutStr\n${generatedFun.first}\n____a}"
+        return "run{${generatedFun.second}\n${generatedFun.first}\n}"
     }
 }
