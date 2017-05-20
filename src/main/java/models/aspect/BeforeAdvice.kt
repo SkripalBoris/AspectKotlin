@@ -15,8 +15,11 @@ class BeforeAdvice(pointcutExpression: BooleanExpression,
         return "before() ${super.toString()}"
     }
 
-    override fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
-        val generatedFun = this.getFunction(targetIdentifier)
+    override fun wrapPointcut(pointcutStr: String): String {
+        val generatedFun = this.getFunction()
+        this.targetIdentifier?.let {
+            return "let{${this.targetIdentifier} -> ${generatedFun.second}\n${generatedFun.first}\n${this.targetIdentifier}.$pointcutStr}"
+        }
         return "run{${generatedFun.second}\n${generatedFun.first}\n$pointcutStr}"
     }
 }

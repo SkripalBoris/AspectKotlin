@@ -20,6 +20,8 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
                   val parameterList: List<ArgumentModel>,
                   val pointcutList : List<Pointcut>) : AspectItem() {
 
+    var targetIdentifier: String? = null
+
     override fun toString(): String {
         val paramStr = parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }
         return "($paramStr): $pointcutExpression {\n$adviceCode\n}"
@@ -29,24 +31,25 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
         return this.pointcutExpression.calcExpression(psiElement)
     }
 
-    fun getFunction(targetIdentifier: String): Pair<String, String> {
+    fun getFunction(): Pair<String, String> {
         val paramList = mutableListOf<ArgumentModel>()
         val targetId = haveTarget()
+        val targetIterator = "adviceIt${SecureRandom().nextInt(Int.MAX_VALUE)}"
         if (!targetId.isEmpty())
             parameterList.find{param -> param.identifier == targetId}?.let {
                 paramList.add(it)
+                this.targetIdentifier = targetIterator
             }
         val functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
         val argsList = mutableListOf<String>()
-        if (!targetId.isEmpty())
-            argsList.add(targetIdentifier)
+        this.targetIdentifier?.let{argsList.add(targetIterator)}
 
         val paramsString = paramList.fold(""){total, next -> if (total.isEmpty())next.toString() else "$total, $next"}
         val argsString = argsList.fold(""){total, next -> if (total.isEmpty())next else "$total, $next"}
         return Pair("$functionName($argsString)", "fun $functionName($paramsString){\n$adviceCode}\n")
     }
 
-    abstract fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String
+    abstract fun wrapPointcut(pointcutStr: String): String
 
     protected fun haveTarget(): String {
         // Считаем, что в каждом срезе может быть только один target

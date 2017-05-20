@@ -14,8 +14,11 @@ class AfterAdvice(pointcutExpression: BooleanExpression,
         return "after() ${super.toString()}"
     }
 
-    override fun wrapPointcut(pointcutStr: String, targetIdentifier: String): String {
-        val generatedFun = this.getFunction(targetIdentifier)
+    override fun wrapPointcut(pointcutStr: String): String {
+        val generatedFun = this.getFunction()
+        this.targetIdentifier?.let {
+            return "let{${this.targetIdentifier} -> ${generatedFun.second}\nval ____a = ${this.targetIdentifier}.$pointcutStr\n${generatedFun.first}\n____a}"
+        }
         return "run{${generatedFun.second}\nval ____a = $pointcutStr\n${generatedFun.first}\n____a}"
     }
 }

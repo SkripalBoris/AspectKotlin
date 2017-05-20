@@ -25,21 +25,8 @@ object AdviceWeaver {
 
     private fun setAdviceCode(psiElement: PsiElement, advice: Advice) {
         val par = psiElement.parent
-        val targetIdentifier = getTargetIdentifier(psiElement)
-        psiElement.replace(KtPsiFactory(psiElement).createExpression(advice.wrapPointcut(psiElement.text, targetIdentifier)))
+        psiElement.replace(KtPsiFactory(psiElement).createExpression(advice.wrapPointcut(psiElement.text)))
         refreshUserMap(psiElement, par)
-    }
-
-    private fun getTargetIdentifier(psiElement: PsiElement): String {
-        if (psiElement is KtCallExpression) {
-            val parentNode = psiElement.parent
-            if (parentNode is KtDotQualifiedExpression) {
-                parentNode.children.firstOrNull()?.let{
-                    return it.text
-                }
-            }
-        }
-        return ""
     }
 
     private fun refreshUserMap(oldElement: PsiElement, targetElement: PsiElement) {
