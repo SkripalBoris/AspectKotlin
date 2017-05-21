@@ -16,8 +16,8 @@ abstract class BaseTagSetter {
     abstract fun visitFile(file: KtFile, aspectItem: AspectItem)
 
     protected fun checkType(expectedTypePatternString: ParameterModel, realType: String): Boolean {
-        return expectedTypePatternString.name.isEmpty() ||
-                realType.replace(" ", "").matches(expectedTypePatternString.name.replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
+        return expectedTypePatternString.getFullName().isEmpty() ||
+                realType.replace(" ", "").matches(expectedTypePatternString.getFullName().replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
     }
 
     protected fun checkName(expectedNamePatternString: MaybeNegativeModel, realName: String): Boolean {

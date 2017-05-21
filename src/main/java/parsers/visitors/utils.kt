@@ -44,10 +44,14 @@ fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): Param
                     }
                 }
                 typeType.classOrInterfaceType()?.let { classOrInterface ->
-                    buildPackage(classOrInterface)
+                    var paramList: List<ParameterModel> = listOf()
+                    typeType.classOrInterfaceType().typeArguments().firstOrNull()?.let { parameterList ->
+                        paramList = parameterList.typeArgument().map{buildType(it.typeType())}
+                    }
                     return ParameterModel(name = classOrInterface.Identifier().fold("") { total, next -> total + next },
                             nullableModifier = nullability,
-                            negative = negative)
+                            negative = negative,
+                            parameterList = paramList)
                 }
                 typeType.primitiveType()?.let { primitiveType ->
                     return ParameterModel(name = primitiveType.text,
@@ -93,10 +97,6 @@ fun buildType(typeContext: ParserRuleContext?): ParameterModel {
     }
 
     if (typeContext is AspectGrammarParser.TypeTypeContext) {
-        val typeName = typeContext.classOrInterfaceType().Identifier().last().text
-        val packageName = typeContext.classOrInterfaceType().Identifier().let {
-            it.filterIndexed { i, terminalNode -> i < it.size - 1 }.fold("") { total, next -> if (total.isEmpty()) next.text else "$total.$next" }
-        }
         var nullabilityType = NullabilityType.ANYTHING
         typeContext.nullabilityModifier()?.let { nullMod ->
             nullabilityType = if (nullMod.nullModifier() != null)
@@ -104,7 +104,18 @@ fun buildType(typeContext: ParserRuleContext?): ParameterModel {
             else
                 NullabilityType.NULLABLE
         }
-        return ParameterModel(typeName, nullableModifier = nullabilityType, packageName = packageName)
+
+        typeContext.classOrInterfaceType()?.let { classOrInterface ->
+            val typeName = classOrInterface.Identifier().last().text
+            val packageName = classOrInterface.Identifier().let {
+                it.filterIndexed { i, terminalNode -> i < it.size - 1 }.fold("") { total, next -> if (total.isEmpty()) next.text else "$total.$next" }
+            }
+            return ParameterModel(typeName, nullableModifier = nullabilityType, packageName = packageName)
+        }
+
+        typeContext.primitiveType()?.let{ primitiveType ->
+            return ParameterModel(primitiveType.text, nullableModifier = nullabilityType)
+        }
     }
     return ParameterModel()
 }
