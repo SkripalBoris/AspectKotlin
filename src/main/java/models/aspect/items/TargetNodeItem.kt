@@ -8,9 +8,7 @@ import psi.TargetProjectContainer
  */
 class TargetNodeItem(val type: ArgumentModel) : AspectItem() {
 
-    override fun toString(): String {
-        return "(target($type))"
-    }
+    override fun toString() = "(target($type))"
 
     override fun calcExpression(psiElement: PsiElement): Boolean {
         val tags = psiElement.getUserData(TargetProjectContainer.tagKey)

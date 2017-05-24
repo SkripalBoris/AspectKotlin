@@ -9,6 +9,6 @@ import psi.TargetProjectContainer
 class ReferencePointcutNodeItem(val identifier: String, var referencePointcutKey: Int) : AspectItem() {
     override fun calcExpression(psiElement: PsiElement): Boolean {
         val tags = psiElement.getUserData(TargetProjectContainer.tagKey)
-        return tags != null && this.referencePointcutKey in tags
+        return tags != null && referencePointcutKey in tags
     }
 }

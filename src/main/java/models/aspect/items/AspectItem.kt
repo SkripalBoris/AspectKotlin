@@ -7,5 +7,5 @@ import models.boolExpr.BooleanExpression
  */
 
 abstract class AspectItem : BooleanExpression {
-    val key = this.hashCode()
+    val key = hashCode()
 }
