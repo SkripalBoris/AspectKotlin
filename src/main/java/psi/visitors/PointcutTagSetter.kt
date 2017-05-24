@@ -28,35 +28,22 @@ object PointcutTagSetter {
 
     private fun visitBooleanExpression(node: BooleanExpression, file: KtFile) {
         // Если операнд, то переходим к его подвыражению
-        if (node is Not) {
-            visitBooleanExpression(node.child, file)
-            return
+        when(node) {
+            is Not -> visitBooleanExpression(node.child, file)
+            is Or -> {
+                visitBooleanExpression(node.left, file)
+                visitBooleanExpression(node.right, file)
+            }
+            is And -> {
+                visitBooleanExpression(node.left, file)
+                visitBooleanExpression(node.right, file)
+            }
         }
-        if (node is Or) {
-            visitBooleanExpression(node.left, file)
-            visitBooleanExpression(node.right, file)
-            return
-        }
-        if (node is And) {
-            visitBooleanExpression(node.left, file)
-            visitBooleanExpression(node.right, file)
-            return
-        }
-
         // Если это элемент
-        if (node is CallNodeItem) {
-            CallPsiTagSetter.visitFile(file, node)
-            return
-        }
-
-        if (node is ExecutionNodeItem) {
-            ExecutePsiTagSetter.visitFile(file, node)
-            return
-        }
-
-        if (node is TargetNodeItem) {
-            TargetPsiTagSetter.visitFile(file, node)
-            return
+        when(node) {
+            is CallNodeItem -> CallPsiTagSetter.visitFile(file, node)
+            is ExecutionNodeItem -> ExecutePsiTagSetter.visitFile(file, node)
+            is TargetNodeItem -> TargetPsiTagSetter.visitFile(file, node)
         }
     }
 
