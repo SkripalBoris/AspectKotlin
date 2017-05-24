@@ -41,7 +41,7 @@ object TargetPsiTagSetter : BaseTagSetter() {
         else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
 
         if (aspectItem is TargetNodeItem) {
-            return this.checkType(aspectItem.type.argumentType, funPackage)
+            return checkType(aspectItem.type.argumentType, funPackage)
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }

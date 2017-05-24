@@ -69,13 +69,10 @@ fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): Param
     return ParameterModel()
 }
 
-fun buildPackage(context: ParserRuleContext): String {
-    if (context is AspectGrammarParser.OptionalParensTypePatternContext)
-        context.annotationPattern()?.let {
-            return it.text
-        }
-    return ""
-}
+fun buildPackage(context: ParserRuleContext) =
+    if (context is AspectGrammarParser.OptionalParensTypePatternContext) {
+        context.annotationPattern()?.text ?: ""
+    } else ""
 
 fun buildType(typeContext: ParserRuleContext?): ParameterModel {
     if (typeContext is AspectGrammarParser.OptionalParensTypePatternContext) {
@@ -121,9 +118,8 @@ fun buildType(typeContext: ParserRuleContext?): ParameterModel {
 }
 
 fun buildPointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext,
-                            paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
-    return pointcutExpression(pointcutExpression, paramList)
-}
+                            paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression =
+    pointcutExpression(pointcutExpression, paramList)
 
 fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext,
                        paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
@@ -178,13 +174,14 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
 }
 
 fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeModel> {
-    if (modifier == null)
-        return mutableListOf()
+    modifier ?: return mutableListOf()
+
     if (modifier.methodModifiersPattern().isEmpty())
         return mutableListOf(MaybeNegativeModel(modifier.methodModifier().text, false))
-    val retList = buildModifiersList(modifier.methodModifiersPattern().first())
-    retList.add(MaybeNegativeModel(modifier.methodModifier().text, false))
-    return retList
+
+    return buildModifiersList(modifier.methodModifiersPattern().first()).apply {
+        add(MaybeNegativeModel(modifier.methodModifier().text, false))
+    }
 }
 
 fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodPattern {

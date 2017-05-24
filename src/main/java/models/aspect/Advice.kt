@@ -22,10 +22,7 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
 
     var targetIdentifier: String? = null
 
-    override fun toString(): String {
-        val paramStr = parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }
-        return "($paramStr): $pointcutExpression {\n$adviceCode\n}"
-    }
+    override fun toString() = "(${parameterList.joinToString(separator = ", ")}): $pointcutExpression {\n$adviceCode\n}"
 
     override fun calcExpression(psiElement: PsiElement) = pointcutExpression.calcExpression(psiElement)
 
@@ -34,17 +31,19 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
         val targetId = haveTarget()
         val targetIterator = "adviceIt${SecureRandom().nextInt(Int.MAX_VALUE)}"
         if (!targetId.isEmpty())
-            parameterList.find{param -> param.identifier == targetId}?.let {
-                paramList.add(it)
-                this.targetIdentifier = targetIterator
-            }
+            parameterList.find{param -> param.identifier == targetId}
+                    ?.let {
+                        paramList.add(it)
+                        targetIdentifier = targetIterator
+                    }
         val functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
         val argsList = mutableListOf<String>()
-        this.targetIdentifier?.let{argsList.add(targetIterator)}
+        targetIdentifier?.let{argsList.add(targetIterator)}
 
         val paramsString = paramList.fold(""){total, next -> if (total.isEmpty())next.toString() else "$total, $next"}
         val argsString = argsList.fold(""){total, next -> if (total.isEmpty())next else "$total, $next"}
-        return Pair("$functionName($argsString)", "fun $functionName($paramsString){\n$adviceCode}\n")
+
+        return "$functionName($argsString)" to "fun $functionName($paramsString){\n$adviceCode}\n"
     }
 
     abstract fun wrapPointcut(pointcutStr: String): String
