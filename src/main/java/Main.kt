@@ -17,7 +17,7 @@ import javax.xml.transform.stream.StreamResult
 
 fun main(args: Array<String>) {
     val targetProjectDir = "/home/boris/Projects/targetProjects/hello-world/"
-//    val targetProjectDir = "/home/sba/Projects/targetProjects/test1/"
+//    val targetProjectDir = "/home/boris/Projects/targetProjects/test1/"
     val pomFile = targetProjectDir + "pom.xml"
     val srcDir = targetProjectDir + "src"
     val newPomFile = targetProjectDir + "pom2.xml"
@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
     TargetProjectContainer.project = targetFiles[0].project
     TargetProjectContainer.context = FooBarCompiler.analyzeBunchOfSources(env, targetFiles, cfg)
 
-    val aspect = parseFile("/home/boris/Projects/AspectKotlin/res/aspect_example.ak")
+    val aspect = parseFile("/home/boris/Projects/AspectKotlin/res/aspect_example_2.ak")
 
     // Размечаем psi тэгами точек включения
     aspect.pointcuts.forEach {

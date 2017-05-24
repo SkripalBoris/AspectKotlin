@@ -45,4 +45,17 @@
 % Генератор текста
 \usepackage{blindtext}
 
+\renewcommand{\theenumi}{\arabic{enumi}}
+\renewcommand{\labelenumi}{\theenumi.}
+\renewcommand{\theenumii}{\asbuk{enumii}}
+\renewcommand{\labelenumii}{\theenumii.}
+\renewcommand{\theenumiii}{\roman{enumiii}.}
+\renewcommand{\labelenumiii}{\theenumiii}
+\renewcommand{\theenumiv}{\Alph{enumiv}.}
+\renewcommand{\labelenumiv}{\theenumiv}
+\makeatletter
+\renewcommand\p@enumii{\theenumi.}
+\renewcommand\p@enumiii{\theenumi.\theenumii.}
+\makeatother
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

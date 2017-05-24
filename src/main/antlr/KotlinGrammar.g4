@@ -69,7 +69,6 @@ methodModifier
 		|	'private'
 		|	'protected'
 		|	'internal'
-		|	'inline'
 		|	'synchronized'
 		|	'open'
 		|	'override'
