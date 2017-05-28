@@ -1,5 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Разработка прототипа аспектно-ориентированного расширения}
+\label{ch:develop}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 В данном разделе рассматривается реализация прототипа в соответствии с
 поставленными требованиями и разработанной архитектурой.
@@ -529,7 +530,8 @@ open class MaybeNegativeModel(var name: String = "",
 		  \textit{false});
 	\item \textit{packageName}~--- имя пакета;
 	\item \textit{nullableModifier}~--- nullability модификатор типа (по
-		  умолчанию ANYTHING).
+		  умолчанию ANYTHING);
+	\item \textit{parameterList}~--- список параметров, в случае если параметр является generic классом.
 \end{itemize}
 
 \begin{lstlisting}[style={java}, label={lst:ParameterModel},
@@ -537,8 +539,8 @@ open class MaybeNegativeModel(var name: String = "",
 class ParameterModel(name: String = "",
                      negative: Boolean = false,
                      var packageName : String = "",
-                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING):
-                     MaybeNegativeModel(name, negative) {
+                     val nullableModifier: NullabilityType = NullabilityType.ANYTHING,
+                     val parameterList :List<ParameterModel> = listOf()): MaybeNegativeModel(name, negative) {
 ...
 }
 \end{lstlisting}
