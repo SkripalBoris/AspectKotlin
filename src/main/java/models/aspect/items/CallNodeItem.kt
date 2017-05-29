@@ -9,12 +9,9 @@ import psi.TargetProjectContainer
 
 class CallNodeItem(val methodPattern: MethodPattern) : AspectItem() {
 
-    override fun toString(): String {
-        return "(call($methodPattern))"
-    }
+    override fun toString() = "(call($methodPattern))"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        val tags = psiElement.getUserData(TargetProjectContainer.tagKey)
-        return tags != null && this.key in tags
-    }
+    override fun calcExpression(psiElement: PsiElement): Boolean =
+        psiElement.getUserData(TargetProjectContainer.tagKey)?.let { tags -> key in tags } ?: false
+
 }

@@ -12,7 +12,7 @@ import java.security.SecureRandom
  * Created by boris on 07.05.17.
  */
 class AdviceVisitor(val pointcutList: MutableList<Pointcut>) : AspectGrammarBaseVisitor<Advice>() {
-    var advices = mutableListOf<Advice>()
+    val advices = mutableListOf<Advice>()
 
     override fun visitAdvice(ctx: AspectGrammarParser.AdviceContext): Advice {
         val boolExpr = buildPointcutExpression(ctx.pointcutExpression(), ctx.adviceSpec().formalParameters().formalParameterList())
@@ -41,6 +41,6 @@ class AdviceVisitor(val pointcutList: MutableList<Pointcut>) : AspectGrammarBase
                 param -> ArgumentModel(buildType(param.typeType()), param.variableDeclaratorId().Identifier().text)
             }
         }
-        return listOf()
+        return emptyList()
     }
 }

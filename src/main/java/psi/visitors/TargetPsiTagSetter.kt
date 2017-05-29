@@ -28,7 +28,6 @@ object TargetPsiTagSetter : BaseTagSetter() {
         if (aspectItem !is TargetNodeItem)
             throw IllegalArgumentException("Node item must be a TargetNodeItem")
         setTag(file, aspectItem)
-        return
     }
 
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
@@ -41,7 +40,7 @@ object TargetPsiTagSetter : BaseTagSetter() {
         else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
 
         if (aspectItem is TargetNodeItem) {
-            return this.checkType(aspectItem.type.argumentType, funPackage)
+            return checkType(aspectItem.type.argumentType, funPackage)
         }
         throw IllegalArgumentException("Illegal aspectItem")
     }

@@ -22,54 +22,51 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
 
     var targetIdentifier: String? = null
 
-    override fun toString(): String {
-        val paramStr = parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }
-        return "($paramStr): $pointcutExpression {\n$adviceCode\n}"
-    }
+    override fun toString() = "(${parameterList.joinToString(separator = ", ")}): $pointcutExpression {\n$adviceCode\n}"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        return this.pointcutExpression.calcExpression(psiElement)
-    }
+    override fun calcExpression(psiElement: PsiElement) = pointcutExpression.calcExpression(psiElement)
 
     fun getFunction(): Pair<String, String> {
         val paramList = mutableListOf<ArgumentModel>()
         val targetId = haveTarget()
         val targetIterator = "adviceIt${SecureRandom().nextInt(Int.MAX_VALUE)}"
-        if (!targetId.isEmpty())
-            parameterList.find{param -> param.identifier == targetId}?.let {
-                paramList.add(it)
-                this.targetIdentifier = targetIterator
-            }
+
+        if (!targetId.isEmpty()) {
+            parameterList.find{param -> param.identifier == targetId}
+                    ?.let {
+                        paramList.add(it)
+                        targetIdentifier = targetIterator
+                    }
+        }
+
         val functionName: String = "adviceFun${SecureRandom().nextInt(Int.MAX_VALUE)}"
         val argsList = mutableListOf<String>()
-        this.targetIdentifier?.let{argsList.add(targetIterator)}
+        targetIdentifier?.let{ argsList.add(it) }
 
-        val paramsString = paramList.fold(""){total, next -> if (total.isEmpty())next.toString() else "$total, $next"}
-        val argsString = argsList.fold(""){total, next -> if (total.isEmpty())next else "$total, $next"}
-        return Pair("$functionName($argsString)", "fun $functionName($paramsString){\n$adviceCode}\n")
+        val paramsString = paramList.joinToString(separator = ", ")
+        val argsString = argsList.joinToString(separator = ", ")
+
+        return "$functionName($argsString)" to "fun $functionName($paramsString){\n$adviceCode}\n"
     }
 
     abstract fun wrapPointcut(pointcutStr: String): String
 
     protected fun haveTarget(): String {
         // Считаем, что в каждом срезе может быть только один target
-        fun getTargetIdentifier(boolExpNode: BooleanExpression) : String {
-            if (boolExpNode is ReferencePointcutNodeItem) {
+        fun getTargetIdentifier(boolExpNode: BooleanExpression): String = when(boolExpNode) {
+            is ReferencePointcutNodeItem -> {
                 pointcutList.findLast { pointcut -> pointcut.id == boolExpNode.identifier }?.let { refPointcut ->
                     return getTargetIdentifier(refPointcut.pointcutExpression)
                 }
                 throw Exception("Undefined pointcut id")
             }
-            if (boolExpNode is And)
-                return "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
-            if (boolExpNode is Or)
-                return "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
-            if (boolExpNode is Not)
-                return getTargetIdentifier(boolExpNode.child)
-            if (boolExpNode is TargetNodeItem)
-                return boolExpNode.type.identifier
-            return ""
+            is And -> "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
+            is Or -> "${getTargetIdentifier(boolExpNode.left)}${getTargetIdentifier(boolExpNode.right)}"
+            is Not -> getTargetIdentifier(boolExpNode.child)
+            is TargetNodeItem -> boolExpNode.type.identifier
+            else -> ""
         }
-        return getTargetIdentifier(this.pointcutExpression)
+
+        return getTargetIdentifier(pointcutExpression)
     }
 }

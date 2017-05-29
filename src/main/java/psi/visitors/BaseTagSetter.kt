@@ -15,14 +15,14 @@ abstract class BaseTagSetter {
 
     abstract fun visitFile(file: KtFile, aspectItem: AspectItem)
 
-    protected fun checkType(expectedTypePatternString: ParameterModel, realType: String): Boolean {
-        return expectedTypePatternString.getFullName().isEmpty() ||
+    protected fun checkType(expectedTypePatternString: ParameterModel, realType: String): Boolean =
+        expectedTypePatternString.getFullName().isEmpty() ||
                 realType.replace(" ", "").matches(expectedTypePatternString.getFullName().replace(".", "\\.").replace("*", ".*").replace(" ", "").toRegex())
-    }
 
-    protected fun checkName(expectedNamePatternString: MaybeNegativeModel, realName: String): Boolean {
-        return expectedNamePatternString.negative.xor(realName.matches(expectedNamePatternString.name.replace("*", ".*").toRegex()))
-    }
+
+    protected fun checkName(expectedNamePatternString: MaybeNegativeModel,
+                            realName: String): Boolean =
+            expectedNamePatternString.negative xor realName.matches(expectedNamePatternString.name.replace("*", ".*").toRegex())
 
     protected fun checkValueParams(expectedValuesParams: List<ParameterModel>, realValueParams: List<ParameterModel>): Boolean {
         if (expectedValuesParams.size != realValueParams.size)
