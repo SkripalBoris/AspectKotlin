@@ -944,6 +944,16 @@ public interface AspectGrammarListener extends ParseTreeListener {
 	 */
 	void exitStatement(AspectGrammarParser.StatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AspectGrammarParser#whenCondition}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhenCondition(AspectGrammarParser.WhenConditionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AspectGrammarParser#whenCondition}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhenCondition(AspectGrammarParser.WhenConditionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AspectGrammarParser#parExpression}.
 	 * @param ctx the parse tree
 	 */

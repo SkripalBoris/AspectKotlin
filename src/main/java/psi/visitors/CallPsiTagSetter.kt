@@ -66,18 +66,18 @@ object CallPsiTagSetter : BaseTagSetter() {
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.name) {
                     "public" -> {
-                        if (resolvedFunDescriptor.visibility.name != "public")
+                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "public"))
                             return false
                     }
 
                     "private" -> {
-                        if (resolvedFunDescriptor.visibility.name != "private" ||
-                                resolvedFunDescriptor.visibility.name != "protected")
+                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "private" ||
+                                resolvedFunDescriptor.visibility.name != "protected"))
                             return false
                     }
 
                     "protected" -> {
-                        if (resolvedFunDescriptor.visibility.name != "protected")
+                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "protected"))
                             return false
                     }
 

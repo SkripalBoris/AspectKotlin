@@ -568,6 +568,12 @@ public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStatement(AspectGrammarParser.StatementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AspectGrammarParser#whenCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhenCondition(AspectGrammarParser.WhenConditionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#parExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

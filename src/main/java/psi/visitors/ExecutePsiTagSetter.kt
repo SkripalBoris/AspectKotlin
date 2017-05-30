@@ -67,17 +67,17 @@ object ExecutePsiTagSetter : BaseTagSetter() {
             aspectItem.methodPattern.modifiers.forEach {
                 when (it.name) {
                     "public" -> {
-                        if (psiElement.isPrivate())
+                        if (it.negative.xor(psiElement.isPrivate()))
                             return false
                     }
 
                     "private" -> {
-                        if (!psiElement.isPrivate())
+                        if (it.negative.xor(!psiElement.isPrivate()))
                             return false
                     }
 
                     "protected" -> {
-                        if (!psiElement.isProtected())
+                        if (it.negative.xor(!psiElement.isProtected()))
                             return false
                     }
 

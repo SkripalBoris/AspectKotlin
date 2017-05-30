@@ -35,7 +35,7 @@ typeArguments
 //Тип
 typeArgument
     :   typeType
-    |   '?' (('extends' | 'super') typeType)?
+    |   '?' ((':' | 'super') typeType)?
     ;
 
 //Параметры функции
@@ -89,7 +89,7 @@ notNullModifier
 
 // Модификаторы конструктора
 constructorModifier
-	:	('public' | 'private' | 'protected')
+	:	('public' | 'private' | 'protected' | 'open')
 	;
 
 fieldModifier
@@ -157,7 +157,7 @@ primary
     |   'super'
     |   literal
     |   Identifier
-    |   typeType '.' 'class'
+    |   typeType '.' 'javaClass'
     ;
 
 //Список выражений
@@ -209,12 +209,22 @@ statement
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
     |   'do' statement 'while' parExpression ';'?
+    |   'when' ('(' expression ')')? '{'
+            (whenCondition (',' whenCondition)* '->' expression ';'*)*
+            ('else' '->' expression ';'*)?
+        '}'
     |   'return' expression? ';'?
     |   'break' Identifier? ';'?
     |   'continue' Identifier? ';'?
     |   ';'
     |   expression ';'?
     |   Identifier ':' statement
+    ;
+
+whenCondition
+    : expression
+    | ('in' | '!in') expression
+    | ('is' | '!is') typeType
     ;
 
 // Выражения
@@ -232,7 +242,7 @@ literal
     |   CharacterLiteral
     |   StringLiteral
     |   BooleanLiteral
-    |   'Null'
+    |   'null'
     ;
 fragment
 KotlinLetter

@@ -180,10 +180,13 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
 fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeModel> {
     if (modifier == null)
         return mutableListOf()
+    val negative = modifier.children.first().let{ child ->
+        child is TerminalNodeImpl && child.text == "!"
+    }
     if (modifier.methodModifiersPattern().isEmpty())
-        return mutableListOf(MaybeNegativeModel(modifier.methodModifier().text, false))
+        return mutableListOf(MaybeNegativeModel(modifier.methodModifier().text, negative))
     val retList = buildModifiersList(modifier.methodModifiersPattern().first())
-    retList.add(MaybeNegativeModel(modifier.methodModifier().text, false))
+    retList.add(MaybeNegativeModel(modifier.methodModifier().text, negative))
     return retList
 }
 

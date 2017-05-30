@@ -1084,6 +1084,18 @@ public class AspectGrammarBaseListener implements AspectGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterWhenCondition(AspectGrammarParser.WhenConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhenCondition(AspectGrammarParser.WhenConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParExpression(AspectGrammarParser.ParExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
