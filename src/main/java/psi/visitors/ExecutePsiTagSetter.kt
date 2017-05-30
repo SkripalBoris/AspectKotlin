@@ -32,21 +32,27 @@ object ExecutePsiTagSetter : BaseTagSetter() {
         if (aspectItem !is ExecutionNodeItem)
             throw IllegalArgumentException("Node item must be a ExecutionNodeItem")
         setTag(file, aspectItem)
-        return
     }
 
     private fun checkFunction(psiElement: KtNamedFunction, aspectItem: AspectItem): Boolean {
         //psiElement.valueParameters[1].typeReference.typeElement.lastChild
-        val functionPackage = if (psiElement.isExtensionDeclaration()) psiElement.receiverTypeReference!!.text
-        else if (psiElement.containingClassOrObject == null)
-            ""
-        else psiElement.containingClassOrObject!!.fqName.toString()
-        val retType = if (psiElement.hasDeclaredReturnType()) psiElement.typeReference!!.text else "Unit"
+        val functionPackage = if (psiElement.isExtensionDeclaration()) {
+            psiElement.receiverTypeReference?.text ?: ""
+        } else {
+            psiElement.containingClassOrObject?.fqName?.asString() ?: ""
+        }
+
+        val retType = if (psiElement.hasDeclaredReturnType()) {
+            psiElement.typeReference?.text ?: "Unit"
+        } else {
+            "Unit"
+        }
         val realTypes = psiElement.valueParameters.map {
             val nullabilityType = if (it.text.last() == '?') NullabilityType.NULLABLE else NullabilityType.NOT_NULL
             val type = it.children.first().text
             ParameterModel(type, nullableModifier = nullabilityType)
         }
+
         if (aspectItem is ExecutionNodeItem) {
             // Проверяем соответствие имени и местоположения функции
             if (!(this.checkName(aspectItem.methodPattern.name, psiElement.name ?: return false) &&

@@ -30,42 +30,36 @@ class MethodPattern(val annotations: List<MaybeNegativeModel>,
             returnType.name = "Unit"
     }
 
-    override fun toString(): String {
-        var retStr = ""
-        annotations.forEach {
-            retStr += "$it "
+    override fun toString() = StringBuilder().apply {
+        annotations.forEach { append("$it ") }
+        modifiers.forEach { append("$it ") }
+
+        when (extensionModifier) {
+            ExtensionType.EXTENSION -> append("extension ")
+            ExtensionType.NOT_EXTENSION -> append("!extension ")
+            else -> {
+            }
         }
 
-        modifiers.forEach {
-            retStr += "$it "
-        }
-
-        when (this.extensionModifier) {
-            ExtensionType.EXTENSION -> retStr += "extension "
-            ExtensionType.NOT_EXTENSION -> retStr += "!extension "
-            ExtensionType.ANYTHING -> {}
-        }
-
-        when (this.inlineModifier) {
-            InlineType.INLINE -> retStr += "inline "
-            InlineType.NOT_INLINE -> retStr += "!inline "
-            InlineType.ANYTHING -> {}
+        when (inlineModifier) {
+            InlineType.INLINE -> append("inline ")
+            InlineType.NOT_INLINE -> append("!inline ")
+            else -> {
+            }
         }
 
         if (type.name.isEmpty())
-            retStr += " fun $name("
+            append(" fun $name(")
         else
-            retStr += " fun $type.$name("
+            append(" fun $type.$name(")
 
-        if (params.isNotEmpty())
-            params.forEach {
-                retStr += it
-                if (it != params.last())
-                    retStr += ", "
-            }
+        params.forEach {
+            append(it)
+            if (it != params.last())
+                append(", ")
+        }
 
-        retStr += ") : $returnType"
+        append("): $returnType")
+    }.toString()
 
-        return retStr
-    }
 }

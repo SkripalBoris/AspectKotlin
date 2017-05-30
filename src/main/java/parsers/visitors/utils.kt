@@ -46,7 +46,7 @@ fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): Param
                 typeType.classOrInterfaceType()?.let { classOrInterface ->
                     var paramList: List<ParameterModel> = listOf()
                     typeType.classOrInterfaceType().typeArguments().firstOrNull()?.let { parameterList ->
-                        paramList = parameterList.typeArgument().map{buildType(it.typeType())}
+                        paramList = parameterList.typeArgument().map { buildType(it.typeType()) }
                     }
                     return ParameterModel(name = classOrInterface.Identifier().fold("") { total, next -> total + next },
                             nullableModifier = nullability,
@@ -69,13 +69,10 @@ fun buildSimpleType(typeContext: AspectGrammarParser.TypePatternContext?): Param
     return ParameterModel()
 }
 
-fun buildPackage(context: ParserRuleContext): String {
-    if (context is AspectGrammarParser.OptionalParensTypePatternContext)
-        context.annotationPattern()?.let {
-            return it.text
-        }
-    return ""
-}
+fun buildPackage(context: ParserRuleContext) =
+        if (context is AspectGrammarParser.OptionalParensTypePatternContext) {
+            context.annotationPattern()?.text ?: ""
+        } else ""
 
 fun buildType(typeContext: ParserRuleContext?): ParameterModel {
     if (typeContext is AspectGrammarParser.OptionalParensTypePatternContext) {
@@ -113,7 +110,7 @@ fun buildType(typeContext: ParserRuleContext?): ParameterModel {
             return ParameterModel(typeName, nullableModifier = nullabilityType, packageName = packageName)
         }
 
-        typeContext.primitiveType()?.let{ primitiveType ->
+        typeContext.primitiveType()?.let { primitiveType ->
             return ParameterModel(primitiveType.text, nullableModifier = nullabilityType)
         }
     }
@@ -121,9 +118,8 @@ fun buildType(typeContext: ParserRuleContext?): ParameterModel {
 }
 
 fun buildPointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext,
-                            paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
-    return pointcutExpression(pointcutExpression, paramList)
-}
+                            paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression =
+        pointcutExpression(pointcutExpression, paramList)
 
 fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressionContext,
                        paramList: AspectGrammarParser.FormalParameterListContext?): BooleanExpression {
@@ -132,30 +128,35 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
             return ReferencePointcutNodeItem(refPointcut.id().text, 0)
         }
 
-        if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.CallPointcutContext) {
-            val methodPattern = (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.CallPointcutContext).methodOrConstructorPattern().methodPattern()
-            return CallNodeItem(fillMethod(methodPattern))
-        }
-        if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.ExecutionPointcutContext) {
-            val methodPattern = (pointcutExpression.pointcutPrimitive() as AspectGrammarParser.ExecutionPointcutContext).methodOrConstructorPattern().methodPattern()
-            return ExecutionNodeItem(fillMethod(methodPattern))
-        }
-        if (pointcutExpression.pointcutPrimitive() is AspectGrammarParser.TargetPointcutContext) {
-            var type = ParameterModel((pointcutExpression.pointcutPrimitive() as AspectGrammarParser.TargetPointcutContext).typeOrIdentifier().typeType().text, nullableModifier = NullabilityType.ANYTHING)
-            var paramIdentifier = ""
-            paramList?.let {
-                paramList.formalParameter().forEach {
-                    val identifier = it.variableDeclaratorId().Identifier().text
-                    if (identifier == type.name) {
-                        paramIdentifier = identifier
-                        type = buildType(it.typeType())
-                        return@forEach
-                    }
+        pointcutExpression.pointcutPrimitive().let { pointcutPrimitive ->
+            when (pointcutPrimitive) {
+                is AspectGrammarParser.CallPointcutContext -> {
+                    val methodPattern = pointcutPrimitive.methodOrConstructorPattern().methodPattern()
+                    return CallNodeItem(fillMethod(methodPattern))
                 }
+                is AspectGrammarParser.ExecutionPointcutContext -> {
+                    val methodPattern = pointcutPrimitive.methodOrConstructorPattern().methodPattern()
+                    return ExecutionNodeItem(fillMethod(methodPattern))
+                }
+                is AspectGrammarParser.TargetPointcutContext -> {
+                    var type = ParameterModel(pointcutPrimitive.typeOrIdentifier().typeType().text,
+                            nullableModifier = NullabilityType.ANYTHING)
+                    var paramIdentifier = ""
+                    paramList?.let {
+                        paramList.formalParameter().forEach {
+                            val identifier = it.variableDeclaratorId().Identifier().text
+                            if (identifier == type.name) {
+                                paramIdentifier = identifier
+                                type = buildType(it.typeType())
+                                return@forEach
+                            }
+                        }
+                    }
+                    return TargetNodeItem(ArgumentModel(type, paramIdentifier))
+                }
+                else -> throw NotImplementedError("Not implemented yet")
             }
-            return TargetNodeItem(ArgumentModel(type, paramIdentifier))
         }
-        throw NotImplementedError("Not implemented yet")
     }
 
     if (pointcutExpression.childCount == 2) {
@@ -180,7 +181,7 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
 fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeModel> {
     if (modifier == null)
         return mutableListOf()
-    val negative = modifier.children.first().let{ child ->
+    val negative = modifier.children.first().let { child ->
         child is TerminalNodeImpl && child.text == "!"
     }
     if (modifier.methodModifiersPattern().isEmpty())

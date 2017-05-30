@@ -81,9 +81,6 @@ object CallPsiTagSetter : BaseTagSetter() {
                             return false
                     }
 
-                    // Inline проверяем выше
-                    "inline" -> {}
-
                     else -> throw IllegalArgumentException("Unexpected modifier ${it.name}")
                 }
             }

@@ -9,11 +9,8 @@ import models.boolExpr.BooleanExpression
  */
 
 class Pointcut(val id: String, val pointcutExpression: BooleanExpression) : AspectItem() {
-    override fun toString(): String {
-        return "$id $pointcutExpression"
-    }
+    override fun toString(): String = "$id $pointcutExpression"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        return this.pointcutExpression.calcExpression(psiElement)
-    }
+    override fun calcExpression(psiElement: PsiElement): Boolean =
+            pointcutExpression.calcExpression(psiElement)
 }

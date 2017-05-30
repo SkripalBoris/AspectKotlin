@@ -18,7 +18,7 @@ object AdviceWeaver {
 
     private fun recursiveAdviceInjector(psiElement: PsiElement, advice: Advice) {
         if (advice.calcExpression(psiElement))
-            this.setAdviceCode(psiElement, advice)
+            setAdviceCode(psiElement, advice)
         else
             psiElement.children.forEach { recursiveAdviceInjector(it, advice) }
     }

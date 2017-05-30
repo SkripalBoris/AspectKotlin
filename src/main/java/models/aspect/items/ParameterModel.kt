@@ -12,41 +12,36 @@ enum class NullabilityType {
 
 class ParameterModel(name: String = "",
                      negative: Boolean = false,
-                     var packageName : String = "",
+                     var packageName: String = "",
                      val nullableModifier: NullabilityType = NullabilityType.ANYTHING,
-                     val parameterList :List<ParameterModel> = listOf()): MaybeNegativeModel(name, negative) {
-    override fun toString(): String {
-        var retStr = ""
-        if (negative)
-            retStr += "! "
+                     val parameterList: List<ParameterModel> = listOf()) : MaybeNegativeModel(name, negative) {
 
-        if (packageName.isNotEmpty())
-            retStr += "$packageName."
-        retStr += name
+    override fun toString() = StringBuilder().apply {
+        if (negative) append("! ")
+        if (packageName.isNotEmpty()) append("$packageName.")
+
+        append(name)
 
         if (parameterList.isNotEmpty()) {
-            retStr += "<${parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }}>"
+            parameterList.joinToString(separator = ", ").let { append("<$it>") }
         }
 
         when (nullableModifier) {
-            NullabilityType.NULLABLE -> retStr += "?"
-            NullabilityType.NOT_NULL -> retStr += "!!"
-            else -> {}
+            NullabilityType.NULLABLE -> append("?")
+            NullabilityType.NOT_NULL -> append("!!")
+            else -> {
+            }
         }
+    }.toString()
 
-        return retStr
-    }
+    fun getFullName() = StringBuilder().apply {
+        if (packageName.isNotEmpty()) append("$packageName.")
 
-    fun getFullName() : String{
-        var retStr = ""
-        if (packageName.isNotEmpty())
-            retStr += "$packageName."
-        retStr += name
+        append(name)
 
         if (parameterList.isNotEmpty()) {
-            retStr += "<${parameterList.fold("") { total, next -> if (total.isEmpty()) next.toString() else "$total, $next" }}>"
+            parameterList.joinToString(separator = ", ").let { append("<$it>") }
         }
+    }.toString()
 
-        return retStr
-    }
 }

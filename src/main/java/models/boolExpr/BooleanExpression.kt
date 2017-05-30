@@ -14,36 +14,24 @@ interface BooleanExpression {
     fun calcExpression(psiElement: PsiElement): Boolean
 }
 
-/*
-Реализации
- */
-
 class Or(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
-    override fun toString(): String {
-        return String.format("($left || $right)")
-    }
+    override fun toString(): String = String.format("($left || $right)")
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        return this.left.calcExpression(psiElement) || this.right.calcExpression(psiElement)
-    }
+    override fun calcExpression(psiElement: PsiElement): Boolean =
+            left.calcExpression(psiElement) || right.calcExpression(psiElement)
 }
 
 class And(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
-    override fun toString(): String {
-        return String.format("($left && $right)")
-    }
+    override fun toString(): String = String.format("($left && $right)")
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        return this.left.calcExpression(psiElement) && this.right.calcExpression(psiElement)
-    }
+    override fun calcExpression(psiElement: PsiElement): Boolean =
+            left.calcExpression(psiElement) && right.calcExpression(psiElement)
 }
 
 class Not(val child: BooleanExpression) : BooleanExpression {
-    override fun toString(): String {
-        return String.format("!($child)")
-    }
+    override fun toString(): String =
+            String.format("!($child)")
 
-    override fun calcExpression(psiElement: PsiElement): Boolean {
-        return !this.child.calcExpression(psiElement)
-    }
+    override fun calcExpression(psiElement: PsiElement): Boolean =
+            !this.child.calcExpression(psiElement)
 }
