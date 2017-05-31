@@ -16,7 +16,7 @@ import psi.TargetProjectContainer
 object TargetPsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
-            if (checkFunction(it, aspectItem))
+            if (checkFunction(it, aspectItem as TargetNodeItem))
                 if (it.getUserData(TargetProjectContainer.tagKey) == null)
                     it.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
                 else
@@ -30,14 +30,14 @@ object TargetPsiTagSetter : BaseTagSetter() {
         setTag(file, aspectItem)
     }
 
-    private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
-        val resolvedCall = psiElement.getResolvedCall(TargetProjectContainer.context!!)?: return false
+    private fun checkFunction(psiElement: KtCallExpression, aspectItem: TargetNodeItem): Boolean {
+        val resolvedCall = psiElement.getResolvedCall(TargetProjectContainer.context!!) ?: return false
         val resolvedFunDescriptor = resolvedCall.candidateDescriptor
         val funPackage = if (resolvedFunDescriptor.isExtension) run {
-                val extensionReceiver = resolvedFunDescriptor.extensionReceiverParameter ?: return false
-                extensionReceiver.value.type.toString()
-            }
-        else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
+            val extensionReceiver = resolvedFunDescriptor.extensionReceiverParameter ?: return false
+            buildParameterModel(extensionReceiver.value.type)
+        }
+        else ParameterModel(resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString())
 
         if (aspectItem is TargetNodeItem) {
             return checkType(aspectItem.type.argumentType, funPackage)

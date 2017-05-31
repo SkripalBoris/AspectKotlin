@@ -18,7 +18,7 @@ import psi.TargetProjectContainer
 object CallPsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtCallExpression>().forEach {
-            if (checkFunction(it, aspectItem))
+            if (checkFunction(it, aspectItem as CallNodeItem))
                 if (it.getUserData(TargetProjectContainer.tagKey) == null)
                     it.putUserData(TargetProjectContainer.tagKey, mutableListOf(aspectItem.key))
                 else
@@ -33,59 +33,56 @@ object CallPsiTagSetter : BaseTagSetter() {
         return
     }
 
-    private fun checkFunction(psiElement: KtCallExpression, aspectItem: AspectItem): Boolean {
+    private fun checkFunction(psiElement: KtCallExpression, aspectItem: CallNodeItem): Boolean {
         val resolvedCall = psiElement.getResolvedCall(TargetProjectContainer.context!!) ?: return false
         val resolvedFunDescriptor = resolvedCall.candidateDescriptor
         val funPackage = if (resolvedFunDescriptor.isExtension) run {
             val extensionReceiver = resolvedFunDescriptor.extensionReceiverParameter ?: return false
-            extensionReceiver.value.type.toString()
+            buildParameterModel(extensionReceiver.value.type)
         }
-        else resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString()
-        val funName = resolvedFunDescriptor.name.asString()
+        else ParameterModel(resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString())
+        val funName = MaybeNegativeModel(resolvedFunDescriptor.name.asString())
         val realParams = resolvedFunDescriptor.valueParameters.map {
-            val typeName = it.type.constructor.toString()
-            val nullableModifier = if (it.type.isMarkedNullable) NullabilityType.NULLABLE else NullabilityType.NOT_NULL
-            ParameterModel(typeName, nullableModifier = nullableModifier)
+            buildParameterModel(it.type)
         }
 
-        if (aspectItem is CallNodeItem) {
-            if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
-                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
-                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, resolvedFunDescriptor.returnType.toString())) &&
-                    this.checkValueParams(aspectItem.methodPattern.params, realParams)))
-                return false
-            if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&
-                    resolvedFunDescriptor.isExtension &&
-                    aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
-                return false
-            if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
-                    (resolvedFunDescriptor as SimpleFunctionDescriptorImpl).isInline &&
-                    aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
-                return false
+        val returnType = buildParameterModel(resolvedFunDescriptor.returnType)
 
-            aspectItem.methodPattern.modifiers.forEach {
-                when (it.name) {
-                    "public" -> {
-                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "public"))
-                            return false
-                    }
+        if (!(this.checkName(aspectItem.methodPattern.name, funName) &&
+                aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, funPackage)) &&
+                aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, returnType) &&
+                        this.checkValueParams(aspectItem.methodPattern.params, realParams))))
+            return false
+        if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&
+                resolvedFunDescriptor.isExtension &&
+                aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
+            return false
+        if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
+                (resolvedFunDescriptor as SimpleFunctionDescriptorImpl).isInline &&
+                aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
+            return false
 
-                    "private" -> {
-                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "private" ||
-                                resolvedFunDescriptor.visibility.name != "protected"))
-                            return false
-                    }
-
-                    "protected" -> {
-                        if (it.negative.xor(resolvedFunDescriptor.visibility.name != "protected"))
-                            return false
-                    }
-
-                    else -> throw IllegalArgumentException("Unexpected modifier ${it.name}")
+        aspectItem.methodPattern.modifiers.forEach {
+            when (it.name) {
+                "public" -> {
+                    if (it.negative.xor(resolvedFunDescriptor.visibility.name != "public"))
+                        return false
                 }
+
+                "private" -> {
+                    if (it.negative.xor(resolvedFunDescriptor.visibility.name != "private" ||
+                            resolvedFunDescriptor.visibility.name != "protected"))
+                        return false
+                }
+
+                "protected" -> {
+                    if (it.negative.xor(resolvedFunDescriptor.visibility.name != "protected"))
+                        return false
+                }
+
+                else -> throw IllegalArgumentException("Unexpected modifier ${it.name}")
             }
-            return true
         }
-        throw IllegalArgumentException("Illegal aspectItem")
+        return true
     }
 }

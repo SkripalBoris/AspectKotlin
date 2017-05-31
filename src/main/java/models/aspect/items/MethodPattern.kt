@@ -25,10 +25,6 @@ class MethodPattern(val annotations: List<MaybeNegativeModel>,
                     val returnType: ParameterModel,
                     val extensionModifier: ExtensionType = ExtensionType.ANYTHING,
                     val inlineModifier: InlineType = InlineType.ANYTHING) {
-    init {
-        if (returnType.name.isEmpty())
-            returnType.name = "Unit"
-    }
 
     override fun toString() = StringBuilder().apply {
         annotations.forEach { append("$it ") }

@@ -15,7 +15,7 @@ import psi.TargetProjectContainer
 object ExecutePsiTagSetter : BaseTagSetter() {
     override fun setTag(psiElement: PsiElement, aspectItem: AspectItem) {
         psiElement.collectDescendantsOfType<KtNamedFunction>().forEach {
-            if (checkFunction(it, aspectItem)) {
+            if (checkFunction(it, aspectItem as ExecutionNodeItem)) {
                 it.bodyExpression?.let { bodyExpr ->
                     bodyExpr.collectDescendantsOfType<KtCallExpression>().forEach { func ->
                         if (func.getUserData(TargetProjectContainer.tagKey) == null)
@@ -34,64 +34,61 @@ object ExecutePsiTagSetter : BaseTagSetter() {
         setTag(file, aspectItem)
     }
 
-    private fun checkFunction(psiElement: KtNamedFunction, aspectItem: AspectItem): Boolean {
-        //psiElement.valueParameters[1].typeReference.typeElement.lastChild
+    private fun checkFunction(psiElement: KtNamedFunction, aspectItem: ExecutionNodeItem): Boolean {
         val functionPackage = if (psiElement.isExtensionDeclaration()) {
-            psiElement.receiverTypeReference?.text ?: ""
+            buildParameterModel(psiElement.receiverTypeReference)
         } else {
-            psiElement.containingClassOrObject?.fqName?.asString() ?: ""
+            buildParameterModel(psiElement.containingClassOrObject)
         }
 
-        val retType = if (psiElement.hasDeclaredReturnType()) {
-            psiElement.typeReference?.text ?: "Unit"
-        } else {
-            "Unit"
-        }
+        val retType = buildParameterModel(psiElement.typeReference)
+
         val realTypes = psiElement.valueParameters.map {
             val nullabilityType = if (it.text.last() == '?') NullabilityType.NULLABLE else NullabilityType.NOT_NULL
             val type = it.children.first().text
             ParameterModel(type, nullableModifier = nullabilityType)
         }
 
-        if (aspectItem is ExecutionNodeItem) {
-            // Проверяем соответствие имени и местоположения функции
-            if (!(this.checkName(aspectItem.methodPattern.name, psiElement.name ?: return false) &&
-                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, functionPackage)) &&
-                    aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, retType)) &&
-                    this.checkValueParams(aspectItem.methodPattern.params, realTypes)))
-                return false
-            if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&
-                    psiElement.isExtensionDeclaration() &&
-                    aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
-                return false
+        // Не поддерживаем безымянные методы
+        if (psiElement.name == null)
+            return false
+        val functionName = MaybeNegativeModel(psiElement.name.toString())
+        // Проверяем соответствие имени и местоположения функции
+        if (!(this.checkName(aspectItem.methodPattern.name, functionName) &&
+                aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, functionPackage)) &&
+                aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.returnType, retType)) &&
+                this.checkValueParams(aspectItem.methodPattern.params, realTypes)))
+            return false
+        if (aspectItem.methodPattern.extensionModifier != ExtensionType.ANYTHING &&
+                psiElement.isExtensionDeclaration() &&
+                aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
+            return false
 
-            if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
-                    psiElement.modifierList != null && psiElement.modifierList!!.allChildren.any { it -> it.text == "inline" } &&
-                    aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
-                return false
-            // Проверка модификаторов
-            aspectItem.methodPattern.modifiers.forEach {
-                when (it.name) {
-                    "public" -> {
-                        if (it.negative.xor(psiElement.isPrivate()))
-                            return false
-                    }
-
-                    "private" -> {
-                        if (it.negative.xor(!psiElement.isPrivate()))
-                            return false
-                    }
-
-                    "protected" -> {
-                        if (it.negative.xor(!psiElement.isProtected()))
-                            return false
-                    }
-
-                    else -> throw IllegalArgumentException("Unexpected modifier")
+        if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
+                psiElement.modifierList != null && psiElement.modifierList!!.allChildren.any { it -> it.text == "inline" } &&
+                aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
+            return false
+        // Проверка модификаторов
+        aspectItem.methodPattern.modifiers.forEach {
+            when (it.name) {
+                "public" -> {
+                    if (it.negative.xor(psiElement.isPrivate()))
+                        return false
                 }
+
+                "private" -> {
+                    if (it.negative.xor(!psiElement.isPrivate()))
+                        return false
+                }
+
+                "protected" -> {
+                    if (it.negative.xor(!psiElement.isProtected()))
+                        return false
+                }
+
+                else -> throw IllegalArgumentException("Unexpected modifier")
             }
-            return true
         }
-        throw IllegalArgumentException("Illegal aspectItem")
+        return true
     }
 }
