@@ -9,8 +9,8 @@ import psi.TargetProjectContainer
 
 class ExecutionNodeItem(val methodPattern: MethodPattern) : AspectItem() {
 
-    override fun toString(): String = "(execution($methodPattern))"
+    override fun toString() = "(execution($methodPattern))"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean =
+    override fun calcExpression(psiElement: PsiElement) =
             psiElement.getUserData(TargetProjectContainer.tagKey)?.let { tags -> key in tags } ?: false
 }

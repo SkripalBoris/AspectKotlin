@@ -24,7 +24,7 @@ abstract class Advice(val pointcutExpression: BooleanExpression,
 
     override fun toString() = "(${parameterList.joinToString(separator = ", ")}): $pointcutExpression {\n$adviceCode\n}"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean = pointcutExpression.calcExpression(psiElement)
+    override fun calcExpression(psiElement: PsiElement) = pointcutExpression.calcExpression(psiElement)
 
     fun getFunction(): Pair<String, String> {
         val paramList = mutableListOf<ArgumentModel>()

@@ -11,7 +11,7 @@ class BeforeAdvice(pointcutExpression: BooleanExpression,
                    adviceCode: String,
                    parameterList: List<ArgumentModel>,
                    pointcutList: List<Pointcut>): Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
-    override fun toString(): String = "before() ${super.toString()}"
+    override fun toString() = "before() ${super.toString()}"
 
     override fun wrapPointcut(pointcutStr: String): String {
         val generatedFun = getFunction()

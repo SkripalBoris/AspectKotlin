@@ -10,7 +10,7 @@ class AroundAdvice(pointcutExpression: BooleanExpression,
                    adviceCode: String,
                    parameterList: List<ArgumentModel>,
                    pointcutList: List<Pointcut>) : Advice(pointcutExpression, adviceCode, parameterList, pointcutList) {
-    override fun toString(): String = "around() ${super.toString()}"
+    override fun toString() = "around() ${super.toString()}"
 
     override fun wrapPointcut(pointcutStr: String): String {
         val generatedFun = getFunction()

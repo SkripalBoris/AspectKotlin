@@ -6,10 +6,7 @@ import models.aspect.items.MaybeNegativeModel
 import models.aspect.items.ParameterModel
 import models.aspect.items.NullabilityType
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
 /**
@@ -87,6 +84,7 @@ abstract class BaseTagSetter {
         }
         return ParameterModel()
     }
+
 
     protected fun buildParameterModel(ktUserType: KtTypeParameter?) =
             ParameterModel(ktUserType?.fqName?.toString() ?: "")

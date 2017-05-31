@@ -17,9 +17,8 @@ import psi.TargetProjectContainer
  */
 
 object PointcutTagSetter {
-    fun visitFiles(pointcut: Pointcut, files: List<KtFile>) {
-        files.forEach { visitFile(pointcut, it) }
-    }
+    fun visitFiles(pointcut: Pointcut, files: List<KtFile>) =
+            files.forEach { visitFile(pointcut, it) }
 
     private fun visitFile(pointcut: Pointcut, file: KtFile) {
         visitBooleanExpression(pointcut.pointcutExpression, file)
@@ -38,7 +37,7 @@ object PointcutTagSetter {
                 visitBooleanExpression(node.left, file)
                 visitBooleanExpression(node.right, file)
             }
-            // Если это элемент
+        // Если это элемент
             is CallNodeItem -> CallPsiTagSetter.visitFile(file, node)
             is ExecutionNodeItem -> ExecutePsiTagSetter.visitFile(file, node)
             is TargetNodeItem -> TargetPsiTagSetter.visitFile(file, node)

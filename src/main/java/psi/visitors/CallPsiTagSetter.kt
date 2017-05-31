@@ -30,7 +30,6 @@ object CallPsiTagSetter : BaseTagSetter() {
         if (aspectItem !is CallNodeItem)
             throw IllegalArgumentException("Node item must be a CallNodeItem")
         setTag(file, aspectItem)
-        return
     }
 
     private fun checkFunction(psiElement: KtCallExpression, aspectItem: CallNodeItem): Boolean {

@@ -8,13 +8,11 @@ import org.jetbrains.kotlin.psi.*
  * Created by sba on 31.01.17.
  */
 object AdviceWeaver {
-    fun visitFiles(targetFiles: List<KtFile>, advice: Advice) {
-        targetFiles.forEach { visitFile(it, advice) }
-    }
+    fun visitFiles(targetFiles: List<KtFile>, advice: Advice) =
+            targetFiles.forEach { visitFile(it, advice) }
 
-    private fun visitFile(targetFile: KtFile, advice: Advice) {
-        recursiveAdviceInjector(targetFile, advice)
-    }
+    private fun visitFile(targetFile: KtFile, advice: Advice) =
+            recursiveAdviceInjector(targetFile, advice)
 
     private fun recursiveAdviceInjector(psiElement: PsiElement, advice: Advice) {
         if (advice.calcExpression(psiElement))

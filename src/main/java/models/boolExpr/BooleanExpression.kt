@@ -15,23 +15,23 @@ interface BooleanExpression {
 }
 
 class Or(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
-    override fun toString(): String = String.format("($left || $right)")
+    override fun toString() = "($left || $right)"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean =
+    override fun calcExpression(psiElement: PsiElement) =
             left.calcExpression(psiElement) || right.calcExpression(psiElement)
 }
 
 class And(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
-    override fun toString(): String = String.format("($left && $right)")
+    override fun toString() = "($left && $right)"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean =
+    override fun calcExpression(psiElement: PsiElement) =
             left.calcExpression(psiElement) && right.calcExpression(psiElement)
 }
 
 class Not(val child: BooleanExpression) : BooleanExpression {
-    override fun toString(): String =
-            String.format("!($child)")
+    override fun toString() =
+            "!($child)"
 
-    override fun calcExpression(psiElement: PsiElement): Boolean =
+    override fun calcExpression(psiElement: PsiElement) =
             !this.child.calcExpression(psiElement)
 }

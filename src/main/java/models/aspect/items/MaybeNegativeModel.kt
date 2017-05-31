@@ -5,7 +5,6 @@ package models.aspect.items
  */
 open class MaybeNegativeModel(var name: String = "",
                               var negative: Boolean = false) {
-    override fun toString(): String {
-        return if (negative) "! $name" else name
-    }
+    override fun toString() =
+            if (negative) "! $name" else name
 }
