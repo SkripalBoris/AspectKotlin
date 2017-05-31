@@ -185,9 +185,9 @@ fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternConte
         child is TerminalNodeImpl && child.text == "!"
     }
     if (modifier.methodModifiersPattern().isEmpty())
-        return mutableListOf(MaybeNegativeModel(modifier.methodModifier().text, negative))
+        return mutableListOf(NegativeNameModel(modifier.methodModifier().text, negative))
     val retList = buildModifiersList(modifier.methodModifiersPattern().first())
-    retList.add(MaybeNegativeModel(modifier.methodModifier().text, negative))
+    retList.add(NegativeNameModel(modifier.methodModifier().text, negative))
     return retList
 }
 

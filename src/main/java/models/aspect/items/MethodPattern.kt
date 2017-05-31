@@ -17,7 +17,7 @@ enum class InlineType {
 }
 
 //TODO Поддержка не только простых типов
-class MethodPattern(val annotations: List<MaybeNegativeModel>,
+data class MethodPattern(val annotations: List<MaybeNegativeModel>,
                     val modifiers: List<MaybeNegativeModel>,
                     val type: ParameterModel,
                     val name: MaybeNegativeModel,

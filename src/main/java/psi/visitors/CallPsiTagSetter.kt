@@ -40,7 +40,7 @@ object CallPsiTagSetter : BaseTagSetter() {
             buildParameterModel(extensionReceiver.value.type)
         }
         else ParameterModel(resolvedFunDescriptor.containingDeclaration.fqNameSafe.asString())
-        val funName = MaybeNegativeModel(resolvedFunDescriptor.name.asString())
+        val funName = NegativeNameModel(resolvedFunDescriptor.name.asString())
         val realParams = resolvedFunDescriptor.valueParameters.map {
             buildParameterModel(it.type)
         }

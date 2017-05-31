@@ -52,7 +52,7 @@ object ExecutePsiTagSetter : BaseTagSetter() {
         // Не поддерживаем безымянные методы
         if (psiElement.name == null)
             return false
-        val functionName = MaybeNegativeModel(psiElement.name.toString())
+        val functionName = NegativeNameModel(psiElement.name.toString())
         // Проверяем соответствие имени и местоположения функции
         if (!(this.checkName(aspectItem.methodPattern.name, functionName) &&
                 aspectItem.methodPattern.type.negative.xor(this.checkType(aspectItem.methodPattern.type, functionPackage)) &&
