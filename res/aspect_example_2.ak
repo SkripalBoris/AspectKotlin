@@ -1,5 +1,5 @@
 aspect B  {
-    pointcut BarPC(): execution(extension ! inline fun bar())
+    pointcut BarPC(): call(inline fun fas(String))
 
     after(): BarPC() {
         println("bar")

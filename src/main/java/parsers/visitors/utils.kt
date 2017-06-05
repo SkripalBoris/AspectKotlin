@@ -178,7 +178,7 @@ fun pointcutExpression(pointcutExpression: AspectGrammarParser.PointcutExpressio
     throw IllegalArgumentException()
 }
 
-fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<MaybeNegativeModel> {
+fun buildModifiersList(modifier: AspectGrammarParser.MethodModifiersPatternContext?): MutableList<NegativeNameModel> {
     if (modifier == null)
         return mutableListOf()
     val negative = modifier.children.first().let { child ->
@@ -200,24 +200,16 @@ fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodP
             ExtensionType.EXTENSION
     }
 
-    var inlineModifier = InlineType.ANYTHING
-    methodPattern.inlineModifier()?.let { modifier ->
-        inlineModifier = if (modifier.children.first().text == "!")
-            InlineType.NOT_INLINE
-        else
-            InlineType.INLINE
-    }
-
     val annotations = if (methodPattern.annotationPattern() == null)
-        mutableListOf<ParameterModel>()
+        emptyList<NegativeNameModel>()
     else
-        methodPattern.annotationPattern().annotationTypePattern().map { ParameterModel(it.text, false) }
+        methodPattern.annotationPattern().annotationTypePattern().map { NegativeNameModel(it.text, false) }
 
     val modifiers = buildModifiersList(methodPattern.methodModifiersPattern())
 
     val type = if (methodPattern.typePattern() != null) ParameterModel(methodPattern.typePattern().simpleTypePattern().text) else ParameterModel()
 
-    val name = ParameterModel(methodPattern.simpleNamePattern().text)
+    val name = NegativeNameModel(methodPattern.simpleNamePattern().text)
     val params = mutableListOf<ParameterModel>()
     methodPattern.formalParametersPattern().formalsPattern()?.let { formals ->
         formals.children.filter { it !is TerminalNodeImpl }.forEach {
@@ -227,5 +219,5 @@ fun fillMethod(methodPattern: AspectGrammarParser.MethodPatternContext): MethodP
     }
     val retType = buildType(methodPattern.retTypePattern())
 
-    return MethodPattern(annotations, modifiers, type, name, params, retType, extensionModifier, inlineModifier)
+    return MethodPattern(annotations, modifiers.map{it}, type, name, params, retType, extensionModifier)
 }

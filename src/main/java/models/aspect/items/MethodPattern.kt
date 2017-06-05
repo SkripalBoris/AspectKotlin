@@ -10,21 +10,14 @@ enum class ExtensionType {
     ANYTHING
 }
 
-enum class InlineType {
-    INLINE,
-    NOT_INLINE,
-    ANYTHING
-}
-
 //TODO Поддержка не только простых типов
-data class MethodPattern(val annotations: List<MaybeNegativeModel>,
-                    val modifiers: List<MaybeNegativeModel>,
+data class MethodPattern(val annotations: List<NegativeNameModel>,
+                    val modifiers: List<NegativeNameModel>,
                     val type: ParameterModel,
-                    val name: MaybeNegativeModel,
+                    val name: NegativeNameModel,
                     val params: List<ParameterModel>,
                     val returnType: ParameterModel,
-                    val extensionModifier: ExtensionType = ExtensionType.ANYTHING,
-                    val inlineModifier: InlineType = InlineType.ANYTHING) {
+                    val extensionModifier: ExtensionType = ExtensionType.ANYTHING) {
 
     override fun toString() = StringBuilder().apply {
         annotations.forEach { append("$it ") }
@@ -33,13 +26,6 @@ data class MethodPattern(val annotations: List<MaybeNegativeModel>,
         when (extensionModifier) {
             ExtensionType.EXTENSION -> append("extension ")
             ExtensionType.NOT_EXTENSION -> append("!extension ")
-            else -> {
-            }
-        }
-
-        when (inlineModifier) {
-            InlineType.INLINE -> append("inline ")
-            InlineType.NOT_INLINE -> append("!inline ")
             else -> {
             }
         }

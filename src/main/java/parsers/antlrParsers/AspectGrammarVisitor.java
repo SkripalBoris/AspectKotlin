@@ -328,12 +328,6 @@ public interface AspectGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExtensionModifier(AspectGrammarParser.ExtensionModifierContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AspectGrammarParser#inlineModifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInlineModifier(AspectGrammarParser.InlineModifierContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AspectGrammarParser#simpleNamePattern}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -56,10 +56,6 @@ object CallPsiTagSetter : BaseTagSetter() {
                 resolvedFunDescriptor.isExtension &&
                 aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
             return false
-        if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
-                (resolvedFunDescriptor as SimpleFunctionDescriptorImpl).isInline &&
-                aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
-            return false
 
         aspectItem.methodPattern.modifiers.forEach {
             when (it.name) {
@@ -76,6 +72,11 @@ object CallPsiTagSetter : BaseTagSetter() {
 
                 "protected" -> {
                     if (it.negative.xor(resolvedFunDescriptor.visibility.name != "protected"))
+                        return false
+                }
+
+                "inline" -> {
+                    if (!it.negative.xor((resolvedFunDescriptor as SimpleFunctionDescriptorImpl).isInline))
                         return false
                 }
 

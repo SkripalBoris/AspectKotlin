@@ -64,10 +64,6 @@ object ExecutePsiTagSetter : BaseTagSetter() {
                 aspectItem.methodPattern.extensionModifier == ExtensionType.NOT_EXTENSION)
             return false
 
-        if (aspectItem.methodPattern.inlineModifier != InlineType.ANYTHING &&
-                psiElement.modifierList != null && psiElement.modifierList!!.allChildren.any { it -> it.text == "inline" } &&
-                aspectItem.methodPattern.inlineModifier == InlineType.NOT_INLINE)
-            return false
         // Проверка модификаторов
         aspectItem.methodPattern.modifiers.forEach {
             when (it.name) {
@@ -83,6 +79,12 @@ object ExecutePsiTagSetter : BaseTagSetter() {
 
                 "protected" -> {
                     if (it.negative.xor(!psiElement.isProtected()))
+                        return false
+                }
+
+                "inline" -> {
+                    if (!it.negative.xor(psiElement.modifierList?.let{ modifiers ->
+                            modifiers.allChildren.any { it -> it.text == "inline" }} ?: false))
                         return false
                 }
 

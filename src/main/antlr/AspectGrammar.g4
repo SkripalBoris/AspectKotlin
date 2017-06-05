@@ -18,7 +18,7 @@ aspectBodyDeclaration
 
 // Совет
 advice
-	:	adviceSpec ('throws' typeList)? ':' pointcutExpression methodBody
+	:	adviceSpec ':' pointcutExpression methodBody
 	;
 
 //Спецификация совета
@@ -159,7 +159,7 @@ methodOrConstructorPattern
 	;
 
 methodPattern
-	:	annotationPattern? methodModifiersPattern? extensionModifier? inlineModifier? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
+	:	annotationPattern? methodModifiersPattern? extensionModifier? 'fun' (typePattern dotOrDotDot)? simpleNamePattern formalParametersPattern (':' retTypePattern)?
 	;
 
 methodModifiersPattern
@@ -168,10 +168,6 @@ methodModifiersPattern
 
 extensionModifier
     : '!'? 'extension'
-    ;
-
-inlineModifier
-    : '!'? 'inline'
     ;
 
 simpleNamePattern

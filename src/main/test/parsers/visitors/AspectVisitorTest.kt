@@ -5,7 +5,6 @@ import models.aspect.BeforeAdvice
 import models.aspect.items.CallNodeItem
 import models.aspect.items.ExecutionNodeItem
 import models.aspect.items.ExtensionType
-import models.aspect.items.InlineType
 import models.boolExpr.Not
 import org.junit.Test
 
@@ -28,7 +27,6 @@ class AspectVisitorTest {
         assertEquals("foo", (pointcutExpression as CallNodeItem).methodPattern.name.name)
         assertFalse(pointcutExpression.methodPattern.name.negative)
         assertEquals(ExtensionType.ANYTHING, pointcutExpression.methodPattern.extensionModifier)
-        assertEquals(InlineType.ANYTHING, pointcutExpression.methodPattern.inlineModifier)
 
         val advice = aspect.advices.last()
         assertTrue(advice is BeforeAdvice)
@@ -50,7 +48,6 @@ class AspectVisitorTest {
         assertEquals("bar", (child as ExecutionNodeItem).methodPattern.name.name)
         assertFalse(child.methodPattern.name.negative)
         assertEquals(ExtensionType.EXTENSION, child.methodPattern.extensionModifier)
-        assertEquals(InlineType.NOT_INLINE, child.methodPattern.inlineModifier)
 
         val advice = aspect.advices.last()
         assertTrue(advice is AfterAdvice)

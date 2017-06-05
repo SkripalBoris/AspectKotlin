@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement
  * Created by sba on 06.12.16.
  */
 
-/*
-Абстрактные классы
- */
 interface BooleanExpression {
     fun calcExpression(psiElement: PsiElement): Boolean
 }

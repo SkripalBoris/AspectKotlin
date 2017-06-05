@@ -69,7 +69,7 @@ methodModifier
 		|	'private'
 		|	'protected'
 		|	'internal'
-		|	'synchronized'
+		|   'inline'
 		|	'open'
 		|	'override'
 		)
